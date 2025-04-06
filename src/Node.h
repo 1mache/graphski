@@ -21,6 +21,11 @@ namespace graphski
 			nodeCount++;
 		}
 
+		bool operator==(const Node& other)
+		{
+			return other.m_id == m_id;
+		}
+
 		// marks the node, usually we want to mark true
 		bool mark(bool val = true)
 		{
