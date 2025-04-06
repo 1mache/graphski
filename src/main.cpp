@@ -7,8 +7,13 @@ int main()
     sf::RenderWindow window (sf::VideoMode({ 800u, 600u }), "CMake SFML Project");
     window.setVerticalSyncEnabled(true);
 
-    std::vector<sf::CircleShape> circles(50);
-    uint8_t numOfCircles = 0;
+    sf::ContextSettings settings;
+    settings.antiAliasingLevel = 8;
+
+    std::vector<sf::CircleShape> circles;
+    circles.reserve(50);
+
+    bool updatedCircles = true;
 
     while (window.isOpen())
     {
@@ -20,15 +25,14 @@ int main()
                 {
                     sf::Vector2i position = mouseButtonPressed->position;
                     // draw a circle at position
-                    sf::CircleShape newCircle(30.f);
-                    newCircle.setFillColor(sf::Color(0xBFE3B4FF));
+                    sf::CircleShape newCircle(30.f,10);
+                    newCircle.setFillColor(sf::Color(0x5F8B4CFF));
                     newCircle.setOutlineThickness(5.f);
                     newCircle.setOutlineColor(sf::Color::White);
-                    newCircle.setPosition(sf::Vector2<float>(position) - sf::Vector2f{ 15.f, 15.f });
+                    newCircle.setPosition(sf::Vector2<float>(position) - sf::Vector2f{ 17.5f, 17.5f });
                     
-                    circles[numOfCircles] = newCircle;
-                    numOfCircles++;
-                    std::cout << circles.size() << std::endl;
+                    circles.push_back(newCircle);
+                    updatedCircles = true;
                 }
 
             }
@@ -39,13 +43,18 @@ int main()
             }
         }
 
-        window.clear();
-
-        for (auto& circle : circles)
+        if(updatedCircles)
         {
-            window.draw(circle);
-        }
+            window.clear();
 
-        window.display();
+            for (auto& circle : circles)
+            {
+                window.draw(circle);
+            }
+
+            window.display();
+
+            updatedCircles = false;
+        }
     }
 }
