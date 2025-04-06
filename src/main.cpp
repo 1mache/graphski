@@ -20,6 +20,13 @@ void createCircle(std::vector<sf::CircleShape>& circles, sf::Vector2f position)
     circles.push_back(newCircle);
 }
 
+void moveCircle(sf::CircleShape& circle, sf::Vector2f position)
+{
+    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
+    position -= {centerOffset, centerOffset};
+    circle.setPosition(position);
+}
+
 int main()
 {
     sf::RenderWindow window (sf::VideoMode({ 800u, 600u }), "CMake SFML Project");
@@ -33,6 +40,9 @@ int main()
 
     bool updatedCircles = true;
 
+    bool moveMode = false;
+    size_t moved_id = 0; // id of the circle inside the vector that we're moving
+    
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -41,12 +51,48 @@ int main()
             {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left)
                 {
-                    sf::Vector2i position = mouseButtonPressed->position;
-                    // draw a circle at position
-                    createCircle(circles, sf::Vector2f(position));
+                    sf::Vector2f position(mouseButtonPressed->position);
+
+                    for (size_t i = 0; i < circles.size(); i++)
+                    {
+                        auto& circle = circles[i];
+                    
+                        // if we clicked inside the circle
+                        if(circle.getGlobalBounds().contains(position))
+                        {
+                            moveMode = true;
+                            moved_id = i;
+                            std::cout << "Im inside the circle " << i << std::endl;
+                        }
+                    }
+
+                    if(!moveMode)
+                    {
+                        // draw a circle at position
+                        createCircle(circles, position);
+                        updatedCircles = true;
+                    }
+                }
+            }
+
+            if(auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
+            {
+                // disable moveMode when left mouse button is released
+                if(mouseButtonReleased->button == sf::Mouse::Button::Left)
+                {
+                    moveMode = false;
+                }
+            }
+
+            if(auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
+            {
+                // if we're moving something right now
+                if(moveMode)
+                {
+                    sf::Vector2f newPosition(mouseMoved->position);
+                    moveCircle(circles[moved_id], newPosition);
                     updatedCircles = true;
                 }
-
             }
 
             if (event->is<sf::Event::Closed>())
