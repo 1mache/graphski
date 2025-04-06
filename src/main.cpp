@@ -33,7 +33,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     sf::ContextSettings settings;
-    settings.antiAliasingLevel = 8;
+    settings.antiAliasingLevel = 10;
 
     std::vector<sf::CircleShape> circles;
     circles.reserve(50);
