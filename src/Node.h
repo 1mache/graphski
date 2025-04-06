@@ -5,8 +5,7 @@ namespace graphski
 {
 	class Node
 	{
-		inline static uint8_t nodeCount = 0;
-		// node id
+		// id of the node, should be unique
 		uint8_t m_id;
 		// if we want to give our node a name like A,B,C
 		std::string m_name;
@@ -14,11 +13,10 @@ namespace graphski
 		bool m_marked = false;
 
 	public:
-		explicit Node(std::string name = "") :m_id(nodeCount), m_name(name)
+		explicit Node(uint8_t id, std::string name = "") :m_id(id) , m_name(name)
 		{
 			if (name.size() == 0) // if empty string was passed
 				m_name = std::to_string(m_id); //set the name to be the id (as string)
-			nodeCount++;
 		}
 
 		bool operator==(const Node& other)
