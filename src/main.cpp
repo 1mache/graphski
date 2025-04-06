@@ -2,6 +2,24 @@
 #include <iostream>
 #include <vector>
 
+constexpr sf::Color NODE_COLOR(0x5F8B4CFF);
+constexpr float     NODE_RADIUS  = 30.f;
+constexpr float     NODE_OUTLINE = 5.f;
+
+void createCircle(std::vector<sf::CircleShape>& circles, sf::Vector2f position)
+{
+    sf::CircleShape newCircle(NODE_RADIUS, 10);
+    newCircle.setFillColor(NODE_COLOR);
+    newCircle.setOutlineThickness(NODE_OUTLINE);
+    newCircle.setOutlineColor(sf::Color::White);
+
+    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
+    position -= {centerOffset, centerOffset};
+    newCircle.setPosition(position);
+
+    circles.push_back(newCircle);
+}
+
 int main()
 {
     sf::RenderWindow window (sf::VideoMode({ 800u, 600u }), "CMake SFML Project");
@@ -25,13 +43,7 @@ int main()
                 {
                     sf::Vector2i position = mouseButtonPressed->position;
                     // draw a circle at position
-                    sf::CircleShape newCircle(30.f,10);
-                    newCircle.setFillColor(sf::Color(0x5F8B4CFF));
-                    newCircle.setOutlineThickness(5.f);
-                    newCircle.setOutlineColor(sf::Color::White);
-                    newCircle.setPosition(sf::Vector2<float>(position) - sf::Vector2f{ 17.5f, 17.5f });
-                    
-                    circles.push_back(newCircle);
+                    createCircle(circles, sf::Vector2f(position));
                     updatedCircles = true;
                 }
 
