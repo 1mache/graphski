@@ -42,7 +42,7 @@ int main()
 
     bool moveMode = false;
     size_t moved_id = 0; // id of the circle inside the vector that we're moving
-    
+
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())

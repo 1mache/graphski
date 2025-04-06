@@ -1,7 +1,6 @@
 #pragma once
 #include "Node.h"
 
-
 namespace graphski
 {
 	class Edge
@@ -29,30 +28,15 @@ namespace graphski
 		}
 
 		// marks the node, usually we want to mark true
-		bool mark(bool val = true)
-		{
-			m_marked = val;
-		}
+		bool mark(bool val = true) { m_marked = val;}
 
-		bool isMarked() const
-		{
-			return m_marked;
-		}
+		bool isMarked() const { return m_marked; }
 
-		Node* getFrom()
-		{
-			return m_from;
-		}
+		Node* getFrom() { return m_from;}
 
-		Node* getTo()
-		{
-			return m_to;
-		}
+		Node* getTo() { return m_to; }
 
-		Edge* getTwin()
-		{
-			return m_twin;
-		}
+		Edge* getTwin() { return m_twin; }
 
 		void setTwin(Edge* twin)
 		{
