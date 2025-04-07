@@ -28,7 +28,12 @@ namespace graphski
 		}
 
 		// marks the node, usually we want to mark true
-		bool mark(bool val = true) { m_marked = val;}
+		bool mark(bool val = true) 
+		{ 
+			m_marked = val;
+			if (m_twin) // mark the twin too if undirected
+				m_twin->mark();
+		}
 
 		bool isMarked() const { return m_marked; }
 
