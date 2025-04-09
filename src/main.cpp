@@ -3,31 +3,6 @@
 #include <vector>
 #include "DrawableNode.h"
 
-//constexpr sf::Color NODE_COLOR(0x5F8B4CFF);
-//constexpr float     NODE_RADIUS  = 30.f;
-//constexpr float     NODE_OUTLINE = 5.f;
-//
-//void createCircle(std::vector<sf::CircleShape>& circles, sf::Vector2f position)
-//{
-//    sf::CircleShape newCircle(NODE_RADIUS, 10);
-//    newCircle.setFillColor(NODE_COLOR);
-//    newCircle.setOutlineThickness(NODE_OUTLINE);
-//    newCircle.setOutlineColor(sf::Color::White);
-//
-//    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
-//    position -= {centerOffset, centerOffset};
-//    newCircle.setPosition(position);
-//
-//    circles.push_back(newCircle);
-//}
-//
-//void moveCircle(sf::CircleShape& circle, sf::Vector2f position)
-//{
-//    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
-//    position -= {centerOffset, centerOffset};
-//    circle.setPosition(position);
-//}
-
 int main()
 {
     sf::RenderWindow window (sf::VideoMode({ 800u, 600u }), "CMake SFML Project");
@@ -74,7 +49,9 @@ int main()
                     if(!moveMode)
                     {
                         // draw a circle at position
-                        nodes.push_back(graphski::DrawableNode(nodeCount, position, txtFont));
+                        auto newNode = graphski::DrawableNode(nodeCount, txtFont);
+                        newNode.setPosition(position);
+                        nodes.push_back(newNode);
                         nodeCount++;
                         updatedCircles = true;
                     }

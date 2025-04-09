@@ -7,8 +7,6 @@ namespace graphski
 {
 	class Graph
 	{
-		static constexpr uint8_t MAX_NODES  = UINT8_MAX;
-		static constexpr uint8_t INIT_NODES = 10;
 		// adjacency list contains pairs node : its edges
 		// TODO: maybe have edges get ids of the nodes they need instead of pointers, then it could me on the stack
 		using AdjacencyList = std::vector<std::pair<Node*, std::vector<Edge*>>>;
@@ -36,5 +34,11 @@ namespace graphski
 
 		// creates an edge between to given nodes, gets them by ids
 		void addEdge(uint8_t fromNodeId, uint8_t toNodeId);
+
+	private: // constants
+
+		static constexpr uint8_t MAX_NODES = UINT8_MAX;
+		static constexpr uint8_t INIT_NODES = 10;
 	};
+
 }
