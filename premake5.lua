@@ -33,6 +33,7 @@ project "graphski"
 			"sfml-system-s-d.lib",
 			"sfml-graphics-s-d.lib",
 			"sfml-window-s-d.lib",
+			"freetyped.lib",
 			"opengl32.lib",
 			"gdi32.lib",
     		"winmm.lib"
@@ -45,6 +46,7 @@ project "graphski"
 			"sfml-system-s.lib",
 			"sfml-graphics-s.lib",
 			"sfml-window-s.lib",
+			"freetype.lib",
 			"opengl32.lib",
 			"gdi32.lib",
     		"winmm.lib"
