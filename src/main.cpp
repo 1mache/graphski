@@ -1,31 +1,32 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include "DrawableNode.h"
 
-constexpr sf::Color NODE_COLOR(0x5F8B4CFF);
-constexpr float     NODE_RADIUS  = 30.f;
-constexpr float     NODE_OUTLINE = 5.f;
-
-void createCircle(std::vector<sf::CircleShape>& circles, sf::Vector2f position)
-{
-    sf::CircleShape newCircle(NODE_RADIUS, 10);
-    newCircle.setFillColor(NODE_COLOR);
-    newCircle.setOutlineThickness(NODE_OUTLINE);
-    newCircle.setOutlineColor(sf::Color::White);
-
-    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
-    position -= {centerOffset, centerOffset};
-    newCircle.setPosition(position);
-
-    circles.push_back(newCircle);
-}
-
-void moveCircle(sf::CircleShape& circle, sf::Vector2f position)
-{
-    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
-    position -= {centerOffset, centerOffset};
-    circle.setPosition(position);
-}
+//constexpr sf::Color NODE_COLOR(0x5F8B4CFF);
+//constexpr float     NODE_RADIUS  = 30.f;
+//constexpr float     NODE_OUTLINE = 5.f;
+//
+//void createCircle(std::vector<sf::CircleShape>& circles, sf::Vector2f position)
+//{
+//    sf::CircleShape newCircle(NODE_RADIUS, 10);
+//    newCircle.setFillColor(NODE_COLOR);
+//    newCircle.setOutlineThickness(NODE_OUTLINE);
+//    newCircle.setOutlineColor(sf::Color::White);
+//
+//    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
+//    position -= {centerOffset, centerOffset};
+//    newCircle.setPosition(position);
+//
+//    circles.push_back(newCircle);
+//}
+//
+//void moveCircle(sf::CircleShape& circle, sf::Vector2f position)
+//{
+//    auto centerOffset = (NODE_RADIUS + NODE_OUTLINE);
+//    position -= {centerOffset, centerOffset};
+//    circle.setPosition(position);
+//}
 
 int main()
 {
@@ -35,13 +36,16 @@ int main()
     sf::ContextSettings settings;
     settings.antiAliasingLevel = 8;
 
-    std::vector<sf::CircleShape> circles;
-    circles.reserve(50);
+    std::vector<graphski::DrawableNode> nodes;
+    nodes.reserve(50);
 
+    uint8_t nodeCount = 0;
     bool updatedCircles = true;
 
     bool moveMode = false;
     size_t moved_id = 0; // id of the circle inside the vector that we're moving
+
+    sf::Font txtFont("fonts/InriaSans.ttf");
 
     while (window.isOpen())
     {
@@ -53,24 +57,25 @@ int main()
                 {
                     sf::Vector2f position(mouseButtonPressed->position);
 
-                    for (size_t i = 0; i < circles.size(); i++)
+                    for (size_t i = 0; i < nodes.size(); i++)
                     {
-                        auto& circle = circles[i];
+                        auto& node = nodes[i];
                     
                         // if we clicked inside the circle
-                        if(circle.getGlobalBounds().contains(position))
+                        if(node.getGlobalBounds().contains(position))
                         {
                             moveMode = true;
                             moved_id = i;
                             updatedCircles = true;
-                            std::cout << "Im inside the circle " << i << std::endl;
+                            std::cout << "Im inside the node " << i << std::endl;
                         }
                     }
 
                     if(!moveMode)
                     {
                         // draw a circle at position
-                        createCircle(circles, position);
+                        nodes.push_back(graphski::DrawableNode(nodeCount, position, txtFont));
+                        nodeCount++;
                         updatedCircles = true;
                     }
                 }
@@ -91,7 +96,7 @@ int main()
                 if(moveMode)
                 {
                     sf::Vector2f newPosition(mouseMoved->position);
-                    moveCircle(circles[moved_id], newPosition);
+                    nodes[moved_id].setPosition(newPosition);
                     updatedCircles = true;
                 }
             }
@@ -106,17 +111,17 @@ int main()
         {
             window.clear();
 
-            for (int i = 0; i < circles.size(); i++)
+            for (uint8_t i = 0; i < nodes.size(); i++)
             {
                 if (moveMode && i == moved_id)
                     continue;
                 
-                auto& circle = circles[i];
-                window.draw(circle);
+                auto& node = nodes[i];
+                window.draw(node);
             }
 
             if (moveMode)
-                window.draw(circles[moved_id]);
+                window.draw(nodes[moved_id]);
 
             window.display();
 
