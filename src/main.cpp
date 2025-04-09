@@ -62,6 +62,7 @@ int main()
                         {
                             moveMode = true;
                             moved_id = i;
+                            updatedCircles = true;
                             std::cout << "Im inside the circle " << i << std::endl;
                         }
                     }
@@ -105,10 +106,17 @@ int main()
         {
             window.clear();
 
-            for (auto& circle : circles)
+            for (int i = 0; i < circles.size(); i++)
             {
+                if (moveMode && i == moved_id)
+                    continue;
+                
+                auto& circle = circles[i];
                 window.draw(circle);
             }
+
+            if (moveMode)
+                window.draw(circles[moved_id]);
 
             window.display();
 
