@@ -32,6 +32,8 @@ namespace graphski
 			target.draw(m_nameTxt, states);
 		}
 
+		void mark(bool val = true) override;
+
 		// returns bounds of the object based on bounds of circle
 		sf::FloatRect getGlobalBounds()
 		{
@@ -45,8 +47,9 @@ namespace graphski
 		void initTextComponent();
 
 	private: // constants
+		static constexpr sf::Color    NODE_COLOR{ 0xFFB200FF };
 		static constexpr sf::Color    NODE_OUTLINE_COLOR{ sf::Color::White };
-		static constexpr sf::Color    NODE_COLOR{ 0x5F8B4CFF };
+		static constexpr sf::Color	  NODE_MARKED_COLOR{ 0xD91656FF };
 		static constexpr sf::Color    NODE_TEXT_COLOR{ sf::Color::White };
 		static constexpr float        NODE_RADIUS = 30.f;
 		static constexpr float        NODE_OUTLINE_THICKNSS = 5.f;

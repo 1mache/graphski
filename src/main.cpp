@@ -40,7 +40,9 @@ int main()
                         if(node.getGlobalBounds().contains(position))
                         {
                             moveMode = true;
-                            moved_id = i;
+                            moved_id = i; // remember the moved node`s index 
+                            // TODO: bug if 2 nodes are one on top of another, bottom one also gets marked
+                            node.mark(); // mark the moved node
                             updatedCircles = true;
                             std::cout << "Im inside the node " << i << std::endl;
                         }
@@ -63,7 +65,12 @@ int main()
                 // disable moveMode when left mouse button is released
                 if(mouseButtonReleased->button == sf::Mouse::Button::Left)
                 {
-                    moveMode = false;
+                    if(moveMode)
+                    {
+                        moveMode = false;
+                        nodes[moved_id].mark(false); // unmark the moved node
+                        updatedCircles = true;
+                    }
                 }
             }
 
@@ -72,6 +79,7 @@ int main()
                 // if we're moving something right now
                 if(moveMode)
                 {
+                    //TODO: add screen bounds checking
                     sf::Vector2f newPosition(mouseMoved->position);
                     nodes[moved_id].setPosition(newPosition);
                     updatedCircles = true;
