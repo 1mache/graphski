@@ -37,9 +37,9 @@ namespace graphski
 
 		bool isMarked() const { return m_marked; }
 
-		Node* getFrom() { return m_from;}
+		Node* getFrom() const { return m_from;}
 
-		Node* getTo() { return m_to; }
+		Node* getTo() const { return m_to; }
 
 		Edge* getTwin() { return m_twin; }
 
