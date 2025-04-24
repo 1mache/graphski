@@ -5,7 +5,7 @@
 
 namespace graphski
 {
-	class DrawableEdge : Edge, sf::Drawable
+	class DrawableEdge : public Edge, public sf::Drawable
 	{
 	public:
 		DrawableEdge(DrawableNode* from, DrawableNode* to) : Edge(from, to) {};
@@ -16,10 +16,13 @@ namespace graphski
 			// we know they can be casted since we got them as pointers to DrawableNode
 			sf::Vector2f fromPos = dynamic_cast<DrawableNode*>(getFrom())->getPosition();
 			sf::Vector2f toPos =   dynamic_cast<DrawableNode*>(getTo())->getPosition();
-			drawLine(fromPos, toPos);
+			target.draw(makeLine(fromPos, toPos), states);
 		}
 
 	private:
-		void drawLine(sf::Vector2f lineStart, sf::Vector2f lineEnd) const;
+		sf::RectangleShape makeLine(sf::Vector2f lineStart, sf::Vector2f lineEnd) const;
+
+	private:
+		static constexpr float LINE_THICKNESS = 5.f;
 	};
 }

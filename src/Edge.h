@@ -47,10 +47,7 @@ namespace graphski
 		{
 			// check that the twin is not null and is really a twin
 			if (twin && *twin == Edge(m_to, m_from))
-			{
-				m_twin = twin;
-				// the edge is now undirected 
-			}
+				m_twin = twin; // the edge is now undirected 
 		}
 	};
 }
