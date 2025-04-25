@@ -29,8 +29,8 @@ namespace graphski
 
 	void Graph::addEdge(uint8_t fromNodeId, uint8_t toNodeId)
 	{
-		Node* fromPtr = m_adjList[fromNodeId].first,
-			* toPtr = m_adjList[toNodeId].first;
+		Node *fromPtr = m_adjList[fromNodeId].first,
+			 *toPtr = m_adjList[toNodeId].first;
 
 		Edge* newEdge = new Edge(fromPtr, toPtr);
 

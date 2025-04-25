@@ -6,7 +6,13 @@ namespace graphski
 {
 	class DrawableGraph : public Graph, public sf::Drawable
 	{
+		// pair of node id and edges id inside node's edges vector
+		using EdgeId = std::pair<uint8_t, uint8_t>;
+
 		sf::Font txtFont;
+
+		bool m_moveMode = false; // if true, we are moving a node
+		uint8_t m_movedId = 0; // id of the node that we're moving 
 
 	public:
 		DrawableGraph(sf::Font&& font) : Graph(), txtFont(std::move(font))
@@ -23,6 +29,35 @@ namespace graphski
 
 		// checks if a position is in a certain node, returns its id if it is
 		std::optional<uint8_t> posInNode(sf::Vector2f position);
+
+		// getter and setter for movedId
+		uint8_t getMovedNodeId() const { return m_movedId; }
+		void setMovedNodeId(uint8_t value) { m_movedId = value; }
+		
+		// getter and setter for moveMode
+		bool isInMoveMode() const { return m_moveMode; }
+		void setMoveMode(bool value) { m_moveMode = value; }
+
+	private:
+		Edge* getEdge(EdgeId edgeId) const
+		{
+			// goes to the node and then to the edge inside the node edge vector
+			return (m_adjList[edgeId.first].second[edgeId.second]);
+		}
+
+		void drawNode(sf::RenderTarget& target, sf::RenderStates states ,uint8_t nodeId) const
+		{
+			// we know only drawable nodes are in a drawable graph
+			auto* drawableNode = dynamic_cast<const DrawableNode*>(m_adjList[nodeId].first);
+			target.draw(*drawableNode, states);
+		}
+		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const
+		{
+			// we know only drawable edges are in a drawable graph
+			auto* drawableEdge = dynamic_cast<const DrawableEdge*>(getEdge(edgeId));
+			target.draw(*drawableEdge, states);
+		}
+
 	private:
 		//TODO: make nodes take color data from here
 		static constexpr sf::Color    NODE_COLOR{ 0xFFB200FF };
