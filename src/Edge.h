@@ -20,7 +20,7 @@ namespace graphski
 			m_from(from), m_to(to){}
 		// Note: no destructor, the nodes and twin(if exists)
 		// will be deleted with the adj list of the graph
-		virtual ~Edge();
+		virtual ~Edge() {};
 		
 		bool operator==(const Edge& other) const
 		{
