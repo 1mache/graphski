@@ -25,10 +25,12 @@ namespace graphski
 		virtual ~Graph();
 
 		// how many nodes are there
-		uint8_t nodeCount() { return static_cast<uint8_t>(m_adjList.size()); }
+		uint8_t nodeCount() const { return (uint8_t)m_adjList.size(); }
+		// for given node how many edges does it have
+		uint8_t edgeCount(uint8_t nodeId) const { return (uint8_t)m_adjList[nodeId].second.size(); }
 
 		// returns the copy of the adjacency list (TODO: find better alternative to "peek in")
-		AdjacencyList getAdjListCopy() { return m_adjList;}
+		AdjacencyList getAdjListCopy() const { return m_adjList;}
 
 		// creates a node with empty edges list, returns its unique id
 		virtual uint8_t addNode(std::string name = "");
@@ -36,6 +38,10 @@ namespace graphski
 		// creates an edge between to given nodes, gets them by ids
 		virtual void addEdge(uint8_t fromNodeId, uint8_t toNodeId);
 
+		// returns the node pointer by id 
+		// TODO: this is not great
+		Node* getNode(uint8_t nodeId) { return m_adjList[nodeId].first; }
+		
 	private: // constants
 
 		static constexpr uint8_t MAX_NODES = UINT8_MAX;

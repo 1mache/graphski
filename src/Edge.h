@@ -29,7 +29,7 @@ namespace graphski
 		}
 
 		// marks the node, usually we want to mark true
-		virtual bool mark(bool val = true) 
+		virtual void mark(bool val = true) 
 		{ 
 			m_marked = val;
 			if (m_twin) // mark the twin too if undirected
@@ -38,9 +38,9 @@ namespace graphski
 
 		bool isMarked() const { return m_marked; }
 
-		Node* getFrom() { return m_from;}
+		Node* getFrom() const { return m_from;}
 
-		Node* getTo() { return m_to; }
+		Node* getTo() const { return m_to; }
 
 		Edge* getTwin() { return m_twin; }
 
@@ -48,10 +48,7 @@ namespace graphski
 		{
 			// check that the twin is not null and is really a twin
 			if (twin && *twin == Edge(m_to, m_from))
-			{
-				m_twin = twin;
-				// the edge is now undirected 
-			}
+				m_twin = twin; // the edge is now undirected 
 		}
 	};
 }

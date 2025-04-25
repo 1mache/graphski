@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-#include "DrawableNode.h"
+#include "DrawableGraph.h"
 
 int main()
 {
@@ -11,16 +11,13 @@ int main()
     sf::ContextSettings settings;
     settings.antiAliasingLevel = 8;
 
-    std::vector<graphski::DrawableNode> nodes;
-    nodes.reserve(50);
-
-    uint8_t nodeCount = 0;
-    bool updatedCircles = true;
+    graphski::DrawableGraph graph(sf::Font("fonts/InriaSans.ttf"));
+    bool updatedGraph = true;
 
     bool moveMode = false;
-    size_t moved_id = 0; // id of the circle inside the vector that we're moving
-
-    sf::Font txtFont("fonts/InriaSans.ttf");
+    uint8_t moved_id = 0; // id of the circle inside the vector that we're moving
+    bool edgeMode = false;
+    uint8_t from_id = 0, to_id = 0;
 
     while (window.isOpen())
     {
@@ -32,28 +29,48 @@ int main()
                 {
                     sf::Vector2f position(mouseButtonPressed->position);
 
-                    for (size_t i = 0; i < nodes.size(); i++)
+                    std::optional<uint8_t> id = graph.posInNode(position);
+
+                    if(id.has_value())
                     {
-                        auto& node = nodes[i];
-                    
-                        // if we clicked inside the circle
-                        if(node.getGlobalBounds().contains(position))
-                        {
-                            moveMode = true;
-                            moved_id = i;
-                            updatedCircles = true;
-                            std::cout << "Im inside the node " << i << std::endl;
-                        }
+                        moveMode = true;
+                        moved_id = id.value(); // remember the moved node`s index 
+                        auto* node = graph.getNode(id.value());
+
+                        // TODO: bug if 2 nodes are one on top of another, bottom one also gets marked
+                        node->mark(); // mark the moved node
+                        updatedGraph = true;
+                        std::cout << "Im inside the node " << (int)id.value() << std::endl;
                     }
 
                     if(!moveMode)
                     {
-                        // draw a circle at position
-                        auto newNode = graphski::DrawableNode(nodeCount, txtFont);
-                        newNode.setPosition(position);
-                        nodes.push_back(newNode);
-                        nodeCount++;
-                        updatedCircles = true;
+                        graph.addNode(position);
+                        updatedGraph = true;
+                    }
+                }
+                if (mouseButtonPressed->button == sf::Mouse::Button::Right) 
+                {
+                    sf::Vector2f position(mouseButtonPressed->position);
+                    
+                    std::optional<uint8_t> id = graph.posInNode(position);
+                    if (id.has_value())
+                    {
+                        auto* node = graph.getNode(id.value());
+                        if (edgeMode)
+                        {
+                            to_id = id.value();
+                            graph.addEdge(from_id, to_id);
+
+                            // done with constructing this edge
+                            edgeMode = false;
+                            updatedGraph = true;
+                        }
+                        else
+                        {
+                            edgeMode = true;
+                            from_id = id.value();
+                        }
                     }
                 }
             }
@@ -63,7 +80,12 @@ int main()
                 // disable moveMode when left mouse button is released
                 if(mouseButtonReleased->button == sf::Mouse::Button::Left)
                 {
-                    moveMode = false;
+                    if(moveMode)
+                    {
+                        moveMode = false;
+                        graph.getNode(moved_id)->mark(false); // unmark the moved node
+                        updatedGraph = true;
+                    }
                 }
             }
 
@@ -72,9 +94,11 @@ int main()
                 // if we're moving something right now
                 if(moveMode)
                 {
+                    //TODO: add screen bounds checking
                     sf::Vector2f newPosition(mouseMoved->position);
-                    nodes[moved_id].setPosition(newPosition);
-                    updatedCircles = true;
+                    auto* dNode = (graphski::DrawableNode*)(graph.getNode(moved_id));
+                    dNode->setPosition(newPosition);
+                    updatedGraph = true;
                 }
             }
 
@@ -84,25 +108,15 @@ int main()
             }
         }
 
-        if(updatedCircles)
+        if(updatedGraph)
         {
             window.clear();
 
-            for (uint8_t i = 0; i < nodes.size(); i++)
-            {
-                if (moveMode && i == moved_id)
-                    continue;
-                
-                auto& node = nodes[i];
-                window.draw(node);
-            }
-
-            if (moveMode)
-                window.draw(nodes[moved_id]);
+            window.draw(graph);
 
             window.display();
 
-            updatedCircles = false;
+            updatedGraph = false;
         }
     }
 }

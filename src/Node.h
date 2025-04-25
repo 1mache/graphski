@@ -30,7 +30,7 @@ namespace graphski
 		// =================Marking===================
 		
 		// marks the node, usually we want to mark true
-		bool mark(bool val = true) { m_marked = val; }
+		virtual void mark(bool val = true) { m_marked = val; }
 
 		bool isMarked() const { return m_marked; }
 		// ===========================================

@@ -2,6 +2,22 @@
 
 namespace graphski
 {
+	void DrawableNode::mark(bool val)
+	{
+		Node::mark(val);
+		if (val)
+		{
+			// mark outline and text
+			m_circle.setOutlineColor(NODE_MARKED_COLOR);
+			m_nameTxt.setFillColor(NODE_MARKED_COLOR);
+		}
+		else
+		{
+			// unmark outline and text
+			m_circle.setOutlineColor(NODE_OUTLINE_COLOR);
+			m_nameTxt.setFillColor(NODE_TEXT_COLOR);
+		}
+	}
 	void DrawableNode::initCircleComponent()
 	{
 		// set circle colors
