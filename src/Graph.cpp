@@ -6,12 +6,15 @@ namespace graphski
 	{
 		for(auto pair: m_adjList)
 		{
-			auto* nodePtr = pair.first;
+			auto* node = pair.first;
 
+			// delete all edges of the node
 			for (auto* edge : pair.second)
 			{
 				delete edge;
 			}
+			// delete the node
+			delete node;
 		}
 	}
 
