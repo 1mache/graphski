@@ -7,10 +7,11 @@ namespace graphski
 {
 	class Graph
 	{
+	protected:
 		// adjacency list contains pairs node : its edges
 		// TODO: maybe have edges get ids of the nodes they need instead of pointers, then it could me on the stack
-		using AdjacencyList = std::vector<std::pair<Node*, std::vector<Edge*>>>;
 		
+		using AdjacencyList = std::vector<std::pair<Node*, std::vector<Edge*>>>;
 		AdjacencyList m_adjList;
 
 	public:
@@ -21,7 +22,7 @@ namespace graphski
 
 		Graph(Graph&) = delete;
 		Graph& operator=(Graph&) = delete;
-		~Graph();
+		virtual ~Graph();
 
 		// how many nodes are there
 		uint8_t nodeCount() const { return (uint8_t)m_adjList.size(); }
@@ -32,10 +33,10 @@ namespace graphski
 		AdjacencyList getAdjListCopy() const { return m_adjList;}
 
 		// creates a node with empty edges list, returns its unique id
-		uint8_t addNode(std::string name = "");
+		virtual uint8_t addNode(std::string name = "");
 
 		// creates an edge between to given nodes, gets them by ids
-		void addEdge(uint8_t fromNodeId, uint8_t toNodeId);
+		virtual void addEdge(uint8_t fromNodeId, uint8_t toNodeId);
 
 		// returns the node pointer by id 
 		// TODO: this is not great
