@@ -20,6 +20,7 @@ namespace graphski
 			m_from(from), m_to(to){}
 		// Note: no destructor, the nodes and twin(if exists)
 		// will be deleted with the adj list of the graph
+		virtual ~Edge();
 		
 		bool operator==(const Edge& other) const
 		{
@@ -28,7 +29,7 @@ namespace graphski
 		}
 
 		// marks the node, usually we want to mark true
-		bool mark(bool val = true) 
+		virtual bool mark(bool val = true) 
 		{ 
 			m_marked = val;
 			if (m_twin) // mark the twin too if undirected
