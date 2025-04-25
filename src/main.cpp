@@ -3,9 +3,18 @@
 #include <vector>
 #include "DrawableGraph.h"
 
+constexpr unsigned int WINDOW_WIDTH = 800u, WINDOW_HEIGHT = 600u;
+
+bool posInBounds(sf::Vector2f position)
+{
+    return (0 <= position.x && position.x <= WINDOW_WIDTH) &&
+           (0 <= position.y && position.y <= WINDOW_HEIGHT);
+
+}
+
 int main()
 {
-    sf::RenderWindow window (sf::VideoMode({ 800u, 600u }), "CMake SFML Project");
+    sf::RenderWindow window (sf::VideoMode({ WINDOW_WIDTH , WINDOW_HEIGHT }), "Graphski");
     window.setVerticalSyncEnabled(true);
 
     sf::ContextSettings settings;
@@ -14,10 +23,8 @@ int main()
     graphski::DrawableGraph graph(sf::Font("fonts/InriaSans.ttf"));
     bool updatedGraph = true;
 
-    bool moveMode = false;
-    uint8_t moved_id = 0; // id of the circle inside the vector that we're moving
     bool edgeMode = false;
-    uint8_t from_id = 0, to_id = 0;
+    uint8_t fromId = 0, toId = 0;
 
     while (window.isOpen())
     {
@@ -33,8 +40,8 @@ int main()
 
                     if(id.has_value())
                     {
-                        moveMode = true;
-                        moved_id = id.value(); // remember the moved node`s index 
+                        graph.setMoveMode(true);
+                        graph.setMovedNodeId(id.value()); // remember the moved node`s index
                         auto* node = graph.getNode(id.value());
 
                         // TODO: bug if 2 nodes are one on top of another, bottom one also gets marked
@@ -43,7 +50,7 @@ int main()
                         std::cout << "Im inside the node " << (int)id.value() << std::endl;
                     }
 
-                    if(!moveMode)
+                    if(!graph.isInMoveMode())
                     {
                         graph.addNode(position);
                         updatedGraph = true;
@@ -59,8 +66,8 @@ int main()
                         auto* node = graph.getNode(id.value());
                         if (edgeMode)
                         {
-                            to_id = id.value();
-                            graph.addEdge(from_id, to_id);
+                            toId = id.value();
+                            graph.addEdge(fromId, toId);
 
                             // done with constructing this edge
                             edgeMode = false;
@@ -69,7 +76,7 @@ int main()
                         else
                         {
                             edgeMode = true;
-                            from_id = id.value();
+                            fromId = id.value();
                         }
                     }
                 }
@@ -80,10 +87,10 @@ int main()
                 // disable moveMode when left mouse button is released
                 if(mouseButtonReleased->button == sf::Mouse::Button::Left)
                 {
-                    if(moveMode)
+                    if(graph.isInMoveMode())
                     {
-                        moveMode = false;
-                        graph.getNode(moved_id)->mark(false); // unmark the moved node
+                        graph.setMoveMode(false);
+                        graph.getNode(graph.getMovedNodeId())->mark(false); // unmark the moved node
                         updatedGraph = true;
                     }
                 }
@@ -92,13 +99,16 @@ int main()
             if(auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
             {
                 // if we're moving something right now
-                if(moveMode)
+                if(graph.isInMoveMode())
                 {
-                    //TODO: add screen bounds checking
+                    //TODO: add more sophisticated screen bounds checking
                     sf::Vector2f newPosition(mouseMoved->position);
-                    auto* dNode = (graphski::DrawableNode*)(graph.getNode(moved_id));
-                    dNode->setPosition(newPosition);
-                    updatedGraph = true;
+                    if(posInBounds(newPosition))
+                    {
+                        auto* dNode = (graphski::DrawableNode*)(graph.getNode(graph.getMovedNodeId()));
+                        dNode->setPosition(newPosition);
+                        updatedGraph = true;
+                    }
                 }
             }
 
