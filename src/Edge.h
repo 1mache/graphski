@@ -29,7 +29,7 @@ namespace graphski
 		}
 
 		// marks the node, usually we want to mark true
-		virtual bool mark(bool val = true) 
+		virtual void mark(bool val = true) 
 		{ 
 			m_marked = val;
 			if (m_twin) // mark the twin too if undirected

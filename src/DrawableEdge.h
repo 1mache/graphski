@@ -9,7 +9,6 @@ namespace graphski
 	{
 	public:
 		DrawableEdge(DrawableNode* from, DrawableNode* to) : Edge(from, to) {};
-		virtual ~DrawableEdge(){};
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override
 		{

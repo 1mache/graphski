@@ -33,7 +33,7 @@ namespace graphski
 		AdjacencyList getAdjListCopy() const { return m_adjList;}
 
 		// creates a node with empty edges list, returns its unique id
-		virtual uint8_t addNode(std::string name = "");
+		uint8_t addNode(std::string name = "");
 
 		// creates an edge between to given nodes, gets them by ids
 		virtual void addEdge(uint8_t fromNodeId, uint8_t toNodeId);
