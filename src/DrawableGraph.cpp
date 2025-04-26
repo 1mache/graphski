@@ -40,7 +40,7 @@ namespace graphski
 	{
 		auto* fromPtr = dynamic_cast<DrawableNode*>(m_adjList[fromNodeId].first);
 		auto *toPtr = dynamic_cast<DrawableNode*>(m_adjList[toNodeId].first);
-
+		// TODO: check if this edge already exists
 		auto* newEdge = new DrawableEdge(fromPtr, toPtr);
 
 		// increment degrees
