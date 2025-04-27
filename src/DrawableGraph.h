@@ -9,15 +9,19 @@ namespace graphski
 		// pair of node id and edges id inside node's edges vector
 		using EdgeId = std::pair<uint8_t, uint8_t>;
 
-		sf::Font txtFont;
-
 		bool m_moveMode = false; // if true, we are moving a node
 		uint8_t m_movedId = 0; // id of the node that we're moving 
 
 	public:
-		DrawableGraph(sf::Font&& font) : Graph(), txtFont(std::move(font))
-		{}
-		
+		DrawableGraph() : Graph()
+		{
+			DrawableNode::setMarkedColor(MARKED_COLOR);
+			DrawableNode::setSelectColor(SELECTED_COLOR);
+			//TODO: I dont like this
+			DrawableEdge::setMarkedColor(MARKED_COLOR);
+			DrawableEdge::setSelectColor(SELECTED_COLOR);
+		}
+
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 		// creates a node with empty edges list at given position, returns its unique id
@@ -60,9 +64,10 @@ namespace graphski
 
 	private:
 		//TODO: make nodes take color data from here
-		static constexpr sf::Color    NODE_COLOR{ 0xFFB200FF };
-		static constexpr sf::Color    NODE_OUTLINE_COLOR{ sf::Color::White };
-		static constexpr sf::Color	  NODE_MARKED_COLOR{ 0xD91656FF };
-		static constexpr sf::Color    NODE_TEXT_COLOR{ sf::Color::White };
+		static constexpr sf::Color DEFAULT_NODE_COLOR{ 0xFFB200FF };
+		static constexpr sf::Color DEFAULT_EDGE_COLOR{ sf::Color::White};
+		static constexpr sf::Color MARKED_COLOR{ 0xD91656FF };
+		static constexpr sf::Color SELECTED_COLOR{ 0xD91656FF };
+		static constexpr sf::Color TEXT_COLOR{ sf::Color::White };
 	};
 }

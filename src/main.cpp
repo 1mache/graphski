@@ -20,7 +20,7 @@ int main()
     sf::ContextSettings settings;
     settings.antiAliasingLevel = 8;
 
-    graphski::DrawableGraph graph(sf::Font("fonts/InriaSans.ttf"));
+    graphski::DrawableGraph graph;
     bool updatedGraph = true;
 
     bool edgeMode = false;
@@ -45,7 +45,7 @@ int main()
                         auto* node = graph.getNode(id.value());
 
                         // TODO: bug if 2 nodes are one on top of another, bottom one also gets marked
-                        node->mark(); // mark the moved node
+                        node->mark(); // select the moved node
                         updatedGraph = true;
                         std::cout << "Im inside the node " << (int)id.value() << std::endl;
                     }

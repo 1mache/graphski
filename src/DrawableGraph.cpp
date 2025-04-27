@@ -29,7 +29,7 @@ namespace graphski
 	{
 		uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 		// push back new node with empty edges list
-		auto* newNode = new DrawableNode(id, txtFont, name);
+		auto* newNode = new DrawableNode(id, DEFAULT_NODE_COLOR, name);
 		newNode->setPosition(position);
 		m_adjList.push_back({newNode , {} });
 
@@ -41,7 +41,7 @@ namespace graphski
 		auto* fromPtr = dynamic_cast<DrawableNode*>(m_adjList[fromNodeId].first);
 		auto *toPtr = dynamic_cast<DrawableNode*>(m_adjList[toNodeId].first);
 		// TODO: check if this edge already exists
-		auto* newEdge = new DrawableEdge(fromPtr, toPtr);
+		auto* newEdge = new DrawableEdge(fromPtr, toPtr, DEFAULT_EDGE_COLOR);
 
 		// increment degrees
 		fromPtr->setDOut(fromPtr->getDOut() + 1);

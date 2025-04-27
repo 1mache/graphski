@@ -1,7 +1,8 @@
 #pragma once
-#include "Node.h"
 #include "SFML/Graphics.hpp"
 #include <iostream>
+#include "Node.h"
+#include "Config.h"
 
 namespace graphski
 {
@@ -10,10 +11,15 @@ namespace graphski
 		sf::CircleShape m_circle;
 		sf::Text m_nameTxt;
 
+		sf::Color m_nodeColor;
+		// mark and selection colors are the same across all nodes
+		inline static sf::Color s_markedColor = sf::Color::White;
+		inline static sf::Color s_selectColor = sf::Color::White;
+
 	public:
-		DrawableNode(uint8_t id, sf::Font& txtFont, std::string name = "") : 
+		DrawableNode(uint8_t id, sf::Color nodeColor, std::string name = "") :
 			Node(id, name),
-			m_circle(NODE_RADIUS, CIRCLE_RES), m_nameTxt(txtFont)
+			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
 		{		
 			//set position of the transform
 			setScale({0.8f, 0.8f}); // lower the scale a little, this should be defined by screenSize later
@@ -24,6 +30,9 @@ namespace graphski
 
 		virtual ~DrawableNode(){};
 
+		static void setMarkedColor(sf::Color color) { s_markedColor = color; }
+		static void setSelectColor(sf::Color color) { s_markedColor = color; }
+
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
 		{
 			states.transform *= getTransform(); 
@@ -32,8 +41,11 @@ namespace graphski
 			target.draw(m_nameTxt, states);
 		}
 
+		// when the node is marked 
 		void mark(bool val = true) override;
-
+		// when the node is selected (selected on screen by user)
+		void select(bool val = true);
+		
 		// returns bounds of the object based on bounds of circle
 		sf::FloatRect getGlobalBounds()
 		{
@@ -45,12 +57,17 @@ namespace graphski
 		void initCircleComponent();
 		// sets up the text component of the node
 		void initTextComponent();
+		// helper function for mark and select that colors the text and outline of the node
+		// according to the boolean value passed to it
+		void highlight(sf::Color color)
+		{
+			m_circle.setOutlineColor(color);
+			m_nameTxt.setFillColor(color);
+		}
 
 	private: // constants
-		static constexpr sf::Color    NODE_COLOR{ 0xFFB200FF };
-		static constexpr sf::Color    NODE_OUTLINE_COLOR{ sf::Color::White };
-		static constexpr sf::Color	  NODE_MARKED_COLOR{ 0xD91656FF };
-		static constexpr sf::Color    NODE_TEXT_COLOR{ sf::Color::White };
+		// color for text and outline when node is not selected
+		static constexpr sf::Color    NODE_IDLE_COLOR{ sf::Color::White };
 		static constexpr float        NODE_RADIUS = 30.f;
 		static constexpr float        NODE_OUTLINE_THICKNSS = 5.f;
 		static constexpr unsigned int CIRCLE_RES = 10u;

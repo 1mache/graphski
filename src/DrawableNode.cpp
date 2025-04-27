@@ -6,24 +6,26 @@ namespace graphski
 	{
 		Node::mark(val);
 		if (val)
-		{
-			// mark outline and text
-			m_circle.setOutlineColor(NODE_MARKED_COLOR);
-			m_nameTxt.setFillColor(NODE_MARKED_COLOR);
-		}
+			highlight(s_markedColor);
 		else
-		{
-			// unmark outline and text
-			m_circle.setOutlineColor(NODE_OUTLINE_COLOR);
-			m_nameTxt.setFillColor(NODE_TEXT_COLOR);
-		}
+			highlight(NODE_IDLE_COLOR);
 	}
+
+	void DrawableNode::select(bool val)
+	{
+		if (val)
+			highlight(s_selectColor);
+		else
+			highlight(NODE_IDLE_COLOR);
+	}
+
 	void DrawableNode::initCircleComponent()
 	{
 		// set circle colors
-		m_circle.setFillColor(NODE_COLOR);
+		m_circle = sf::CircleShape(NODE_RADIUS, CIRCLE_RES);
+		m_circle.setFillColor(m_nodeColor);
 		m_circle.setOutlineThickness(NODE_OUTLINE_THICKNSS);
-		m_circle.setOutlineColor(NODE_OUTLINE_COLOR);
+		m_circle.setOutlineColor(NODE_IDLE_COLOR);
 
 		// set origins to center components:
 		sf::Vector2f circleCenterOffset(NODE_RADIUS, NODE_RADIUS);
@@ -33,7 +35,7 @@ namespace graphski
 	void DrawableNode::initTextComponent()
 	{
 		//set text properties
-		m_nameTxt.setFillColor(NODE_TEXT_COLOR);
+		m_nameTxt.setFillColor(NODE_IDLE_COLOR);
 		m_nameTxt.setCharacterSize(NAME_TEXT_SIZE);
 		// displays a max of 3 chars out of the node name
 		m_nameTxt.setString(Node::getName().substr(0, MAX_DISPLAYED_CHARS));
