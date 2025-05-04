@@ -1,4 +1,6 @@
 #include "DrawableGraph.h"
+#include "DrawableNode.h"
+#include "DrawableEdge.h"
 
 namespace graphski
 {
@@ -29,7 +31,7 @@ namespace graphski
 	{
 		uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 		// push back new node with empty edges list
-		auto* newNode = new DrawableNode(id, DEFAULT_NODE_COLOR, name);
+		auto* newNode = new DrawableNode(id, nodeColor, name);
 		newNode->setPosition(position);
 		m_adjList.push_back({newNode , {} });
 
@@ -41,7 +43,7 @@ namespace graphski
 		auto* fromPtr = dynamic_cast<DrawableNode*>(m_adjList[fromNodeId].first);
 		auto *toPtr = dynamic_cast<DrawableNode*>(m_adjList[toNodeId].first);
 		// TODO: check if this edge already exists
-		auto* newEdge = new DrawableEdge(fromPtr, toPtr, DEFAULT_EDGE_COLOR);
+		auto* newEdge = new DrawableEdge(fromPtr, toPtr, IDLE_OUTLINE_COLOR);
 
 		// increment degrees
 		fromPtr->setDOut(fromPtr->getDOut() + 1);
@@ -62,5 +64,19 @@ namespace graphski
 		}
 
 		return std::nullopt;
+	}
+
+	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, uint8_t nodeId) const
+	{
+		// we know only drawable nodes are in a drawable graph
+		auto* drawableNode = dynamic_cast<const DrawableNode*>(m_adjList[nodeId].first);
+		target.draw(*drawableNode, states);
+	}
+
+	void DrawableGraph::drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const
+	{
+		// we know only drawable edges are in a drawable graph
+		auto* drawableEdge = dynamic_cast<const DrawableEdge*>(getEdge(edgeId));
+		target.draw(*drawableEdge, states);
 	}
 }

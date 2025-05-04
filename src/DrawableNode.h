@@ -1,27 +1,33 @@
 #pragma once
-#include "SFML/Graphics.hpp"
 #include <iostream>
+#include "SFML/Graphics.hpp"
 #include "Node.h"
+#include "DrawableGraph.h"
 #include "Config.h"
 
 namespace graphski
 {
 	class DrawableNode : public Node, public sf::Drawable, public sf::Transformable
 	{
+		// visual components
 		sf::CircleShape m_circle;
-		sf::Text m_nameTxt;
+		sf::Text        m_nameTxt;
+		sf::Color		m_nodeColor;
 
-		sf::Color m_nodeColor;
+		// TODO: this assumes theres only one graph
+		// can be changed to be set by specific graph pointer
 		// mark and selection colors are the same across all nodes
-		inline static sf::Color s_markedColor = sf::Color::White;
-		inline static sf::Color s_selectColor = sf::Color::White;
+		inline static sf::Color s_markedColor  = DrawableGraph::MARKED_COLOR;
+		inline static sf::Color s_selectColor  = DrawableGraph::SELECTED_COLOR;
+		inline static sf::Color s_textColor    = DrawableGraph::TEXT_COLOR; // color when not selected or marked
+		inline static sf::Color s_outlineColor = DrawableGraph::IDLE_OUTLINE_COLOR; // color when not selected or marked
 
 	public:
 		DrawableNode(uint8_t id, sf::Color nodeColor, std::string name = "") :
 			Node(id, name),
 			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
 		{		
-			//set position of the transform
+			// TODO: this should be set by screen size	
 			setScale({0.8f, 0.8f}); // lower the scale a little, this should be defined by screenSize later
 
 			initCircleComponent();
@@ -29,9 +35,6 @@ namespace graphski
 		}
 
 		virtual ~DrawableNode(){};
-
-		static void setMarkedColor(sf::Color color) { s_markedColor = color; }
-		static void setSelectColor(sf::Color color) { s_markedColor = color; }
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
 		{
@@ -67,7 +70,6 @@ namespace graphski
 
 	private: // constants
 		// color for text and outline when node is not selected
-		static constexpr sf::Color    NODE_IDLE_COLOR{ sf::Color::White };
 		static constexpr float        NODE_RADIUS = 30.f;
 		static constexpr float        NODE_OUTLINE_THICKNSS = 5.f;
 		static constexpr unsigned int CIRCLE_RES = 10u;

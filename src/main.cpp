@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "DrawableGraph.h"
+#include "DrawableNode.h"
 
 constexpr unsigned int WINDOW_WIDTH = 800u, WINDOW_HEIGHT = 600u;
 

@@ -1,0 +1,34 @@
+[
+  {
+    "id": 0,
+    "name": "0",
+    "neighbors": [
+      3,
+      2
+    ]
+  },
+  {
+    "id": 1,
+    "name": "1",
+    "neighbors": [
+      3
+    ]
+  },
+  {
+    "id": 2,
+    "name": "2",
+    "neighbors": []
+  },
+  {
+    "id": 3,
+    "name": "3",
+    "neighbors": [
+      2
+    ]
+  },
+  {
+    "id": 4,
+    "name": "4",
+    "neighbors": []
+  }
+]
