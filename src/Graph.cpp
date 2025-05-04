@@ -75,6 +75,7 @@ namespace graphski
 		else
 		{
 			std::cout << "Error opening file for writing: " << FILE_NAME << std::endl;
+
 		}
 	}
 
