@@ -1,25 +1,20 @@
 {
-  "nodeCount": 5,
+  "nodeCount": 3,
   "nodes": [
     {
       "id": 0,
-      "neighbors": [4, 2, 3]
-    }, 
+      "neighbors": []
+    },
     {
       "id": 1,
-      "neighbors": [0]
-    }, 
+      "neighbors": []
+    },
     {
       "id": 2,
-      "neighbors": [1]
-    }, 
-    {
-      "id": 3,
-      "neighbors": [0]
-    }, 
-    {
-      "id": 4,
-      "neighbors": []
+      "neighbors": [
+        1,
+        0
+      ]
     }
   ]
 }

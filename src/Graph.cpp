@@ -44,98 +44,36 @@ namespace graphski
 
 	void Graph::saveToFile() const
 	{
-		constexpr int INDENT_SIZE = 2;
-		int indentCount = 0;
+		// initialize the file
+		nlohmann::json j;
+		// write the number of nodes
+		j["nodeCount"] = nodeCount();
+		// initialize the array of neighbors in json 
+		auto& nodesArr = j["nodes"] = nlohmann::json::array();
+
+		for (const auto& pair : m_adjList)
+		{
+			const Node* node = pair.first;
+			std::vector<uint8_t> neighbors;
+			for (const Edge* edge : pair.second)
+				// get all the id's of the nodes that are connected to this one
+				neighbors.push_back(edge->getTo()->getId());
+
+			// write id and neighbors to json
+			nodesArr[node->getId()] = {
+				{"id", node->getId()},
+				{"neighbors", neighbors}
+			};
+		}
 
 		std::ofstream file(FILE_NAME);
 		if (!file.is_open())
 		{
-			std::cout << "Error! Failed to create file!" << std::endl;
-			return;
+			std::cout << "Error opening file for writing: " << FILE_NAME << std::endl;
 		}
 
-		file << "{\n";
-		indentCount ++;
-		file << std::string(indentCount * INDENT_SIZE, ' ');
-		file << "\"nodeCount\": " << m_adjList.size() << ",\n";
-		file << std::string(indentCount * INDENT_SIZE, ' ');
-		file << "\"nodes\": [\n";
-		indentCount ++;
-
-		for (uint8_t i = 0; i < m_adjList.size(); i++)
-		{
-			file << std::string(indentCount * INDENT_SIZE, ' ');
-			file << "{\n";
-			indentCount++;
-			
-			file << std::string(indentCount * INDENT_SIZE, ' ');
-			file << "\"id\": " << (int)m_adjList[i].first->getId() << ",\n";
-			
-			file << std::string(indentCount * INDENT_SIZE, ' ');
-			file << "\"neighbors\": [";
-
-			for (uint8_t j = 0; j < m_adjList[i].second.size(); j++)
-			{
-				file << (int)m_adjList[i].second[j]->getTo()->getId();
-				// add coma if not last
-				if (j != m_adjList[i].second.size() - 1)
-					file << ", ";
-			}
-			file << "]\n";
-
-			indentCount--;
-			file << std::string(indentCount * INDENT_SIZE, ' ');
-			file << "}";
-			// add coma if not last
-			if (i != m_adjList.size() - 1)
-				file << ", ";
-			file << "\n";
-		}
-
-		indentCount--;
-		file << std::string(indentCount * INDENT_SIZE, ' ');
-		file << "]\n";
-
-		indentCount--;
-		file << std::string(indentCount * INDENT_SIZE, ' ');
-		file << "}\n";
-
-		std::cout << "Successfully wrote to: " << FILE_NAME << std::endl;
+		file << j.dump(2); // pretty print with 2 spaces (you can change this)
 		file.close();
+		std::cout << "Graph saved to " << FILE_NAME << std::endl;
 	}
-
-	//{
-	//	nlohmann::json j;
-	//	auto& nodesArr = j["nodes"] = nlohmann::json::array();
-	//	j["nodeCount"] = nodeCount();
-
-	//	for (const auto& pair : m_adjList)
-	//	{
-	//		const Node* node = pair.first;
-	//		std::vector<uint8_t> neighbors;
-	//		for (const Edge* edge : pair.second)
-	//		{
-	//			// get the id of the nodes that are connected to this one
-	//			neighbors.push_back(edge->getTo()->getId());
-	//		}
-
-	//		nodesArr[node->getId()] = {
-	//			{"id", node->getId()},
-	//			{"name", node->getName()},
-	//			{"neighbors", neighbors}
-	//		};
-	//	}
-
-	//	std::ofstream file(FILE_NAME);
-	//	if (file.is_open())
-	//	{
-	//		file << j.dump(2); // pretty print with 2 spaces
-	//		file.close();
-	//		std::cout << "Graph saved to " << FILE_NAME << std::endl;
-	//	}
-	//	else
-	//	{
-	//		std::cout << "Error opening file for writing: " << FILE_NAME << std::endl;
-	//	}
-	//}
 }
