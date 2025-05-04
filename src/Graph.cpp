@@ -41,9 +41,13 @@ namespace graphski
 		// put new edge into the vector. TODO: sort by id toId inside vector
 		m_adjList[fromNodeId].second.push_back(newEdge);
 	}
+
 	void Graph::saveToFile() const
 	{
 		nlohmann::json j;
+		auto& nodesArr = j["nodes"] = nlohmann::json::array();
+		j["nodeCount"] = nodeCount();
+
 		for (const auto& pair : m_adjList)
 		{
 			const Node* node = pair.first;
@@ -54,7 +58,7 @@ namespace graphski
 				neighbors.push_back(edge->getTo()->getId());
 			}
 
-			j[node->getId()] = {
+			nodesArr[node->getId()] = {
 				{"id", node->getId()},
 				{"name", node->getName()},
 				{"neighbors", neighbors}
