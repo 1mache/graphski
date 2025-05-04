@@ -70,6 +70,7 @@ namespace graphski
 		if (!file.is_open())
 		{
 			std::cout << "Error opening file for writing: " << FILE_NAME << std::endl;
+
 		}
 
 		file << j.dump(2); // pretty print with 2 spaces (you can change this)
