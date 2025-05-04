@@ -2,7 +2,7 @@
 Graph visualizer in C++ using SFML
 
 ## Dependencies
-[SFML](https://github.com/SFML/SFML)
+[SFML](https://github.com/SFML/SFML)\
 [nlohmann's json](https://github.com/nlohmann/json)
 
 ## How to draw
@@ -22,4 +22,4 @@ Build the project by running:
 (if you're using *VisualStudio2022*)\
 Or by executing `build.bat` (on Windows).\
 This will create VisualStudio2022 project files inside the repo folder.\
-(If you're not on Windows or not using Visual Studio 2022 Im sorry...)
+(If you're not on Windows or not using Visual Studio 2022 Im sorry... you will have to link SFML on your own)
