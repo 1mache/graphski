@@ -1,48 +1,24 @@
 {
-  "nodeCount": 7,
+  "nodeCount": 5,
   "nodes": [
     {
       "id": 0,
-      "name": "0",
-      "neighbors": [
-        1
-      ]
-    },
+      "neighbors": [4, 2, 3]
+    }, 
     {
       "id": 1,
-      "name": "1",
-      "neighbors": [
-        2,
-        6
-      ]
-    },
+      "neighbors": [0]
+    }, 
     {
       "id": 2,
-      "name": "2",
-      "neighbors": [
-        3
-      ]
-    },
+      "neighbors": [1]
+    }, 
     {
       "id": 3,
-      "name": "3",
-      "neighbors": [
-        6
-      ]
-    },
+      "neighbors": [0]
+    }, 
     {
       "id": 4,
-      "name": "4",
-      "neighbors": []
-    },
-    {
-      "id": 5,
-      "name": "5",
-      "neighbors": []
-    },
-    {
-      "id": 6,
-      "name": "6",
       "neighbors": []
     }
   ]
