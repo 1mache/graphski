@@ -19,7 +19,10 @@ project "graphski"
     }
 
 	-- add SFML includes
-	includedirs { "dependencies/SFML-3.0.0/include" }
+	includedirs { 
+		"dependencies/SFML-3.0.0/include",
+		"dependencies/nlohmann"
+	}
 	-- add SFML lib path for linker
 	libdirs { "dependencies/SFML-3.0.0/lib" }
 	

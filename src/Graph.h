@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include <fstream>
+#include <iostream>
+#include "json.hpp"
 #include "Node.h"
 #include "Edge.h"
 
@@ -33,7 +36,7 @@ namespace graphski
 		AdjacencyList getAdjListCopy() const { return m_adjList;}
 
 		// creates a node with empty edges list, returns its unique id
-		uint8_t addNode(std::string name = "");
+		virtual uint8_t addNode(std::string name = "");
 
 		// creates an edge between to given nodes, gets them by ids
 		virtual void addEdge(uint8_t fromNodeId, uint8_t toNodeId);
@@ -42,10 +45,13 @@ namespace graphski
 		// TODO: this is not great
 		Node* getNode(uint8_t nodeId) { return m_adjList[nodeId].first; }
 		
+		void saveToFile() const;
+
 	private: // constants
 
 		static constexpr uint8_t MAX_NODES = UINT8_MAX;
 		static constexpr uint8_t INIT_NODES = 10;
+		static constexpr const char* FILE_NAME = "graph.json";
 	};
 
 }
