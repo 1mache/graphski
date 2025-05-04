@@ -76,4 +76,38 @@ namespace graphski
 		file.close();
 		std::cout << "Graph saved to " << FILE_NAME << std::endl;
 	}
+
+	void Graph::loadFromFile()
+	{
+		nlohmann::json j;
+		std::ifstream file(FILE_NAME);
+		if (file.is_open())
+		{
+			file >> j;
+			file.close();
+		}
+		else
+		{
+			std::cout << "Error opening file" << std::endl;
+			return;
+		}
+
+		m_adjList.clear();
+		m_adjList.reserve(j["nodeCount"].get<uint8_t>());
+
+		// create nodes
+		for (auto node : j["nodes"])
+		{
+			uint8_t id = node["id"];
+			m_adjList.push_back({ new Node(id), {} });
+		}
+
+		// add edges
+		for (auto node : j["nodes"])
+		{
+			uint8_t id = node["id"];
+			for (uint8_t neighbor : node["neighbors"])
+				addEdge(id, neighbor);
+		}
+	}
 }
