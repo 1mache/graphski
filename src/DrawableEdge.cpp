@@ -1,13 +1,13 @@
 #include "DrawableEdge.h"
 
-sf::RectangleShape graphski::DrawableEdge::makeLine(sf::Vector2f lineStart, sf::Vector2f lineEnd) const
+void graphski::DrawableEdge::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	// vector that represents the line
-	sf::Vector2f lineVector = lineEnd - lineStart;
-	sf::RectangleShape line({ lineVector.length(), LINE_THICKNESS });
-
-	line.getFillColor() = s_idleColor;
-	line.setPosition(lineStart);
-	line.rotate(lineVector.angle());
-	return line;
+	// we know they can be casted since we got them as pointers to DrawableNode
+	sf::Vector2f fromPos = dynamic_cast<DrawableNode*>(getFrom())->getPosition();
+	sf::Vector2f toPos = dynamic_cast<DrawableNode*>(getTo())->getPosition();
+	auto arrow = Arrow(fromPos, toPos, LINE_THICKNESS, s_idleColor);
+	// set the offset so that the arrow hits the side of the node
+	// + a little extra to make it look better
+	arrow.setOffset(DrawableNode::NODE_RADIUS * 0.90f);
+	arrow.draw(target, states);
 }

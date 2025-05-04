@@ -17,6 +17,8 @@ int main()
 {
     constexpr sf::Keyboard::Key WRITE_TO_FILE_KEY = sf::Keyboard::Key::W;
 
+    srand(time(nullptr)); // seed the random number generator
+
     sf::RenderWindow window (sf::VideoMode({ WINDOW_WIDTH , WINDOW_HEIGHT }), "Graphski");
     window.setVerticalSyncEnabled(true);
 

@@ -6,6 +6,7 @@ namespace graphski
 {
 	void DrawableGraph::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
+		// draw all the edges first
 		for (uint8_t i = 0; i < m_adjList.size(); i++)
 		{
 			// draw all the edges
@@ -31,6 +32,14 @@ namespace graphski
 	{
 		uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 		// push back new node with empty edges list
+
+		sf::Color nodeColor = m_nodeColor; // default color
+		if(Config::crazyColors)
+		{
+			nodeColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+			nodeColor += sf::Color(0xFF050505); // add some white to the color
+		}
+
 		auto* newNode = new DrawableNode(id, nodeColor, name);
 		newNode->setPosition(position);
 		m_adjList.push_back({newNode , {} });
