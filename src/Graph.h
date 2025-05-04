@@ -46,6 +46,8 @@ namespace graphski
 		Node* getNode(uint8_t nodeId) { return m_adjList[nodeId].first; }
 		
 		void saveToFile() const;
+		// TODO: in DrawableGraph we need to draw this somehow
+		void loadFromFile();
 
 	private: // constants
 
