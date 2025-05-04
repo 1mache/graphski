@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include <fstream>
+#include <iostream>
+#include "json.hpp"
 #include "Node.h"
 #include "Edge.h"
 
@@ -42,10 +45,13 @@ namespace graphski
 		// TODO: this is not great
 		Node* getNode(uint8_t nodeId) { return m_adjList[nodeId].first; }
 		
+		void saveToFile() const;
+
 	private: // constants
 
 		static constexpr uint8_t MAX_NODES = UINT8_MAX;
 		static constexpr uint8_t INIT_NODES = 10;
+		static constexpr const char* FILE_NAME = "graph.json";
 	};
 
 }

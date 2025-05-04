@@ -14,6 +14,8 @@ bool posInBounds(sf::Vector2f position)
 
 int main()
 {
+    constexpr sf::Keyboard::Key WRITE_TO_FILE_KEY = sf::Keyboard::Key::W;
+
     sf::RenderWindow window (sf::VideoMode({ WINDOW_WIDTH , WINDOW_HEIGHT }), "Graphski");
     window.setVerticalSyncEnabled(true);
 
@@ -110,6 +112,12 @@ int main()
                         updatedGraph = true;
                     }
                 }
+            }
+
+            if (auto* key =  event->getIf<sf::Event::KeyPressed>())
+            {
+				if (key->code == WRITE_TO_FILE_KEY)
+					graph.saveToFile();
             }
 
             if (event->is<sf::Event::Closed>())

@@ -41,4 +41,36 @@ namespace graphski
 		// put new edge into the vector. TODO: sort by id toId inside vector
 		m_adjList[fromNodeId].second.push_back(newEdge);
 	}
+	void Graph::saveToFile() const
+	{
+		nlohmann::json j;
+		for (const auto& pair : m_adjList)
+		{
+			const Node* node = pair.first;
+			std::vector<uint8_t> neighbors;
+			for (const Edge* edge : pair.second)
+			{
+				// get the id of the nodes that are connected to this one
+				neighbors.push_back(edge->getTo()->getId());
+			}
+
+			j[node->getId()] = {
+				{"id", node->getId()},
+				{"name", node->getName()},
+				{"neighbors", neighbors}
+			};
+		}
+
+		std::ofstream file(FILE_NAME);
+		if (file.is_open())
+		{
+			file << j.dump(2); // pretty print with 2 spaces
+			file.close();
+			std::cout << "Graph saved to " << FILE_NAME << std::endl;
+		}
+		else
+		{
+			std::cout << "Error opening file for writing: " << FILE_NAME << std::endl;
+		}
+	}
 }
