@@ -7,6 +7,7 @@ Graph visualizer in C++ using SFML
 
 ## How to draw
 - Create a node - Left mouse button
+- Move nodes around - hold Left mouse button on them
 - Create an edge - select two nodes by clicking on them with the right mouse button
 - Write to json file (not sure why you would do that) - press W when you're done drawing
 
