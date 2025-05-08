@@ -24,10 +24,7 @@ namespace graphski
 		// setter for the offset
 		void setOffset(float value)
 		{
-			if((m_to - m_from).length() < value)
-				throw std::out_of_range("Offset is bigger than the arrow length!");
-			else
-				m_offset = value; 
+			m_offset = value; 
 		}
 	private:
 		static constexpr float	   HAIR_LEN  = 25.f;

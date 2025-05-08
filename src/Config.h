@@ -7,5 +7,5 @@ class Config
 public:
 	static const sf::Font& getFont(){ return s_txtFont; }
 
-	static constexpr bool crazyColors = false;
+	static constexpr bool crazyColors = true;
 };
