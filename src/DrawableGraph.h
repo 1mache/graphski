@@ -17,6 +17,15 @@ namespace graphski
 	public:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+		// clear the graph
+		void empty() override
+		{
+			m_moveMode = false;
+			m_movedId = 0;
+
+			Graph::empty();
+		}
+
 		// creates a node with empty edges list at given position, returns its unique id
 		// note: blocks Graph::addNode because we cant create a drawable node without position
 		uint8_t addNode(sf::Vector2f position, std::string name = "");

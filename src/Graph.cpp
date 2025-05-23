@@ -18,6 +18,25 @@ namespace graphski
 		}
 	}
 
+	void Graph::empty()
+	{
+		for (auto pair : m_adjList)
+		{
+			auto* node = pair.first;
+
+			// delete all edges of the node
+			for (auto* edge : pair.second)
+			{
+				delete edge;
+			}
+			// delete the node
+			delete node;
+		}
+
+		m_adjList = AdjacencyList();
+		m_adjList.reserve(INIT_NODES);
+	}
+
 	uint8_t Graph::addNode(std::string name)
 	{
 		uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)

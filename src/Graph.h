@@ -27,6 +27,8 @@ namespace graphski
 		Graph& operator=(Graph&) = delete;
 		virtual ~Graph();
 
+		virtual void empty();
+
 		// how many nodes are there
 		uint8_t nodeCount() const { return (uint8_t)m_adjList.size(); }
 		// for given node how many edges does it have
