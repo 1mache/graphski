@@ -128,7 +128,7 @@ int main()
 					graph.saveToFile();
                 if (key->code == CLEAR_GRAPH_KEY)
                 {
-                    graph.empty();
+                    graph.makeEmpty();
                     // TODO: move both into the DrawableGraph so it hadles all that
                     updatedGraph = true;
                     edgeMode = false;

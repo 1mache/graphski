@@ -32,7 +32,13 @@ namespace graphski
 			deleteAdjList();
 		}
 
-		virtual void empty();
+		// clears the graph
+		virtual void makeEmpty() 
+		{
+			deleteAdjList();
+			m_adjList.clear();
+			m_adjList.reserve(INIT_NODES);
+		};
 
 		// how many nodes are there
 		uint8_t nodeCount() const { return (uint8_t)m_adjList.size(); }

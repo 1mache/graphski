@@ -17,12 +17,12 @@ namespace graphski
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 		// clear the graph
-		void empty() override
+		void makeEmpty() override
 		{
 			m_moveMode = false;
 			m_movedId = 0;
 
-			Graph::empty();
+			Graph::makeEmpty();
 		}
 
 		// creates a node with empty edges list at given position, returns its unique id
