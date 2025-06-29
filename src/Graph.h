@@ -1,21 +1,23 @@
 #pragma once
 #include <vector>
+#include <utility>
 #include <fstream>
 #include <iostream>
 #include "json.hpp"
-#include "Node.h"
-#include "Edge.h"
 
 namespace graphski
 {
+	template<typename NodeT, typename EdgeT> 
 	class Graph
 	{
 	protected:
 		// adjacency list contains pairs node : its edges
 		// TODO: maybe have edges get ids of the nodes they need instead of pointers, then it could me on the stack
-		
-		using AdjacencyList = std::vector<std::pair<Node*, std::vector<Edge*>>>;
+		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
 		AdjacencyList m_adjList;
+
+		// pair of node id and edges id inside node's edges vector
+		using EdgeId = std::pair<uint8_t, uint8_t>;
 
 	public:
 		Graph() 
@@ -25,7 +27,10 @@ namespace graphski
 
 		Graph(Graph&) = delete;
 		Graph& operator=(Graph&) = delete;
-		virtual ~Graph();
+		virtual ~Graph() 
+		{
+			deleteAdjList();
+		}
 
 		// how many nodes are there
 		uint8_t nodeCount() const { return (uint8_t)m_adjList.size(); }
@@ -36,18 +41,170 @@ namespace graphski
 		AdjacencyList getAdjListCopy() const { return m_adjList;}
 
 		// creates a node with empty edges list, returns its unique id
-		virtual uint8_t addNode(std::string name = "");
+		virtual uint8_t addNode(std::string name = "") 
+		{
+			uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
+			// push back new node with empty edges list
+			m_adjList.push_back({ new NodeT(id, name), {} });
+
+			return id;
+		}
 
 		// creates an edge between to given nodes, gets them by ids
-		virtual void addEdge(uint8_t fromNodeId, uint8_t toNodeId);
+		void addEdge(uint8_t fromNodeId, uint8_t toNodeId)
+		{
+			NodeT* fromPtr = m_adjList[fromNodeId].first,
+				* toPtr = m_adjList[toNodeId].first;
+
+			EdgeT* newEdge = new EdgeT(fromPtr, toPtr);
+
+			// increment degrees
+			fromPtr->setDOut(fromPtr->getDOut() + 1);
+			toPtr->setDIn(toPtr->getDIn() + 1);
+
+			// put new edge into the vector. TODO: sort by id toId inside vector
+			m_adjList[fromNodeId].second.push_back(newEdge);
+		}
 
 		// returns the node pointer by id 
 		// TODO: this is not great
-		Node* getNode(uint8_t nodeId) { return m_adjList[nodeId].first; }
+		NodeT* getNode(uint8_t nodeId) const { return m_adjList[nodeId].first; }
+
+		// returns the edge pointer by ids of nodes it connects
+		EdgeT* getEdge(EdgeId edgeId) const
+		{
+			return (m_adjList[edgeId.first].second[edgeId.second]);
+		}
+
+		void transpose()
+		{
+			std::cout << "I am transposing it" << std::endl;
+
+			// new Adjacency list sized like the original and filled with empty pairs
+			AdjacencyList newAdjList{ m_adjList.size(), {nullptr, {}} };
+
+			// fill it with nodes
+			for (const auto& pair : m_adjList)
+			{
+				NodeT* node = pair.first;
+
+				NodeT* newNode = new NodeT(*node);
+				// swap in and out degrees for new node
+				newNode->setDIn(node->getDOut());
+				newNode->setDOut(node->getDIn());
+
+				newAdjList[newNode->getId()] = { newNode, {} };
+			}
+
+			// fill it with opposite edges
+			for (const auto& pair : m_adjList)
+			{
+				// pointer to new node with same id from new list
+				auto nodeId = pair.first->getId();
+				auto& edges = pair.second;
+
+				for (const auto& edge : edges)
+				{
+					uint8_t targetId = edge->getTo()->getId();
+					// its crucial to use newAdjList here, not m_adjList when accessing nodes
+					auto* edgeTarget = newAdjList[targetId].first;
+					newAdjList[targetId].second.push_back(
+						new EdgeT(edgeTarget, newAdjList[nodeId].first)
+					);
+				}
+			}
+
+			// free previous adjlist
+			deleteAdjList();
+			m_adjList = std::move(newAdjList);
+		};
 		
-		void saveToFile() const;
+		void saveToFile() const 
+		{
+			// initialize the file
+			nlohmann::json j;
+			// write the number of nodes
+			j["nodeCount"] = nodeCount();
+			// initialize the array of neighbors in json 
+			auto& nodesArr = j["nodes"] = nlohmann::json::array();
+
+			for (const auto& pair : m_adjList)
+			{
+				const NodeT* node = pair.first;
+				std::vector<uint8_t> neighbors;
+				for (const EdgeT* edge : pair.second)
+					// get all the id's of the nodes that are connected to this one
+					neighbors.push_back(static_cast<const NodeT*>(edge->getTo())->getId());
+
+				// write id and neighbors to json
+				nodesArr[node->getId()] = {
+					{"id", node->getId()},
+					{"neighbors", neighbors}
+				};
+			}
+
+			std::ofstream file(FILE_NAME);
+			if (!file.is_open())
+			{
+				std::cout << "Error opening file for writing: " << FILE_NAME << std::endl;
+			}
+
+			file << j.dump(2); // pretty print with 2 spaces (you can change this)
+			file.close();
+			std::cout << "Graph saved to " << FILE_NAME << std::endl;
+		};
+
 		// TODO: in DrawableGraph we need to draw this somehow
-		void loadFromFile();
+		void loadFromFile() 
+		{
+			nlohmann::json j;
+			std::ifstream file(FILE_NAME);
+			if (file.is_open())
+			{
+				file >> j;
+				file.close();
+			}
+			else
+			{
+				std::cout << "Error opening file" << std::endl;
+				return;
+			}
+
+			m_adjList.clear();
+			m_adjList.reserve(j["nodeCount"].get<uint8_t>());
+
+			// create nodes
+			for (auto node : j["nodes"])
+			{
+				uint8_t id = node["id"];
+				m_adjList.push_back({ new NodeT(id), {} });
+			}
+
+			// add edges
+			for (auto node : j["nodes"])
+			{
+				uint8_t id = node["id"];
+				for (uint8_t neighbor : node["neighbors"])
+					addEdge(id, neighbor);
+			}
+		};
+	
+	private:
+		void deleteAdjList() 
+		{
+			for (auto pair : m_adjList)
+			{
+				auto* node = pair.first;
+
+				// delete all edges of the node
+				for (auto* edge : pair.second)
+				{
+					delete edge;
+				}
+				// delete the node
+				delete node;
+			}
+		};
 
 	private: // constants
 

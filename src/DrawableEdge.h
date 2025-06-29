@@ -6,15 +6,15 @@
 
 namespace graphski
 {
-	class DrawableEdge : public Edge, public sf::Drawable
+	class DrawableEdge : public Edge<DrawableNode>, public sf::Drawable
 	{
 		// mark and selection colors are the same across all nodes
-		inline static sf::Color s_idleColor     = DrawableGraph::IDLE_OUTLINE_COLOR;
-		inline static sf::Color s_markedColor   = DrawableGraph::MARKED_COLOR;
-		inline static sf::Color s_selectedColor = DrawableGraph::SELECTED_COLOR;
+		inline static sf::Color s_idleColor     = Config::IDLE_OUTLINE_COLOR;
+		inline static sf::Color s_markedColor   = Config::MARKED_COLOR;
+		inline static sf::Color s_selectedColor = Config::SELECTED_COLOR;
 
 	public:
-		DrawableEdge(DrawableNode* from, DrawableNode* to, sf::Color color) : Edge(from, to) {};
+		DrawableEdge(DrawableNode* from, DrawableNode* to) : Edge(from, to) {};
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	private:

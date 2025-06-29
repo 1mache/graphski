@@ -16,6 +16,7 @@ bool posInBounds(sf::Vector2f position)
 int main()
 {
     constexpr sf::Keyboard::Key WRITE_TO_FILE_KEY = sf::Keyboard::Key::W;
+    constexpr sf::Keyboard::Key TRANSPOSE_KEY =     sf::Keyboard::Key::T;
 
     srand(time(nullptr)); // seed the random number generator
 
@@ -124,6 +125,12 @@ int main()
             {
 				if (key->code == WRITE_TO_FILE_KEY)
 					graph.saveToFile();
+
+                if (key->code == TRANSPOSE_KEY)
+                {
+                    graph.transpose();
+                    updatedGraph = true;
+                }
             }
 
             if (event->is<sf::Event::Closed>())

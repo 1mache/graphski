@@ -37,37 +37,23 @@ namespace graphski
 		if(Config::crazyColors)
 		{
 			nodeColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
-			nodeColor += sf::Color(0xFF050505); // add some white to the color
+			nodeColor += sf::Color(0xFF050505); // add some white to the color for pastel effect
 		}
 
-		auto* newNode = new DrawableNode(id, nodeColor, name);
+		auto* newNode = new DrawableNode(id, name, nodeColor);
 		newNode->setPosition(position);
 		m_adjList.push_back({newNode , {} });
 
 		return id;
 	}
 
-	void DrawableGraph::addEdge(uint8_t fromNodeId, uint8_t toNodeId)
-	{
-		auto* fromPtr = dynamic_cast<DrawableNode*>(m_adjList[fromNodeId].first);
-		auto *toPtr = dynamic_cast<DrawableNode*>(m_adjList[toNodeId].first);
-		// TODO: check if this edge already exists
-		auto* newEdge = new DrawableEdge(fromPtr, toPtr, IDLE_OUTLINE_COLOR);
-
-		// increment degrees
-		fromPtr->setDOut(fromPtr->getDOut() + 1);
-		toPtr->setDIn(toPtr->getDIn() + 1);
-
-		// put new edge into the vector. TODO: sort by id toId inside vector
-		m_adjList[fromNodeId].second.push_back(newEdge);
-	}
 
 	std::optional<uint8_t> DrawableGraph::posInNode(sf::Vector2f position)
 	{
 		// checks if bounds contain position for every node in graph 
 		for (uint8_t i = 0; i < m_adjList.size(); i++)
 		{
-			auto* drawableNode = dynamic_cast<DrawableNode*>(m_adjList[i].first);
+			auto* drawableNode = getNode(i);
 			if(drawableNode->getGlobalBounds().contains(position))
 				return i;
 		}
@@ -77,15 +63,13 @@ namespace graphski
 
 	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, uint8_t nodeId) const
 	{
-		// we know only drawable nodes are in a drawable graph
-		auto* drawableNode = dynamic_cast<const DrawableNode*>(m_adjList[nodeId].first);
+		auto* drawableNode = getNode(nodeId);
 		target.draw(*drawableNode, states);
 	}
 
 	void DrawableGraph::drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const
 	{
-		// we know only drawable edges are in a drawable graph
-		auto* drawableEdge = dynamic_cast<const DrawableEdge*>(getEdge(edgeId));
+		auto* drawableEdge = getEdge(edgeId);
 		target.draw(*drawableEdge, states);
 	}
 }

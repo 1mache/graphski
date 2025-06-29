@@ -3,26 +3,28 @@
 
 namespace graphski
 {
+	template<typename NodeT>
 	class Edge
 	{
 		// the edge is directed if this is null,
 		// but if its undirected it will point to (to -> from) edge
 		Edge* m_twin = nullptr;
 		
-		Node* m_from = nullptr;
-		Node* m_to   = nullptr;
+		// TODO: from is not needed with the current version of adjlist
+		NodeT* m_from = nullptr;
+		NodeT* m_to   = nullptr;
 
 		bool m_marked = false;
 		
 	public:
 		// directed by default
-		Edge(Node* from, Node* to): 
+		Edge(NodeT* from, NodeT* to): 
 			m_from(from), m_to(to){}
 		// Note: no destructor, the nodes and twin(if exists)
 		// will be deleted with the adj list of the graph
 		virtual ~Edge() {};
 		
-		bool operator==(const Edge& other) const
+		bool operator==(const Edge<NodeT>& other) const
 		{
 			return (other.m_to == m_to && other.m_from == m_from)
 				|| (m_twin && other == *m_twin);
@@ -38,9 +40,9 @@ namespace graphski
 
 		bool isMarked() const { return m_marked; }
 
-		Node* getFrom() const { return m_from;}
+		NodeT* getFrom() const { return m_from;}
 
-		Node* getTo() const { return m_to; }
+		NodeT* getTo() const { return m_to; }
 
 		Edge* getTwin() { return m_twin; }
 

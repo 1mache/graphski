@@ -2,7 +2,6 @@
 #include <iostream>
 #include "SFML/Graphics.hpp"
 #include "Node.h"
-#include "DrawableGraph.h"
 #include "Config.h"
 
 namespace graphski
@@ -17,13 +16,13 @@ namespace graphski
 		// TODO: this assumes theres only one graph
 		// can be changed to be set by specific graph pointer
 		// mark and selection colors are the same across all nodes
-		inline static sf::Color s_markedColor  = DrawableGraph::MARKED_COLOR;
-		inline static sf::Color s_selectColor  = DrawableGraph::SELECTED_COLOR;
-		inline static sf::Color s_textColor    = DrawableGraph::TEXT_COLOR; // color when not selected or marked
-		inline static sf::Color s_outlineColor = DrawableGraph::IDLE_OUTLINE_COLOR; // color when not selected or marked
+		inline static sf::Color s_markedColor  = Config::MARKED_COLOR;
+		inline static sf::Color s_selectColor  = Config::SELECTED_COLOR;
+		inline static sf::Color s_textColor    = Config::TEXT_COLOR; // color when not selected or marked
+		inline static sf::Color s_outlineColor = Config::IDLE_OUTLINE_COLOR; // color when not selected or marked
 
 	public:
-		DrawableNode(uint8_t id, sf::Color nodeColor, std::string name = "") :
+		DrawableNode(uint8_t id, std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
 			Node(id, name),
 			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
 		{		
