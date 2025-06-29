@@ -1,4 +1,7 @@
+/build
+
 # Visual Studio solution and project files 
+*.json
 *.sln
 *.vcxproj
 *.vcxproj.filters

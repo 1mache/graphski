@@ -68,9 +68,9 @@ namespace graphski
 			m_nameTxt.setFillColor(color);
 		}
 
-	private: // constants
-		// color for text and outline when node is not selected
+	public: // constants
 		static constexpr float        NODE_RADIUS = 30.f;
+	private: 
 		static constexpr float        NODE_OUTLINE_THICKNSS = 5.f;
 		static constexpr unsigned int CIRCLE_RES = 10u;
 		static constexpr unsigned int NAME_TEXT_SIZE = 30u; //TODO: these will probably not be constexp

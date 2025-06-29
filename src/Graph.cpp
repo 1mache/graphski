@@ -44,39 +44,38 @@ namespace graphski
 
 	void Graph::saveToFile() const
 	{
+		// initialize the file
 		nlohmann::json j;
-		auto& nodesArr = j["nodes"] = nlohmann::json::array();
+		// write the number of nodes
 		j["nodeCount"] = nodeCount();
+		// initialize the array of neighbors in json 
+		auto& nodesArr = j["nodes"] = nlohmann::json::array();
 
 		for (const auto& pair : m_adjList)
 		{
 			const Node* node = pair.first;
 			std::vector<uint8_t> neighbors;
 			for (const Edge* edge : pair.second)
-			{
-				// get the id of the nodes that are connected to this one
+				// get all the id's of the nodes that are connected to this one
 				neighbors.push_back(edge->getTo()->getId());
-			}
 
+			// write id and neighbors to json
 			nodesArr[node->getId()] = {
 				{"id", node->getId()},
-				{"name", node->getName()},
 				{"neighbors", neighbors}
 			};
 		}
 
 		std::ofstream file(FILE_NAME);
-		if (file.is_open())
-		{
-			file << j.dump(2); // pretty print with 2 spaces
-			file.close();
-			std::cout << "Graph saved to " << FILE_NAME << std::endl;
-		}
-		else
+		if (!file.is_open())
 		{
 			std::cout << "Error opening file for writing: " << FILE_NAME << std::endl;
 
 		}
+
+		file << j.dump(2); // pretty print with 2 spaces (you can change this)
+		file.close();
+		std::cout << "Graph saved to " << FILE_NAME << std::endl;
 	}
 
 	void Graph::loadFromFile()

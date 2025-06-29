@@ -41,7 +41,7 @@ project "graphski"
 			"gdi32.lib",
     		"winmm.lib"
 		}
-		targetdir "bin/debug"
+		targetdir "build/debug"
 
 	filter ("configurations:Release")
 		runtime "Release"
@@ -55,4 +55,4 @@ project "graphski"
     		"winmm.lib"
 		}
 		optimize "On"
-		targetdir "bin/release"
+		targetdir "build/release"

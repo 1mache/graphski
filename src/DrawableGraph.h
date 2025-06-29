@@ -12,7 +12,7 @@ namespace graphski
 		bool m_moveMode = false; // if true, we are moving a node
 		uint8_t m_movedId = 0; // id of the node that we're moving
 
-		sf::Color nodeColor{ 0xFFB200FF };
+		sf::Color m_nodeColor{DEFAULT_NODE_COLOR};
 
 	public:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -46,6 +46,7 @@ namespace graphski
 		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const;
 
 	public:
+		static constexpr sf::Color DEFAULT_NODE_COLOR{ 0xFFB200FF };
 		static constexpr sf::Color IDLE_OUTLINE_COLOR{ sf::Color::White};
 		static constexpr sf::Color MARKED_COLOR      { 0xD91656FF };
 		static constexpr sf::Color SELECTED_COLOR    { 0xD91656FF };
