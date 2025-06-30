@@ -10,7 +10,7 @@ namespace graphski
 		sf::Vector2f m_to;
 		// the offset is how much length will be subtracted
 		// from the arrow. (from the end)
-		float m_offset = 0.f;
+		float m_headOffset = 0.f;
 
 		float	  m_thickness;
 		sf::Color m_color;
@@ -22,12 +22,9 @@ namespace graphski
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		
 		// setter for the offset
-		void setOffset(float value)
-		{
-			m_offset = value; 
-		}
+		void setHeadOffset(float value) { m_headOffset = value; }
 	private:
-		static constexpr float	   HAIR_LEN  = 25.f;
-		static constexpr sf::Angle HAIR_ANGLE = sf::degrees(45);
+		static constexpr float	   HAIR_LEN  = 20.f;
+		static constexpr sf::Angle HAIR_ANGLE = sf::degrees(30);
 	};
 }

@@ -21,7 +21,6 @@ namespace graphski
 		{
 			m_moveMode = false;
 			m_movedId = 0;
-
 			Graph::makeEmpty();
 		}
 
