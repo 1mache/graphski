@@ -49,10 +49,7 @@ int main()
                     {
                         graph.setMoveMode(true);
                         graph.setMovedNodeId(id.value()); // remember the moved node`s index
-                        auto* node = graph.getNode(id.value());
-
-                        // TODO: bug if 2 nodes are one on top of another, bottom one also gets marked
-                        node->mark(); // select the moved node
+                        graph.markNode(id.value());
                         updatedGraph = true;
                         std::cout << "Im inside the node " << (int)id.value() << std::endl;
                     }
@@ -70,7 +67,6 @@ int main()
                     std::optional<uint8_t> id = graph.posInNode(position);
                     if (id.has_value())
                     {
-                        auto* node = graph.getNode(id.value());
                         if (edgeMode)
                         {
                             toId = id.value();
@@ -100,7 +96,7 @@ int main()
                     if(graph.isInMoveMode())
                     {
                         graph.setMoveMode(false);
-                        graph.getNode(graph.getMovedNodeId())->mark(false); // unmark the moved node
+                        graph.markNode(graph.getMovedNodeId(), false); // unmark the moved node
                         updatedGraph = true;
                     }
                 }
@@ -115,8 +111,7 @@ int main()
                     sf::Vector2f newPosition(mouseMoved->position);
                     if(posInBounds(newPosition))
                     {
-                        auto* dNode = (graphski::DrawableNode*)(graph.getNode(graph.getMovedNodeId()));
-                        dNode->setPosition(newPosition);
+						graph.setNodePosition(graph.getMovedNodeId(), newPosition);
                         updatedGraph = true;
                     }
                 }

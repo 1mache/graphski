@@ -53,7 +53,7 @@ namespace graphski
 		// checks if bounds contain position for every node in graph 
 		for (uint8_t i = 0; i < m_adjList.size(); i++)
 		{
-			auto* drawableNode = getNode(i);
+			auto* drawableNode = m_adjList[i].first;
 			if(drawableNode->getGlobalBounds().contains(position))
 				return i;
 		}

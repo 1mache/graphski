@@ -39,6 +39,15 @@ namespace graphski
 		bool isInMoveMode() const { return m_moveMode; }
 		void setMoveMode(bool value) { m_moveMode = value; }
 
+		void setNodePosition(uint8_t nodeId, sf::Vector2f position)
+		{
+			auto* node = getNode(nodeId);
+			if(node)
+				node->setPosition(position);
+			else
+				std::cerr << "Node ID out of range: " << static_cast<int>(nodeId) << std::endl;
+		}
+
 	private:
 		void drawNode(sf::RenderTarget& target, sf::RenderStates states, uint8_t nodeId) const;
 		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const;

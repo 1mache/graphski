@@ -43,7 +43,16 @@ namespace graphski
 		// how many nodes are there
 		uint8_t nodeCount() const { return (uint8_t)m_adjList.size(); }
 		// for given node how many edges does it have
-		uint8_t edgeCount(uint8_t nodeId) const { return (uint8_t)m_adjList[nodeId].second.size(); }
+		uint8_t edgeCount(uint8_t nodeId) const 
+		{
+			if(nodeId >= nodeCount())
+			{
+				std::cerr << "Node id out of bounds: " << (int)nodeId << std::endl;
+				return 0;
+			}
+
+			return (uint8_t)m_adjList[nodeId].second.size(); 
+		}
 
 		// returns the copy of the adjacency list (TODO: find better alternative to "peek in")
 		AdjacencyList getAdjListCopy() const { return m_adjList;}
@@ -61,8 +70,15 @@ namespace graphski
 		// creates an edge between to given nodes, gets them by ids
 		void addEdge(uint8_t fromNodeId, uint8_t toNodeId)
 		{
-			NodeT* fromPtr = m_adjList[fromNodeId].first,
-				* toPtr = m_adjList[toNodeId].first;
+			NodeT *fromPtr = getNode(fromNodeId),
+				  *toPtr = getNode(toNodeId);
+			
+			if(!fromPtr || !toPtr)
+			{
+				std::cerr << "Error: trying to add edge between non-existing nodes: "
+						  << (int)fromNodeId << " and " << (int)toNodeId << std::endl;
+				return;
+			}
 
 			EdgeT* newEdge = new EdgeT(fromPtr, toPtr);
 
@@ -73,16 +89,9 @@ namespace graphski
 			// put new edge into the vector. TODO: sort by id toId inside vector
 			m_adjList[fromNodeId].second.push_back(newEdge);
 		}
-
-		// returns the node pointer by id 
-		// TODO: this is not great
-		NodeT* getNode(uint8_t nodeId) const { return m_adjList[nodeId].first; }
-
-		// returns the edge pointer by ids of nodes it connects
-		EdgeT* getEdge(EdgeId edgeId) const
-		{
-			return (m_adjList[edgeId.first].second[edgeId.second]);
-		}
+		
+		// marks the node of given id
+		void markNode(uint8_t id, bool val = true) { getNode(id)->mark(val); }
 
 		void transpose()
 		{
@@ -178,7 +187,7 @@ namespace graphski
 				return;
 			}
 
-			m_adjList.clear();
+			makeEmpty(); // clear the graph before loading
 			m_adjList.reserve(j["nodeCount"].get<uint8_t>());
 
 			// create nodes
@@ -197,6 +206,35 @@ namespace graphski
 			}
 		};
 	
+	protected:
+		// returns the node pointer by id
+		NodeT* getNode(uint8_t id) const
+		{
+			if (id >= nodeCount())
+			{
+				std::cerr << "Node id out of bounds: " << (int)id << std::endl;
+				return nullptr;
+			}
+			return m_adjList[id].first;
+		}
+
+		// returns the edge pointer by its id (pair of node id and edge id inside node's edges vector)
+		EdgeT* getEdge(const EdgeId& edgeId) const
+		{
+			if (edgeId.first >= nodeCount())
+			{
+				std::cerr << "Node id out of bounds: " << (int)edgeId.first << std::endl;
+				return nullptr;
+			}
+			if (edgeId.second >= edgeCount(edgeId.first))
+			{
+				std::cerr << "Edge id out of bounds: " << (int)edgeId.second << std::endl;
+				return nullptr;
+			}
+
+			return m_adjList[edgeId.first].second[edgeId.second];
+		}
+
 	private:
 		void deleteAdjList() 
 		{
