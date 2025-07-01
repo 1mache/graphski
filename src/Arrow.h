@@ -23,6 +23,14 @@ namespace graphski
 		
 		// setter for the offset
 		void setHeadOffset(float value) { m_headOffset = value; }
+
+		// setters for the from and to points
+		void setFrom(sf::Vector2f from) { m_from = from; }
+		void setTo(sf::Vector2f to) { m_to = to; }
+
+		// setter for the color
+		void setColor(sf::Color color) { m_color = color; }
+		
 	private:
 		static constexpr float	   HAIR_LEN  = 20.f;
 		static constexpr sf::Angle HAIR_ANGLE = sf::degrees(30);

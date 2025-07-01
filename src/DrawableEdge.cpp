@@ -2,13 +2,12 @@
 
 void graphski::DrawableEdge::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	// we know they can be casted since we got them as pointers to DrawableNode
-	sf::Vector2f fromPos = getFrom()->getPosition();
-	sf::Vector2f toPos = getTo()->getPosition();
-	// TODO: optimize. dont create a new Arrow every time we draw
-	auto arrow = Arrow(fromPos, toPos, LINE_THICKNESS, s_idleColor);
+	// update arrows 'to' and 'from' positions
+	m_arrow.setFrom(getFrom()->getPosition());
+	m_arrow.setTo(getTo()->getPosition());
+
 	// set the offset so that the arrow hits the side of the node
 	// + a little extra to make it look better
-	arrow.setHeadOffset(DrawableNode::NODE_RADIUS * 0.9f);
-	arrow.draw(target, states);
+	m_arrow.setHeadOffset(DrawableNode::NODE_RADIUS * 0.9f);
+	m_arrow.draw(target, states);
 }

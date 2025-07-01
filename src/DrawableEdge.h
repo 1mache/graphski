@@ -13,8 +13,14 @@ namespace graphski
 		inline static sf::Color s_markedColor   = Config::MARKED_COLOR;
 		inline static sf::Color s_selectedColor = Config::SELECTED_COLOR;
 
+		// cached arrow component. needs to be changed in draw function which is const, 
+		// this is simply a visual component of the edge. it does not affect the edge logic
+		mutable Arrow m_arrow;
+
 	public:
-		DrawableEdge(DrawableNode* from, DrawableNode* to) : Edge(from, to) {};
+		DrawableEdge(DrawableNode* from, DrawableNode* to) : Edge(from, to),
+			m_arrow(from->getPosition(), to->getPosition(), LINE_THICKNESS, s_idleColor)
+		{};
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	private:

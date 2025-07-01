@@ -11,8 +11,10 @@ namespace graphski
 	class Graph
 	{
 	protected:
+		// TODO: maybe have edges get ids of the nodes they need instead of pointers, then it could be on the stack
+		// EDIT: pointers are for polimorphism, originally. gonna be hard to change now
+		
 		// adjacency list contains pairs node : its edges
-		// TODO: maybe have edges get ids of the nodes they need instead of pointers, then it could me on the stack
 		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
 		AdjacencyList m_adjList;
 
