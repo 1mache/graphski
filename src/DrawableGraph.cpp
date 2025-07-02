@@ -36,8 +36,11 @@ namespace graphski
 		sf::Color nodeColor = m_nodeColor; // default color
 		if(Config::crazyColors)
 		{
-			nodeColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
-			nodeColor += sf::Color(0xFF050505); // add some white to the color for pastel effect
+			do
+			{
+				nodeColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+				nodeColor += sf::Color(0xFF050505); // add some white to the color for pastel effect
+			} while (colorDifference(nodeColor, Config::TEXT_COLOR) < MIN_COLOR_DIFFERENCE);
 		}
 
 		auto* newNode = new DrawableNode(id, name, nodeColor);

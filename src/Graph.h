@@ -59,7 +59,7 @@ namespace graphski
 		// returns the copy of the adjacency list (TODO: find better alternative to "peek in")
 		AdjacencyList getAdjListCopy() const { return m_adjList;}
 
-		// creates a node with empty edges list, returns its unique id
+		// creates a node with empty edges list, returns its unique idf
 		virtual uint8_t addNode(std::string name = "") 
 		{
 			uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)

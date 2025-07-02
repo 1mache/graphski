@@ -1,6 +1,7 @@
 #pragma once
 #include "Graph.h"
 #include "SFML/Graphics.hpp"
+#include "Utils.h"
 #include "DrawableNode.h"
 #include "DrawableEdge.h"
 
@@ -51,5 +52,16 @@ namespace graphski
 	private:
 		void drawNode(sf::RenderTarget& target, sf::RenderStates states, uint8_t nodeId) const;
 		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const;
+
+	private:
+		// helper fucntion: calculates the difference between two colors
+		constexpr uint32_t colorDifference(const sf::Color& a, const sf::Color& b) const
+		{
+			return Utils::absDiff(a.toInteger(), b.toInteger());
+		}
+
+		// min color difference between text and background color (for random color selection)
+		static constexpr uint32_t MIN_COLOR_DIFFERENCE = Utils::absDiff(Config::DEFAULT_NODE_COLOR.toInteger(),
+																		Config::TEXT_COLOR.toInteger());
 	};
 }
