@@ -95,6 +95,7 @@ namespace graphski
 		// marks the node of given id
 		void markNode(uint8_t id, bool val = true) { getNode(id)->mark(val); }
 
+		// transposes the graph
 		void transpose()
 		{
 			std::cout << "I am transposing it" << std::endl;
@@ -138,6 +139,7 @@ namespace graphski
 			m_adjList = std::move(newAdjList);
 		};
 		
+		// saves the graph to a file in json format
 		void saveToFile() const 
 		{
 			// initialize the file
@@ -173,7 +175,7 @@ namespace graphski
 			std::cout << "Graph saved to " << FILE_NAME << std::endl;
 		};
 
-		// TODO: in DrawableGraph we need to draw this somehow
+		// loads the graph from a file in json format
 		void loadFromFile() 
 		{
 			nlohmann::json j;
