@@ -82,8 +82,19 @@ namespace graphski
 				return;
 			}
 
-			EdgeT* newEdge = new EdgeT(fromPtr, toPtr);
+			// check if edge already exists
+			for(const EdgeT* edge : m_adjList[fromNodeId].second)
+			{
+				if (edge->getTo()->getId() == toNodeId)
+				{
+					std::cerr << "Error: trying to add an edge that already exists between nodes: "
+							  << (int)fromNodeId << " and " << (int)toNodeId << std::endl;
+					return;
+				}
+			}	
 
+			EdgeT* newEdge = new EdgeT(fromPtr, toPtr);
+			
 			// increment degrees
 			fromPtr->setDOut(fromPtr->getDOut() + 1);
 			toPtr->setDIn(toPtr->getDIn() + 1);
