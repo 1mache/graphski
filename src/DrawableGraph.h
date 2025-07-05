@@ -50,8 +50,32 @@ namespace graphski
 		}
 
 	private:
+		// returns a color for a node (random or not depends on Config)
+		sf::Color getNodeColor() const;
+
 		void drawNode(sf::RenderTarget& target, sf::RenderStates states, uint8_t nodeId) const;
 		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const;
+
+		// override function to serialize a drawable node
+		nlohmann::json serializeNode(const DrawableNode* node) const override
+		{
+			// call base function 
+			auto nodeJson = Graph<DrawableNode, DrawableEdge>::serializeNode(node);
+			// add position 
+			nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
+			return nodeJson;
+		}
+
+		// override function to deserialize a drawable node
+		DrawableNode* deserializeNode(const nlohmann::json& nodeJson) const override
+		{
+			// call base function to get the node without position
+			auto* node = Graph<DrawableNode, DrawableEdge>::deserializeNode(nodeJson);
+			// set the position
+			node->setPosition({nodeJson["position"][0], nodeJson["position"][1]});
+			node->setColor(getNodeColor()); // set color
+			return node;
+		}
 
 	private:
 		// helper fucntion: calculates the difference between two colors

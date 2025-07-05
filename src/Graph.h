@@ -138,7 +138,7 @@ namespace graphski
 			deleteAdjList();
 			m_adjList = std::move(newAdjList);
 		};
-		
+	
 		// saves the graph to a file in json format
 		void saveToFile() const 
 		{
@@ -151,17 +151,15 @@ namespace graphski
 
 			for (const auto& pair : m_adjList)
 			{
-				const NodeT* node = pair.first;
+				auto nodeJson = serializeNode(pair.first);
+
 				std::vector<uint8_t> neighbors;
 				for (const EdgeT* edge : pair.second)
 					// get all the id's of the nodes that are connected to this one
 					neighbors.push_back(static_cast<const NodeT*>(edge->getTo())->getId());
-
-				// write id and neighbors to json
-				nodesArr[node->getId()] = {
-					{"id", node->getId()},
-					{"neighbors", neighbors}
-				};
+				
+				nodeJson["neighbors"] = neighbors;
+				nodesArr.push_back(nodeJson);
 			}
 
 			std::ofstream file(FILE_NAME);
@@ -176,7 +174,7 @@ namespace graphski
 		};
 
 		// loads the graph from a file in json format
-		void loadFromFile() 
+		void loadFromFile()
 		{
 			nlohmann::json j;
 			std::ifstream file(FILE_NAME);
@@ -195,14 +193,12 @@ namespace graphski
 			m_adjList.reserve(j["nodeCount"].get<uint8_t>());
 
 			// create nodes
-			for (auto node : j["nodes"])
-			{
-				uint8_t id = node["id"];
-				m_adjList.push_back({ new NodeT(id), {} });
-			}
+			for (auto& node : j["nodes"])
+				m_adjList.push_back({ deserializeNode(node),
+									  {} });
 
 			// add edges
-			for (auto node : j["nodes"])
+			for (auto& node : j["nodes"])
 			{
 				uint8_t id = node["id"];
 				for (uint8_t neighbor : node["neighbors"])
@@ -237,6 +233,22 @@ namespace graphski
 			}
 
 			return m_adjList[edgeId.first].second[edgeId.second];
+		}
+
+		// retuerns the json representation of the node, used in saveToFie
+		virtual nlohmann::json serializeNode(const NodeT* node) const
+		{
+			nlohmann::json j;
+			j["id"] = node->getId();
+			j["name"] = node->getName();
+			return j;
+		}
+
+		// creates and returns a new node given json representation of it, used in loadFromFile
+		virtual NodeT* deserializeNode(const nlohmann::json& j) const
+		{
+			return new NodeT(j["id"].get<uint8_t>(), 
+							 j["name"].get<std::string>());
 		}
 
 	private:

@@ -33,17 +33,7 @@ namespace graphski
 		uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 		// push back new node with empty edges list
 
-		sf::Color nodeColor = m_nodeColor; // default color
-		if(Config::crazyColors)
-		{
-			do
-			{
-				nodeColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
-				nodeColor += sf::Color(0xFF050505); // add some white to the color for pastel effect
-			} while (colorDifference(nodeColor, Config::TEXT_COLOR) < MIN_COLOR_DIFFERENCE);
-		}
-
-		auto* newNode = new DrawableNode(id, name, nodeColor);
+		auto* newNode = new DrawableNode(id, name, getNodeColor());
 		newNode->setPosition(position);
 		m_adjList.push_back({newNode , {} });
 
@@ -62,6 +52,21 @@ namespace graphski
 		}
 
 		return std::nullopt;
+	}
+
+	sf::Color DrawableGraph::getNodeColor() const
+	{
+		sf::Color nodeColor = m_nodeColor; // default color
+		if (Config::crazyColors)
+		{
+			do
+			{
+				nodeColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+				nodeColor += sf::Color(0xFF050505); // add some white to the color for pastel effect
+			} while (colorDifference(nodeColor, Config::TEXT_COLOR) < MIN_COLOR_DIFFERENCE);
+		}
+
+		return nodeColor;
 	}
 
 	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, uint8_t nodeId) const

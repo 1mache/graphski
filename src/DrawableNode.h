@@ -54,6 +54,13 @@ namespace graphski
 			return getTransform().transformRect(m_circle.getGlobalBounds());
 		}
 
+		// set the node color
+		void setColor(sf::Color color)
+		{
+			m_nodeColor = color;
+			m_circle.setFillColor(m_nodeColor);
+		}
+
 	private:
 		// sets up the circle component of the node
 		void initCircleComponent();
