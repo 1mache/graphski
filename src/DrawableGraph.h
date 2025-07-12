@@ -9,21 +9,13 @@ namespace graphski
 {
 	class DrawableGraph : public Graph<DrawableNode, DrawableEdge>, public sf::Drawable
 	{
-		bool m_moveMode = false; // if true, we are moving a node
-		NodeId m_movedId = 0; // id of the node that we're moving
-
 		sf::Color m_nodeColor{Config::DEFAULT_NODE_COLOR};
+
+		bool m_inMoveMode = false; // if true, we are moving a node
+		NodeId m_movedId = 0; // id of the node that we're moving
 
 	public:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
-		// clear the graph
-		void makeEmpty() override
-		{
-			m_moveMode = false;
-			m_movedId = 0;
-			Graph::makeEmpty();
-		}
 
 		// creates a node with empty edges list at given position, returns its unique id
 		// note: blocks Graph::addNode because we cant create a drawable node without position
@@ -32,21 +24,23 @@ namespace graphski
 		// checks if a position is in a certain node, returns its id if it is
 		std::optional<NodeId> posInNode(sf::Vector2f position);
 
-		// getter and setter for movedId
-		NodeId getMovedNodeId() const { return m_movedId; }
-		void setMovedNodeId(NodeId value) { m_movedId = value; }
-		
-		// getter and setter for moveMode
-		bool isInMoveMode() const { return m_moveMode; }
-		void setMoveMode(bool value) { m_moveMode = value; }
-
 		void setNodePosition(NodeId nodeId, sf::Vector2f position)
 		{
 			auto* node = getNode(nodeId);
-			if(node)
+			if (node)
 				node->setPosition(position);
-			else
-				std::cerr << "Node ID out of range: " << static_cast<int>(nodeId) << std::endl;
+		}
+
+		bool inMoveMode() const { return m_inMoveMode; }
+
+		void setMoveMode(bool val) { m_inMoveMode = val;}
+
+		NodeId getMovedId() const { return m_movedId; }
+
+		void setMovedId(NodeId id) 
+		{
+			if (nodeIdInBounds(id))
+				m_movedId = id; 
 		}
 
 	private:

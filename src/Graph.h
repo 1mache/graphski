@@ -33,7 +33,7 @@ namespace graphski
 		}
 
 		// clears the graph
-		virtual void makeEmpty() 
+		void makeEmpty() 
 		{
 			deleteAdjList();
 			m_adjList.clear();
