@@ -7,7 +7,7 @@ void graphski::DrawableEdge::draw(sf::RenderTarget& target, sf::RenderStates sta
 	m_arrow.setTo(getTo()->getPosition());
 
 	// set the offset so that the arrow hits the side of the node
-	// + a little extra to make it look better
-	m_arrow.setHeadOffset(DrawableNode::NODE_RADIUS * 0.9f);
+	float offsetExtra = 0.9f; // + shorten it a bit to make it look better
+	m_arrow.setHeadOffset(DrawableNode::NODE_RADIUS * offsetExtra);
 	m_arrow.draw(target, states);
 }
