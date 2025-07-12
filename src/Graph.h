@@ -14,13 +14,14 @@ namespace graphski
 		// TODO: maybe have edges get ids of the nodes they need instead of pointers, then it could be on the stack
 		// EDIT: pointers are for polimorphism, originally. gonna be hard to change now
 		
+
 		// adjacency list contains pairs node : its edges
 		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
-		AdjacencyList m_adjList;
-
+		using AdjacencyListPeek = std::vector<std::vector<uint8_t>>;
 		// pair of node id and edges id inside node's edges vector
 		using EdgeId = std::pair<uint8_t, uint8_t>;
 
+		AdjacencyList m_adjList;
 	public:
 		Graph() 
 		{
@@ -55,9 +56,6 @@ namespace graphski
 
 			return (uint8_t)m_adjList[nodeId].second.size(); 
 		}
-
-		// returns the copy of the adjacency list (TODO: find better alternative to "peek in")
-		AdjacencyList getAdjListCopy() const { return m_adjList;}
 
 		// creates a node with empty edges list, returns its unique idf
 		virtual uint8_t addNode(std::string name = "") 
@@ -105,6 +103,36 @@ namespace graphski
 		
 		// marks the node of given id
 		void markNode(uint8_t id, bool val = true) { getNode(id)->mark(val); }
+
+		// gets an array of neighbor ids for the given node id
+		std::vector<uint8_t> getNeighbors(uint8_t nodeId) const
+		{
+			if (!nodeIdInBounds(nodeId))
+				return {};
+
+			std::vector<uint8_t> result;
+			result.reserve(edgeCount(nodeId));
+
+			for (const EdgeT* edge : m_adjList[nodeId].second)
+			{
+				result.push_back(edge->getTo()->getId());
+			}
+
+			return result;
+		}
+		
+		// gets a peek of the adjacency list. all in terms of ids, not pointers
+		AdjacencyListPeek getAdjacencyList() const
+		{
+			AdjacencyListPeek result;
+			result.reserve(m_adjList.size());
+			for (const auto& pair : m_adjList)
+			{
+				std::vector<uint8_t> neighbors = getNeighbors(pair.first->getId());
+				result.push_back(neighbors);
+			}
+			return result;
+		}
 
 		// transposes the graph
 		void transpose()
@@ -218,30 +246,32 @@ namespace graphski
 		};
 	
 	protected:
+		bool nodeIdInBounds(uint8_t nodeId) const
+		{
+			if (nodeId >= nodeCount())
+			{
+				std::cerr << "Node id out of bounds: " << (int)nodeId << std::endl;
+				return false;
+			}
+			return true;
+		}
+
 		// returns the node pointer by id
 		NodeT* getNode(uint8_t id) const
 		{
-			if (id >= nodeCount())
-			{
-				std::cerr << "Node id out of bounds: " << (int)id << std::endl;
+			if (!nodeIdInBounds(id))
 				return nullptr;
-			}
+
 			return m_adjList[id].first;
 		}
 
 		// returns the edge pointer by its id (pair of node id and edge id inside node's edges vector)
 		EdgeT* getEdge(const EdgeId& edgeId) const
 		{
-			if (edgeId.first >= nodeCount())
-			{
-				std::cerr << "Node id out of bounds: " << (int)edgeId.first << std::endl;
+			if (!nodeIdInBounds(edgeId.first))
 				return nullptr;
-			}
-			if (edgeId.second >= edgeCount(edgeId.first))
-			{
-				std::cerr << "Edge id out of bounds: " << (int)edgeId.second << std::endl;
+			if (!nodeIdInBounds(edgeId.second))
 				return nullptr;
-			}
 
 			return m_adjList[edgeId.first].second[edgeId.second];
 		}

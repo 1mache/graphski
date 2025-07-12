@@ -84,7 +84,7 @@ namespace graphski
 			return Utils::absDiff(a.toInteger(), b.toInteger());
 		}
 
-		// min color difference between text and background color (for random color selection)
+		// min color difference (for random color selection)
 		static constexpr uint32_t MIN_COLOR_DIFFERENCE = Utils::absDiff(Config::DEFAULT_NODE_COLOR.toInteger(),
 																		Config::TEXT_COLOR.toInteger());
 	};
