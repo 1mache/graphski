@@ -1,10 +1,14 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
 
 class Config
 {
+
 	inline static sf::Font s_txtFont = sf::Font("fonts/InriaSans.ttf");
 public:
+	static constexpr unsigned int WINDOW_WIDTH = 800u, WINDOW_HEIGHT = 600u;
+
 	static const sf::Font& getFont(){ return s_txtFont; }
 
 	static constexpr bool crazyColors = true;

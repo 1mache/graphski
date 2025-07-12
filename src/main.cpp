@@ -5,13 +5,13 @@
 #include "DrawableNode.h"
 #include "GraphEventHandler.h"
 
-constexpr unsigned int WINDOW_WIDTH = 800u, WINDOW_HEIGHT = 600u;
-
 int main()
 {
     srand(time(nullptr)); // seed the random number generator
 
-    sf::RenderWindow window (sf::VideoMode({ WINDOW_WIDTH , WINDOW_HEIGHT }), "Graphski");
+    sf::RenderWindow window (sf::VideoMode({ Config::WINDOW_WIDTH , Config::WINDOW_HEIGHT }),
+                            "Graphski");
+
     window.setVerticalSyncEnabled(true);
 
     graphski::DrawableGraph graph;

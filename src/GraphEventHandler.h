@@ -1,5 +1,6 @@
 #pragma once
 #include "DrawableGraph.h"
+#include "Config.h"
 
 namespace graphski 
 {
@@ -33,8 +34,8 @@ namespace graphski
 
         bool posInBounds(sf::Vector2f position)
         {
-            return (0 <= position.x && position.x <= WINDOW_WIDTH) &&
-                (0 <= position.y && position.y <= WINDOW_HEIGHT);
+            return (0 <= position.x && position.x <= Config::WINDOW_WIDTH) &&
+                (0 <= position.y && position.y <= Config::WINDOW_HEIGHT);
         }
 
     private:
@@ -44,7 +45,5 @@ namespace graphski
         static constexpr sf::Keyboard::Key LOAD_FROM_FILE_KEY = sf::Keyboard::Key::L;
         static constexpr sf::Keyboard::Key CLEAR_GRAPH_KEY    = sf::Keyboard::Key::C;
         static constexpr sf::Keyboard::Key TRANSPOSE_KEY      = sf::Keyboard::Key::T;
-
-        static constexpr unsigned int WINDOW_WIDTH = 800u, WINDOW_HEIGHT = 600u;
     };
 }
