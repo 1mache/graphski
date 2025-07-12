@@ -14,9 +14,6 @@ int main()
     sf::RenderWindow window (sf::VideoMode({ WINDOW_WIDTH , WINDOW_HEIGHT }), "Graphski");
     window.setVerticalSyncEnabled(true);
 
-    sf::ContextSettings settings;
-    settings.antiAliasingLevel = 8;
-
     graphski::DrawableGraph graph;
 	graphski::GraphEventHandler eventHandler(graph);
 
