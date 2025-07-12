@@ -22,7 +22,7 @@ namespace graphski
 		inline static sf::Color s_outlineColor = Config::IDLE_OUTLINE_COLOR; // color when not selected or marked
 
 	public:
-		DrawableNode(uint8_t id, std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
+		DrawableNode(NodeId id, std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
 			Node(id, name),
 			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
 		{		
@@ -80,6 +80,6 @@ namespace graphski
 		static constexpr float        NODE_OUTLINE_THICKNSS = 5.f;
 		static constexpr unsigned int CIRCLE_RES = 10u;
 		static constexpr unsigned int NAME_TEXT_SIZE = 30u; //TODO: these will probably not be constexp
-		static constexpr uint8_t      MAX_DISPLAYED_CHARS = 3u;
+		static constexpr NodeId      MAX_DISPLAYED_CHARS = 3u;
 	};
 }

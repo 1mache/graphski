@@ -28,11 +28,12 @@ int main()
     sf::ContextSettings settings;
     settings.antiAliasingLevel = 8;
 
+	using NodeId = graphski::NodeId;
     graphski::DrawableGraph graph;
     bool updatedGraph = true;
 
     bool edgeMode = false;
-    uint8_t fromId = 0, toId = 0;
+    NodeId fromId = 0, toId = 0;
 
     while (window.isOpen())
     {
@@ -44,7 +45,7 @@ int main()
                 {
                     sf::Vector2f position(mouseButtonPressed->position);
 
-                    std::optional<uint8_t> id = graph.posInNode(position);
+                    std::optional<NodeId> id = graph.posInNode(position);
 
                     if(id.has_value())
                     {
@@ -65,7 +66,7 @@ int main()
                 {
                     sf::Vector2f position(mouseButtonPressed->position);
                     
-                    std::optional<uint8_t> id = graph.posInNode(position);
+                    std::optional<NodeId> id = graph.posInNode(position);
                     if (id.has_value())
                     {
                         if (edgeMode)

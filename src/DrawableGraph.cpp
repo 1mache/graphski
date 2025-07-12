@@ -7,15 +7,15 @@ namespace graphski
 	void DrawableGraph::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		// draw all the edges first
-		for (uint8_t i = 0; i < m_adjList.size(); i++)
+		for (NodeId i = 0; i < m_adjList.size(); i++)
 		{
 			// draw all the edges
-			for (uint8_t j = 0; j < m_adjList[i].second.size(); j++)
+			for (NodeId j = 0; j < m_adjList[i].second.size(); j++)
 				drawEdge(target, states, { i, j });
 		}
 
 		// draw all the unmoved nodes
-		for (uint8_t i = 0; i < m_adjList.size(); i++)
+		for (NodeId i = 0; i < m_adjList.size(); i++)
 		{
 			if (m_moveMode && i == m_movedId)
 				continue; // skip the moved node
@@ -28,9 +28,9 @@ namespace graphski
 			drawNode(target, states, m_movedId);
 	}
 
-	uint8_t DrawableGraph::addNode(sf::Vector2f position, std::string name)
+	NodeId DrawableGraph::addNode(sf::Vector2f position, std::string name)
 	{
-		uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
+		NodeId id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 		// push back new node with empty edges list
 
 		auto* newNode = new DrawableNode(id, name, getNodeColor());
@@ -41,10 +41,10 @@ namespace graphski
 	}
 
 
-	std::optional<uint8_t> DrawableGraph::posInNode(sf::Vector2f position)
+	std::optional<NodeId> DrawableGraph::posInNode(sf::Vector2f position)
 	{
 		// checks if bounds contain position for every node in graph 
-		for (uint8_t i = 0; i < m_adjList.size(); i++)
+		for (NodeId i = 0; i < m_adjList.size(); i++)
 		{
 			auto* drawableNode = m_adjList[i].first;
 			if(drawableNode->getGlobalBounds().contains(position))
@@ -69,7 +69,7 @@ namespace graphski
 		return nodeColor;
 	}
 
-	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, uint8_t nodeId) const
+	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, NodeId nodeId) const
 	{
 		auto* drawableNode = getNode(nodeId);
 		target.draw(*drawableNode, states);

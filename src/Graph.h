@@ -3,6 +3,8 @@
 #include <utility>
 #include <fstream>
 #include <iostream>
+#include <limits>
+#include "GraphTypes.h"
 #include "json.hpp"
 
 namespace graphski
@@ -11,15 +13,10 @@ namespace graphski
 	class Graph
 	{
 	protected:
-		// TODO: maybe have edges get ids of the nodes they need instead of pointers, then it could be on the stack
-		// EDIT: pointers are for polimorphism, originally. gonna be hard to change now
-		
 
 		// adjacency list contains pairs node : its edges
 		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
-		using AdjacencyListPeek = std::vector<std::vector<uint8_t>>;
-		// pair of node id and edges id inside node's edges vector
-		using EdgeId = std::pair<uint8_t, uint8_t>;
+		using AdjacencyListPeek = std::vector<std::vector<NodeId>>;
 
 		AdjacencyList m_adjList;
 	public:
@@ -44,23 +41,23 @@ namespace graphski
 		};
 
 		// how many nodes are there
-		uint8_t nodeCount() const { return (uint8_t)m_adjList.size(); }
+		NodeId nodeCount() const { return (NodeId)m_adjList.size(); }
 		// for given node how many edges does it have
-		uint8_t edgeCount(uint8_t nodeId) const 
+		NodeId edgeCount(NodeId id) const 
 		{
-			if(nodeId >= nodeCount())
+			if(id >= nodeCount())
 			{
-				std::cerr << "Node id out of bounds: " << (int)nodeId << std::endl;
+				std::cerr << "Node id out of bounds: " << (int)id << std::endl;
 				return 0;
 			}
 
-			return (uint8_t)m_adjList[nodeId].second.size(); 
+			return (NodeId)(m_adjList[id].second.size()); 
 		}
 
 		// creates a node with empty edges list, returns its unique idf
-		virtual uint8_t addNode(std::string name = "") 
+		virtual NodeId addNode(std::string name = "") 
 		{
-			uint8_t id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
+			NodeId id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 			// push back new node with empty edges list
 			m_adjList.push_back({ new NodeT(id, name), {} });
 
@@ -68,7 +65,7 @@ namespace graphski
 		}
 
 		// creates an edge between to given nodes, gets them by ids
-		void addEdge(uint8_t fromNodeId, uint8_t toNodeId)
+		void addEdge(NodeId fromNodeId, NodeId toNodeId)
 		{
 			NodeT *fromPtr = getNode(fromNodeId),
 				  *toPtr = getNode(toNodeId);
@@ -102,18 +99,18 @@ namespace graphski
 		}
 		
 		// marks the node of given id
-		void markNode(uint8_t id, bool val = true) { getNode(id)->mark(val); }
+		void markNode(NodeId id, bool val = true) { getNode(id)->mark(val); }
 
 		// gets an array of neighbor ids for the given node id
-		std::vector<uint8_t> getNeighbors(uint8_t nodeId) const
+		std::vector<NodeId> getNeighbors(NodeId id) const
 		{
-			if (!nodeIdInBounds(nodeId))
+			if (!nodeIdInBounds(id))
 				return {};
 
-			std::vector<uint8_t> result;
-			result.reserve(edgeCount(nodeId));
+			std::vector<NodeId> result;
+			result.reserve(edgeCount(id));
 
-			for (const EdgeT* edge : m_adjList[nodeId].second)
+			for (const EdgeT* edge : m_adjList[id].second)
 			{
 				result.push_back(edge->getTo()->getId());
 			}
@@ -128,7 +125,7 @@ namespace graphski
 			result.reserve(m_adjList.size());
 			for (const auto& pair : m_adjList)
 			{
-				std::vector<uint8_t> neighbors = getNeighbors(pair.first->getId());
+				std::vector<NodeId> neighbors = getNeighbors(pair.first->getId());
 				result.push_back(neighbors);
 			}
 			return result;
@@ -159,12 +156,12 @@ namespace graphski
 			for (const auto& pair : m_adjList)
 			{
 				// pointer to new node with same id from new list
-				auto nodeId = pair.first->getId();
+				NodeId nodeId = pair.first->getId();
 				auto& edges = pair.second;
 
 				for (const auto& edge : edges)
 				{
-					uint8_t targetId = edge->getTo()->getId();
+					NodeId targetId = edge->getTo()->getId();
 					// its crucial to use newAdjList here, not m_adjList when accessing nodes
 					auto* edgeTarget = newAdjList[targetId].first;
 					newAdjList[targetId].second.push_back(
@@ -192,7 +189,7 @@ namespace graphski
 			{
 				auto nodeJson = serializeNode(pair.first);
 
-				std::vector<uint8_t> neighbors;
+				std::vector<NodeId> neighbors;
 				for (const EdgeT* edge : pair.second)
 					// get all the id's of the nodes that are connected to this one
 					neighbors.push_back(static_cast<const NodeT*>(edge->getTo())->getId());
@@ -229,7 +226,7 @@ namespace graphski
 			}
 
 			makeEmpty(); // clear the graph before loading
-			m_adjList.reserve(j["nodeCount"].get<uint8_t>());
+			m_adjList.reserve(j["nodeCount"].get<NodeId>());
 
 			// create nodes
 			for (auto& node : j["nodes"])
@@ -239,25 +236,25 @@ namespace graphski
 			// add edges
 			for (auto& node : j["nodes"])
 			{
-				uint8_t id = node["id"];
-				for (uint8_t neighbor : node["neighbors"])
+				NodeId id = node["id"];
+				for (NodeId neighbor : node["neighbors"])
 					addEdge(id, neighbor);
 			}
 		};
 	
 	protected:
-		bool nodeIdInBounds(uint8_t nodeId) const
+		bool nodeIdInBounds(NodeId id) const
 		{
-			if (nodeId >= nodeCount())
+			if (id >= nodeCount())
 			{
-				std::cerr << "Node id out of bounds: " << (int)nodeId << std::endl;
+				std::cerr << "Node id out of bounds: " << (int)id << std::endl;
 				return false;
 			}
 			return true;
 		}
 
 		// returns the node pointer by id
-		NodeT* getNode(uint8_t id) const
+		NodeT* getNode(NodeId id) const
 		{
 			if (!nodeIdInBounds(id))
 				return nullptr;
@@ -288,7 +285,7 @@ namespace graphski
 		// creates and returns a new node given json representation of it, used in loadFromFile
 		virtual NodeT* deserializeNode(const nlohmann::json& j) const
 		{
-			return new NodeT(j["id"].get<uint8_t>(), 
+			return new NodeT(j["id"].get<NodeId>(),
 							 j["name"].get<std::string>());
 		}
 
@@ -311,8 +308,8 @@ namespace graphski
 
 	private: // constants
 
-		static constexpr uint8_t MAX_NODES = UINT8_MAX;
-		static constexpr uint8_t INIT_NODES = 10;
+		static constexpr NodeId MAX_NODES = std::numeric_limits<NodeId>::max();
+		static constexpr NodeId INIT_NODES = 10;
 		static constexpr const char* FILE_NAME = "graph.json";
 	};
 
