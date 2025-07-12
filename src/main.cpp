@@ -72,14 +72,11 @@ int main()
                         if (edgeMode)
                         {
                             toId = id.value();
-                            if(toId != fromId) // if its node from node to itself
-                            {
-                                graph.addEdge(fromId, toId);
-                                // done with constructing this edge
-                                edgeMode = false;
-                                updatedGraph = true;
+                            graph.addEdge(fromId, toId);
+                            // done with constructing this edge
+                            edgeMode = false;
+                            updatedGraph = true;
 
-                            }
                         }
                         else
                         {

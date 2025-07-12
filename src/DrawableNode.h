@@ -80,6 +80,6 @@ namespace graphski
 		static constexpr float        NODE_OUTLINE_THICKNSS = 5.f;
 		static constexpr unsigned int CIRCLE_RES = 10u;
 		static constexpr unsigned int NAME_TEXT_SIZE = 30u; //TODO: these will probably not be constexp
-		static constexpr NodeId      MAX_DISPLAYED_CHARS = 3u;
+		static constexpr NodeId       MAX_DISPLAYED_CHARS = 3u;
 	};
 }

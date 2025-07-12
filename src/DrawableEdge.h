@@ -25,5 +25,8 @@ namespace graphski
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	private:
 		static constexpr float LINE_THICKNESS = 5.f;
+
+		// position offset of the self edge circle relative to the node center
+		static constexpr sf::Vector2f SELF_EDGE_OFFSET{ -1.f, -1.f };
 	};
 }

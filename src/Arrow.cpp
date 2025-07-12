@@ -2,6 +2,12 @@
 
 void graphski::Arrow::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+	if(m_from == m_to)
+	{
+		drawSelfArrow(target, states);
+		return;
+	}
+	
 	// vector that represents the big line
 	sf::Vector2f lineVector = m_to - m_from;
 
@@ -42,4 +48,21 @@ void graphski::Arrow::draw(sf::RenderTarget& target, sf::RenderStates states) co
 	target.draw(line,  states);
 	target.draw(hair1, states);
 	target.draw(hair2, states);
+}
+
+void graphski::Arrow::drawSelfArrow(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	sf::CircleShape selfArrow(m_selfArrowRadius, CIRCLE_RES);
+
+	selfArrow.setFillColor(sf::Color::Transparent);
+	selfArrow.setOutlineColor(m_color);
+	
+	selfArrow.setOutlineThickness(m_thickness);
+
+	auto centerOffset = sf::Vector2f{ m_selfArrowRadius, m_selfArrowRadius };
+	selfArrow.setOrigin(centerOffset);
+
+	selfArrow.setPosition(m_from + m_selfArrowOffset);
+
+	target.draw(selfArrow, states);
 }
