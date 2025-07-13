@@ -16,7 +16,7 @@ namespace graphski
 
 		// adjacency list contains pairs node : its edges
 		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
-		using AdjacencyListPeek = std::vector<std::vector<NodeId>>;
+		using AdjacencyListPeek = std::vector<std::pair<NodeId ,std::vector<NodeId>>>;
 
 		AdjacencyList m_adjList;
 	public:
@@ -126,7 +126,7 @@ namespace graphski
 			for (const auto& pair : m_adjList)
 			{
 				std::vector<NodeId> neighbors = getNeighbors(pair.first->getId());
-				result.push_back(neighbors);
+				result.push_back({ pair.first->getId(), neighbors });
 			}
 			return result;
 		}
