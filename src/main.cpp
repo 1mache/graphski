@@ -27,7 +27,7 @@ int main()
             eventHandler.processEvent(event);
         }
 
-        if(eventHandler.isGraphUpdated())
+        if(graph.isGraphUpdated())
         {
             window.clear();
 
@@ -35,7 +35,7 @@ int main()
 
             window.display();
 
-            eventHandler.setGraphNotUpdated();
+            graph.setGraphNotUpdated();
         }
     }
 }

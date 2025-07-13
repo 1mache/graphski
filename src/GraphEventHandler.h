@@ -8,21 +8,10 @@ namespace graphski
     {
         graphski::DrawableGraph& m_graph;
 
-		bool m_updatedGraph = true; // indicates if the graph has been updated with the last events
-
-		bool m_inEdgeMode = false; // if we are currently in edge creation mode
-		NodeId fromId = 0, toId = 0; // ids of nodes used for edge creation
-
     public:
         GraphEventHandler(graphski::DrawableGraph& graph)
             : m_graph(graph)
         {}
-
-        bool isGraphUpdated() const { return m_updatedGraph; } 
-
-		// the state is set to true only by event processing functions
-		// from outside you can only set it to false
-        void setGraphNotUpdated() { m_updatedGraph = false;}
 
         void processEvent(const std::optional<sf::Event>& event);
     

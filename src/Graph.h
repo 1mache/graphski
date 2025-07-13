@@ -33,7 +33,7 @@ namespace graphski
 		}
 
 		// clears the graph
-		void makeEmpty() 
+		virtual void makeEmpty() 
 		{
 			deleteAdjList();
 			m_adjList.clear();
@@ -45,11 +45,8 @@ namespace graphski
 		// for given node how many edges does it have
 		NodeId edgeCount(NodeId id) const 
 		{
-			if(id >= nodeCount())
-			{
-				std::cerr << "Node id out of bounds: " << (int)id << std::endl;
+			if(!nodeIdInBounds(id))
 				return 0;
-			}
 
 			return (NodeId)(m_adjList[id].second.size()); 
 		}
@@ -65,7 +62,7 @@ namespace graphski
 		}
 
 		// creates an edge between to given nodes, gets them by ids
-		void addEdge(NodeId fromNodeId, NodeId toNodeId)
+		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId)
 		{
 			NodeT *fromPtr = getNode(fromNodeId),
 				  *toPtr = getNode(toNodeId);
@@ -99,7 +96,7 @@ namespace graphski
 		}
 		
 		// marks the node of given id
-		void markNode(NodeId id, bool val = true) { getNode(id)->mark(val); }
+		virtual void markNode(NodeId id, bool val = true) { getNode(id)->mark(val); }
 
 		// gets an array of neighbor ids for the given node id
 		std::vector<NodeId> getNeighbors(NodeId id) const
@@ -132,7 +129,7 @@ namespace graphski
 		}
 
 		// transposes the graph
-		void transpose()
+		virtual void transpose()
 		{
 			std::cout << "I am transposing it" << std::endl;
 
@@ -210,7 +207,7 @@ namespace graphski
 		};
 
 		// loads the graph from a file in json format
-		void loadFromFile()
+		virtual void loadFromFile()
 		{
 			nlohmann::json j;
 			std::ifstream file(FILE_NAME);

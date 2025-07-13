@@ -33,14 +33,10 @@ namespace graphski
                 m_graph.setMoveMode(true);
                 m_graph.setMovedId(id.value()); // remember the moved node`s index
                 m_graph.markNode(id.value());
-                m_updatedGraph = true;
             }
 
             if (!m_graph.inMoveMode())
-            {
                 m_graph.addNode(position);
-                m_updatedGraph = true;
-            }
         }
 
         if (event.button == sf::Mouse::Button::Right)
@@ -51,19 +47,17 @@ namespace graphski
             
             if (id.has_value())
             {
-                if (m_inEdgeMode)
+                if (m_graph.inEdgeMode())
                 {
-                    toId = id.value();
-                    m_graph.addEdge(fromId, toId);
+                    m_graph.setEdgeToId(id.value());
+                    m_graph.addEdge();
                     // done with constructing this edge
-                    m_inEdgeMode = false;
-                    m_updatedGraph = true;
-
+                    m_graph.setEdgeMode(false);
                 }
                 else
                 {
-                    m_inEdgeMode = true;
-                    fromId = id.value();
+					m_graph.setEdgeMode(true);
+                    m_graph.setEdgeFromId(id.value());
                 }
             }
         }
@@ -77,9 +71,7 @@ namespace graphski
             if (m_graph.inMoveMode())
             {
 				m_graph.setMoveMode(false);
-
                 m_graph.markNode(m_graph.getMovedId(), false); // unmark the moved node
-                m_updatedGraph = true;
             }
         }
     }
@@ -92,10 +84,7 @@ namespace graphski
             sf::Vector2f newPosition(event.position);
             //TODO: add more sophisticated screen bounds checking
             if (posInBounds(newPosition))
-            {
                 m_graph.setNodePosition(m_graph.getMovedId(), newPosition);
-                m_updatedGraph = true;
-            }
         }
     }
 
@@ -108,19 +97,14 @@ namespace graphski
             break;
         case LOAD_FROM_FILE_KEY:
             m_graph.loadFromFile();
-            m_updatedGraph = true;
 			break;
 
         case CLEAR_GRAPH_KEY:
             m_graph.makeEmpty();
-			m_inEdgeMode = false; 
-			m_graph.setMoveMode(false);
-            m_updatedGraph = true;
 			break;
 
         case TRANSPOSE_KEY:
 			m_graph.transpose();
-			m_updatedGraph = true;
 			break;
 
         default:

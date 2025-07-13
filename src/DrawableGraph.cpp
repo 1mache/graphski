@@ -37,6 +37,7 @@ namespace graphski
 		newNode->setPosition(position);
 		m_adjList.push_back({newNode , {} });
 
+		m_updatedGraph = true;
 		return id;
 	}
 
