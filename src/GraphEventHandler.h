@@ -6,12 +6,14 @@ namespace graphski
 {
     class GraphEventHandler
     {
-        graphski::DrawableGraph& m_graph;
+        DrawableGraph& m_graph;
 
     public:
         GraphEventHandler(graphski::DrawableGraph& graph)
             : m_graph(graph)
         {}
+		GraphEventHandler(const GraphEventHandler&) = delete;
+		GraphEventHandler& operator=(const GraphEventHandler&) = delete;   
 
         void processEvent(const std::optional<sf::Event>& event);
     
