@@ -4,21 +4,21 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
-#include "GraphTypes.h"
 #include "json.hpp"
+#include "IGraph.h"
 
 namespace graphski
 {
 	template<typename NodeT, typename EdgeT> 
-	class Graph
+	class Graph: public IGraph
 	{
 	protected:
 
 		// adjacency list contains pairs node : its edges
 		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
-		using AdjacencyListPeek = std::vector<std::pair<NodeId ,std::vector<NodeId>>>;
 
 		AdjacencyList m_adjList;
+
 	public:
 		Graph() 
 		{
@@ -27,13 +27,28 @@ namespace graphski
 
 		Graph(Graph&) = delete;
 		Graph& operator=(Graph&) = delete;
+		
+		Graph(Graph&& other) 
+		{
+			m_adjList = std::move(other.m_adjList);
+		}
+		Graph& operator=(Graph&& other) 
+		{
+			if (this != &other)
+			{
+				deleteAdjList();
+				m_adjList = std::move(other.m_adjList);
+			}
+			return *this;
+		}
+		
 		virtual ~Graph() 
 		{
 			deleteAdjList();
 		}
 
 		// clears the graph
-		virtual void makeEmpty() 
+		virtual void makeEmpty() override 
 		{
 			deleteAdjList();
 			m_adjList.clear();
@@ -41,18 +56,18 @@ namespace graphski
 		};
 
 		// how many nodes are there
-		NodeId nodeCount() const { return (NodeId)m_adjList.size(); }
+		NodeId nodeCount() const override { return (NodeId)m_adjList.size(); }
 		// for given node how many edges does it have
-		NodeId edgeCount(NodeId id) const 
+		size_t edgeCount(NodeId id) const override
 		{
 			if(!nodeIdInBounds(id))
 				return 0;
 
-			return (NodeId)(m_adjList[id].second.size()); 
+			return m_adjList[id].second.size(); 
 		}
 
 		// creates a node with empty edges list, returns its unique idf
-		virtual NodeId addNode(std::string name = "") 
+		virtual NodeId addNode(std::string name = "") override 
 		{
 			NodeId id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 			// push back new node with empty edges list
@@ -62,7 +77,7 @@ namespace graphski
 		}
 
 		// creates an edge between to given nodes, gets them by ids
-		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId)
+		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) override
 		{
 			NodeT *fromPtr = getNode(fromNodeId),
 				  *toPtr = getNode(toNodeId);
@@ -96,10 +111,10 @@ namespace graphski
 		}
 		
 		// marks the node of given id
-		virtual void markNode(NodeId id, bool val = true) { getNode(id)->mark(val); }
+		virtual void markNode(NodeId id, bool val = true) override { getNode(id)->mark(val); }
 
 		// gets an array of neighbor ids for the given node id
-		std::vector<NodeId> getNeighbors(NodeId id) const
+		std::vector<NodeId> getNeighbors(NodeId id) const override
 		{
 			if (!nodeIdInBounds(id))
 				return {};
@@ -116,14 +131,15 @@ namespace graphski
 		}
 		
 		// gets a peek of the adjacency list. all in terms of ids, not pointers
-		AdjacencyListPeek getAdjacencyList() const
+		AdjacencyListPeek getAdjacencyList() const override
 		{
 			AdjacencyListPeek result;
 			result.reserve(m_adjList.size());
 			for (const auto& pair : m_adjList)
 			{
 				std::vector<NodeId> neighbors = getNeighbors(pair.first->getId());
-				result.push_back({ pair.first->getId(), neighbors });
+				NodePeek node{ pair.first->getId(), pair.first->getName() };
+				result.push_back({ node, neighbors });
 			}
 			return result;
 		}
