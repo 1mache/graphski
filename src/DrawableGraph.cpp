@@ -28,6 +28,15 @@ namespace graphski
 			drawNode(target, states, m_movedId);
 	}
 
+	NodeId DrawableGraph::addNode(std::string name)
+	{
+		NodeId id = Graph<DrawableNode, DrawableEdge>::addNode(name);
+		m_adjList[id].first->setColor(getNodeColor()); // set color for the new node
+
+		m_updatedGraph = true;
+		return id;
+	}
+
 	NodeId DrawableGraph::addNode(sf::Vector2f position, std::string name)
 	{
 		NodeId id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)

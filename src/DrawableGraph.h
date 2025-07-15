@@ -9,6 +9,7 @@ namespace graphski
 {
 	class DrawableGraph : public Graph<DrawableNode, DrawableEdge>, public sf::Drawable
 	{
+
 		sf::Color m_nodeColor{Config::DEFAULT_NODE_COLOR};
 
 		bool m_updatedGraph = true; // indicates if the graph has been updated with the last events
@@ -30,9 +31,8 @@ namespace graphski
 			m_inEdgeMode = false;
 		}
 
-		// creates a node with empty edges list at given position, returns its unique id
-		// note: blocks Graph::addNode because we cant create a drawable node without position
-		NodeId addNode(sf::Vector2f position, std::string name = "");
+		NodeId addNode(std::string name = "") override;
+		NodeId addNode(sf::Vector2f position, std::string name = ""); 
 
 		// edge mode version
 		void addEdge()
