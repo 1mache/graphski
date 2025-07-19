@@ -16,6 +16,7 @@ namespace graphski
 	{
 		NodeId id;
 		std::string name;
+		NodeId dIn, dOut; // in and out degrees
 	};
 
 	// adjacency list type for peeking into the graph

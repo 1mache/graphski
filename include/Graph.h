@@ -58,12 +58,23 @@ namespace graphski
 		// how many nodes are there
 		NodeId nodeCount() const override { return (NodeId)m_adjList.size(); }
 		// for given node how many edges does it have
-		size_t edgeCount(NodeId id) const override
+		size_t edgeCount() const override 
 		{
-			if(!nodeIdInBounds(id))
-				return 0;
+			size_t count = 0;
+			for (const auto& pair : m_adjList)
+			{
+				count += pair.second.size();
+			}
+			return count;
+		}
 
-			return m_adjList[id].second.size(); 
+		NodePeek peekNode(NodeId id) const override
+		{
+			if (!nodeIdInBounds(id))
+				return { 0, "", 0, 0 };
+
+			const NodeT* node = m_adjList[id].first;
+			return NodePeek(*node);
 		}
 
 		// creates a node with empty edges list, returns its unique idf
@@ -120,7 +131,7 @@ namespace graphski
 				return {};
 
 			std::vector<NodeId> result;
-			result.reserve(edgeCount(id));
+			result.reserve(getNode(id)->getDOut());
 
 			for (const EdgeT* edge : m_adjList[id].second)
 			{
@@ -137,9 +148,8 @@ namespace graphski
 			result.reserve(m_adjList.size());
 			for (const auto& pair : m_adjList)
 			{
-				std::vector<NodeId> neighbors = getNeighbors(pair.first->getId());
-				NodePeek node{ pair.first->getId(), pair.first->getName() };
-				result.push_back({ node, neighbors });
+				NodeT* node = pair.first; 
+				result.push_back({ NodePeek(*node), getNeighbors(node->getId())});
 			}
 			return result;
 		}
@@ -266,23 +276,36 @@ namespace graphski
 			return true;
 		}
 
-		// returns the node pointer by id
-		NodeT* getNode(NodeId id) const
+		// getters and setters for node and edge pointers
+		NodeT* getNode(NodeId id)
 		{
 			if (!nodeIdInBounds(id))
 				return nullptr;
-
 			return m_adjList[id].first;
 		}
 
-		// returns the edge pointer by its id (pair of node id and edge id inside node's edges vector)
-		EdgeT* getEdge(const EdgeId& edgeId) const
+		const NodeT* getNode(NodeId id) const
+		{
+			if (!nodeIdInBounds(id))
+				return nullptr;
+			return m_adjList[id].first;
+		}
+
+		EdgeT* getEdge(const EdgeId& edgeId)
 		{
 			if (!nodeIdInBounds(edgeId.first))
 				return nullptr;
 			if (!nodeIdInBounds(edgeId.second))
 				return nullptr;
+			return m_adjList[edgeId.first].second[edgeId.second];
+		}
 
+		const EdgeT* getEdge(const EdgeId& edgeId) const
+		{
+			if (!nodeIdInBounds(edgeId.first))
+				return nullptr;
+			if (!nodeIdInBounds(edgeId.second))
+				return nullptr;
 			return m_adjList[edgeId.first].second[edgeId.second];
 		}
 
@@ -325,5 +348,4 @@ namespace graphski
 		static constexpr NodeId INIT_NODES = 10;
 		static constexpr const char* FILE_NAME = "graph.json";
 	};
-
 }

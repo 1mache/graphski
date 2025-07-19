@@ -22,10 +22,15 @@ namespace graphski
 			if (name.size() == 0) // if empty string was passed
 				m_name = std::to_string(m_id); //set the name to be the id (as string)
 		}
-
+		
 		bool operator==(const Node& other) const
 		{
 			return other.m_id == m_id;
+		}
+
+		operator NodePeek() const
+		{
+			return NodePeek{ m_id, m_name, m_dIn, m_dOut };
 		}
 
 		// =================Marking===================

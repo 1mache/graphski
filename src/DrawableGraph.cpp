@@ -81,13 +81,13 @@ namespace graphski
 
 	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, NodeId nodeId) const
 	{
-		auto* drawableNode = getNode(nodeId);
+		const auto* drawableNode = getNode(nodeId);
 		target.draw(*drawableNode, states);
 	}
 
 	void DrawableGraph::drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const
 	{
-		auto* drawableEdge = getEdge(edgeId);
+		const auto* drawableEdge = getEdge(edgeId);
 		target.draw(*drawableEdge, states);
 	}
 }

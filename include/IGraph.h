@@ -13,7 +13,9 @@ namespace graphski
 		virtual void makeEmpty() = 0;
 
 		virtual NodeId nodeCount() const = 0;
-		virtual size_t edgeCount(NodeId id) const = 0;
+		virtual size_t edgeCount() const = 0;
+
+		virtual NodePeek peekNode(NodeId id) const = 0;
 
 		virtual NodeId addNode(std::string name = "") = 0;
 		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
