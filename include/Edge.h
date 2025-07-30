@@ -6,11 +6,6 @@ namespace graphski
 	template<typename NodeT>
 	class Edge
 	{
-		NodeT* m_from = nullptr;
-		NodeT* m_to   = nullptr;
-
-		bool m_marked = false;
-		
 	public:
 		// directed by default
 		Edge(NodeT* from, NodeT* to): 
@@ -33,5 +28,11 @@ namespace graphski
 		NodeT* getFrom() const { return m_from;}
 
 		NodeT* getTo() const { return m_to; }
+
+	private:
+		NodeT* m_from = nullptr;
+		NodeT* m_to = nullptr;
+
+		bool m_marked = false;
 	};
 }

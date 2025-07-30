@@ -6,16 +6,6 @@ namespace graphski
 {
 	class Node
 	{
-		// id of the node, should be unique
-		NodeId m_id;
-		// if we want to give our node a name like A,B,C
-		std::string m_name;
-		// is the node marked, used for various algorithms
-		bool m_marked = false;
-
-		// in Degree, out Degree
-		NodeId m_dIn = 0, m_dOut = 0;
-
 	public:
 		explicit Node(NodeId id, std::string name = "") :m_id(id), m_name(name)
 		{
@@ -61,5 +51,16 @@ namespace graphski
 
 		void setName(std::string name) { m_name = name; }
 		// ===============================================
+
+	private:
+		// id of the node, should be unique
+		NodeId m_id;
+		// if we want to give our node a name like A,B,C
+		std::string m_name;
+		// is the node marked, used for various algorithms
+		bool m_marked = false;
+
+		// in Degree, out Degree
+		NodeId m_dIn = 0, m_dOut = 0;
 	};
 }

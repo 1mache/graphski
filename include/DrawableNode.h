@@ -8,19 +8,6 @@ namespace graphski
 {
 	class DrawableNode : public Node, public sf::Drawable, public sf::Transformable
 	{
-		// visual components
-		sf::CircleShape m_circle;
-		sf::Text        m_nameTxt;
-		sf::Color		m_nodeColor;
-
-		// TODO: this assumes theres only one graph
-		// can be changed to be set by specific graph pointer
-		// mark and selection colors are the same across all nodes
-		inline static sf::Color s_markedColor  = Config::MARKED_COLOR;
-		inline static sf::Color s_selectColor  = Config::SELECTED_COLOR;
-		inline static sf::Color s_textColor    = Config::TEXT_COLOR; // color when not selected or marked
-		inline static sf::Color s_outlineColor = Config::IDLE_OUTLINE_COLOR; // color when not selected or marked
-
 	public:
 		DrawableNode(NodeId id, std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
 			Node(id, name),
@@ -73,6 +60,20 @@ namespace graphski
 			m_circle.setOutlineColor(color);
 			m_nameTxt.setFillColor(color);
 		}
+
+	private:
+		// visual components
+		sf::CircleShape m_circle;
+		sf::Text        m_nameTxt;
+		sf::Color		m_nodeColor;
+
+		// TODO: this assumes theres only one graph
+		// can be changed to be set by specific graph pointer
+		// mark and selection colors are the same across all nodes
+		inline static sf::Color s_markedColor = Config::MARKED_COLOR;
+		inline static sf::Color s_selectColor = Config::SELECTED_COLOR;
+		inline static sf::Color s_textColor = Config::TEXT_COLOR; // color when not selected or marked
+		inline static sf::Color s_outlineColor = Config::IDLE_OUTLINE_COLOR; // color when not selected or marked
 
 	public: // constants
 		static constexpr float        NODE_RADIUS = 30.f;

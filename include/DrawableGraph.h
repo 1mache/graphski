@@ -9,17 +9,6 @@ namespace graphski
 {
 	class DrawableGraph : public Graph<DrawableNode, DrawableEdge>, public sf::Drawable
 	{
-
-		sf::Color m_nodeColor{Config::DEFAULT_NODE_COLOR};
-
-		bool m_updatedGraph = true; // indicates if the graph has been updated with the last events
-
-		bool m_inMoveMode = false; // if true, we are moving a node
-		NodeId m_movedId = 0; // id of the node that we're moving
-
-		bool m_inEdgeMode = false; // if we are currently in edge creation mode
-		NodeId m_fromId = 0, m_toId = 0; // ids of nodes used for edge creation
-
 	public:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -139,6 +128,17 @@ namespace graphski
 
 			return node;
 		}
+
+	private:
+		sf::Color m_nodeColor{ Config::DEFAULT_NODE_COLOR };
+
+		bool m_updatedGraph = true; // indicates if the graph has been updated with the last events
+
+		bool m_inMoveMode = false; // if true, we are moving a node
+		NodeId m_movedId = 0; // id of the node that we're moving
+
+		bool m_inEdgeMode = false; // if we are currently in edge creation mode
+		NodeId m_fromId = 0, m_toId = 0; // ids of nodes used for edge creation
 
 	private:
 		// helper fucntion: calculates the difference between two colors

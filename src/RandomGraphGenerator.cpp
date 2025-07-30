@@ -7,7 +7,7 @@ namespace graphski
 		if (type == Distributions::Uniform)
 			m_nodeProbabilities.assign(m_nodeCount, 1.0f / m_nodeCount);
 
-		else if (type == Distributions::iDependent)
+		else if (type == Distributions::IndexDependent)
 		{
 			m_nodeProbabilities.clear();
 			for (NodeId i = 0; i < m_nodeCount; ++i)
@@ -27,10 +27,13 @@ namespace graphski
 		for (NodeId i = 0; i < m_nodeCount; ++i)
 			m_nodes.push_back(m_graph.addNode());
 
+		// from every node
 		for (NodeId j = 0; j < m_nodeCount; ++j)
 		{
+			// to every other node i
 			for (NodeId i = 0; i < m_nodeCount; ++i)
 			{
+				// add an edge with probability m_nodeProbabilities[i]
 				if(distribution(gen) < m_nodeProbabilities[i])
 					m_graph.addEdge(m_nodes[j], m_nodes[i]);
 			}

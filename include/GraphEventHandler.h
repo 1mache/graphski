@@ -6,8 +6,6 @@ namespace graphski
 {
     class GraphEventHandler
     {
-        DrawableGraph& m_graph;
-
     public:
         GraphEventHandler(graphski::DrawableGraph& graph)
             : m_graph(graph)
@@ -30,7 +28,8 @@ namespace graphski
         }
 
     private:
-
+        DrawableGraph& m_graph;
+    private:
         // key constants
         static constexpr sf::Keyboard::Key WRITE_TO_FILE_KEY  = sf::Keyboard::Key::W;
         static constexpr sf::Keyboard::Key LOAD_FROM_FILE_KEY = sf::Keyboard::Key::L;

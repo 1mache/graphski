@@ -12,13 +12,6 @@ namespace graphski
 	template<typename NodeT, typename EdgeT> 
 	class Graph: public IGraph
 	{
-	protected:
-
-		// adjacency list contains pairs node : its edges
-		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
-
-		AdjacencyList m_adjList;
-
 	public:
 		Graph() 
 		{
@@ -341,6 +334,13 @@ namespace graphski
 				delete node;
 			}
 		};
+
+	protected:
+
+		// adjacency list contains pairs node : its edges
+		using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
+
+		AdjacencyList m_adjList;
 
 	private: // constants
 
