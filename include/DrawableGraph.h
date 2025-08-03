@@ -16,8 +16,7 @@ namespace graphski
 		{
 			Graph<DrawableNode, DrawableEdge>::makeEmpty();
 			m_updatedGraph = true;
-			m_inMoveMode = false;
-			m_inEdgeMode = false;
+			m_interactionMode = InteractionMode::None;
 		}
 
 		NodeId addNode(std::string name = "") override;
@@ -26,7 +25,7 @@ namespace graphski
 		// edge mode version
 		void addEdge()
 		{
-			if(!m_inEdgeMode)
+			if(m_interactionMode != InteractionMode::Edge)
 			{
 				std::cout << "Cannot add edge, not in edge mode" << std::endl;
 				return;
@@ -71,8 +70,14 @@ namespace graphski
 		bool isGraphUpdated() const { return m_updatedGraph; }
 		void setGraphNotUpdated() { m_updatedGraph = false; }
 
-		bool inMoveMode() const { return m_inMoveMode; }
-		void setMoveMode(bool val) { m_inMoveMode = val;}
+		bool inMoveMode() const 
+		{ return m_interactionMode == InteractionMode::Move; }
+
+		void setMoveMode(bool val) 
+		{
+			if(val) m_interactionMode = InteractionMode::Move;
+			else m_interactionMode = InteractionMode::None;
+		}
 
 		NodeId getMovedId() const { return m_movedId; }
 		void setMovedId(NodeId id) 
@@ -81,8 +86,13 @@ namespace graphski
 				m_movedId = id; 
 		}
 
-		bool inEdgeMode() const { return m_inEdgeMode; }
-		void setEdgeMode(bool val) { m_inEdgeMode = val; }
+		bool inEdgeMode() const { return m_interactionMode == InteractionMode::Edge; }
+		void setEdgeMode(bool val) 
+		{
+			if (val) m_interactionMode = InteractionMode::Edge;
+			else m_interactionMode = InteractionMode::Edge;
+		}
+
 
 		void setEdgeFromId(NodeId id)
 		{
@@ -132,14 +142,21 @@ namespace graphski
 		}
 
 	private:
+		enum class InteractionMode
+		{
+			None,
+			Move, // moving a node
+			Edge // creating an edge
+		};
+
 		sf::Color m_nodeColor{ Config::DEFAULT_NODE_COLOR };
 
 		bool m_updatedGraph = true; // indicates if the graph has been updated with the last events
 
-		bool m_inMoveMode = false; // if true, we are moving a node
-		NodeId m_movedId = 0; // id of the node that we're moving
+		InteractionMode m_interactionMode = InteractionMode::None; // current interaction mode
 
-		bool m_inEdgeMode = false; // if we are currently in edge creation mode
+		NodeId m_movedId  = 0; // id of the node that we're moving
+
 		NodeId m_fromId = 0, m_toId = 0; // ids of nodes used for edge creation
 
 	private:

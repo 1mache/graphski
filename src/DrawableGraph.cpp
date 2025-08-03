@@ -17,14 +17,14 @@ namespace graphski
 		// draw all the unmoved nodes
 		for (NodeId i = 0; i < m_adjList.size(); i++)
 		{
-			if (m_inMoveMode && i == m_movedId)
+			if ((m_interactionMode == InteractionMode::Move) && i == m_movedId)
 				continue; // skip the moved node
 
 			drawNode(target, states ,i);
 		}
 		
 		// draw the moved node last
-		if(m_inMoveMode)
+		if((m_interactionMode == InteractionMode::Move))
 			drawNode(target, states, m_movedId);
 	}
 
