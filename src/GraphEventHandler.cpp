@@ -1,4 +1,6 @@
 #include "GraphEventHandler.h"
+#include "GraphEventHandler.h"
+#include "GraphEventHandler.h"
 namespace graphski
 {
     void GraphEventHandler::processEvent(const std::optional<sf::Event>& event)
@@ -28,15 +30,27 @@ namespace graphski
 			// is there a node where we clicked?
             std::optional<NodeId> id = m_graph.posInNode(position);
 
-            if (id.has_value())
+            if (!id.has_value())
             {
-                m_graph.setMoveMode(true);
-                m_graph.setMovedId(id.value()); // remember the moved node`s index
-                m_graph.markNode(id.value());
+                m_graph.addNode(position);
+                return;
             }
 
-            if (!m_graph.inMoveMode())
-                m_graph.addNode(position);
+            // double click logic
+            auto timeSinceLastClick = m_clickClock.getElapsedTime() - m_lastClick;
+            if (isDoubleClick(timeSinceLastClick))
+            {
+                handleNodeDoubleClick(id.value());
+                // restart clock and lastClick
+                m_clickClock.restart();
+                m_lastClick = sf::milliseconds(0);
+            }
+            else m_lastClick = m_clickClock.getElapsedTime();
+
+            // moveMode
+            m_graph.setMoveMode(true);
+            m_graph.setMovedId(id.value()); // remember the moved node`s index
+            m_graph.markNode(id.value());
         }
 
         if (event.button == sf::Mouse::Button::Right)
@@ -61,6 +75,11 @@ namespace graphski
                 }
             }
         }
+    }
+
+    void GraphEventHandler::handleNodeDoubleClick(NodeId nodeId)
+    {
+        std::cout << "I am double clicking it" << '\n';
     }
 
     void GraphEventHandler::handleMouseButtonReleased(const sf::Event::MouseButtonReleased& event)
