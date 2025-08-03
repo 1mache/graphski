@@ -31,7 +31,7 @@ namespace graphski
 
 	private:
 		NodeT* m_from = nullptr;
-		NodeT* m_to = nullptr;
+		NodeT* m_to   = nullptr;
 
 		bool m_marked = false;
 	};

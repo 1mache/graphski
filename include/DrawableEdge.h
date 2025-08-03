@@ -17,8 +17,8 @@ namespace graphski
 
 	private:
 		// mark and selection colors are the same across all nodes
-		inline static sf::Color s_idleColor = Config::IDLE_OUTLINE_COLOR;
-		inline static sf::Color s_markedColor = Config::MARKED_COLOR;
+		inline static sf::Color s_idleColor     = Config::IDLE_OUTLINE_COLOR;
+		inline static sf::Color s_markedColor   = Config::MARKED_COLOR;
 		inline static sf::Color s_selectedColor = Config::SELECTED_COLOR;
 
 		// cached arrow component. needs to be changed in draw function which is const, 

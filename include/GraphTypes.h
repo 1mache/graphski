@@ -14,9 +14,9 @@ namespace graphski
 
 	struct NodePeek
 	{
-		NodeId id;
+		NodeId		id;
 		std::string name;
-		NodeId dIn, dOut; // in and out degrees
+		NodeId		dIn, dOut; // in and out degrees
 	};
 
 	// adjacency list type for peeking into the graph

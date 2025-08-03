@@ -54,13 +54,14 @@ namespace graphski
 
 	private:
 		// id of the node, should be unique
-		NodeId m_id;
+		NodeId		m_id;
 		// if we want to give our node a name like A,B,C
 		std::string m_name;
 		// is the node marked, used for various algorithms
-		bool m_marked = false;
+		bool		m_marked = false;
 
 		// in Degree, out Degree
-		NodeId m_dIn = 0, m_dOut = 0;
+		NodeId		m_dIn = 0, 
+					m_dOut = 0;
 	};
 }

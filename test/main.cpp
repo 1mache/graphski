@@ -21,7 +21,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     graphski::DrawableGraph graph;
-	graphski::GraphEventHandler eventHandler(graph);
+	graphski::GraphEventHandler graphEvents(graph);
 
 	NodeId nodeCount = 16; // number of nodes in the graph
 	graphski::RandomGraphGenerator generator(graph, nodeCount);
@@ -36,7 +36,7 @@ int main()
             if (event->is<sf::Event::Closed>())
                 window.close();
 
-            eventHandler.processEvent(event);
+            graphEvents.processEvent(event);
         }
 
         if(graph.isGraphUpdated())

@@ -53,9 +53,9 @@ namespace graphski
 		sf::Vector2f m_selfArrowOffset{ 0.f, 0.f };
 
 	private:
-		static constexpr float	   HAIR_LEN  = 20.f;
-		static constexpr sf::Angle HAIR_ANGLE = sf::degrees(30);
+		static constexpr float	      HAIR_LEN  = 20.f;
+		static constexpr sf::Angle    HAIR_ANGLE = sf::degrees(30);
+		static constexpr sf::Vector2  SELF_ARROW_OFFSET_DIR{-1, 1};
 		static constexpr unsigned int CIRCLE_RES = 15u;
-		static constexpr sf::Vector2 SELF_ARROW_OFFSET_DIR{-1, 1};
 	};
 }

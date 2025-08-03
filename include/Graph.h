@@ -73,6 +73,8 @@ namespace graphski
 
         static constexpr NodeId MAX_NODES = std::numeric_limits<NodeId>::max();
         static constexpr NodeId INIT_NODES = 10;
+		
+        // TODO: make this dynamic
         static constexpr const char* FILE_NAME = "graph.json";
     };
 
