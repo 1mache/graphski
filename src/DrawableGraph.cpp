@@ -64,6 +64,36 @@ namespace graphski
 		return std::nullopt;
 	}
 
+	void DrawableGraph::distributePoints()
+	{
+		size_t nodeNum = nodeCount();
+
+		const float w = float(Config::WINDOW_WIDTH);
+		const float h = float(Config::WINDOW_HEIGHT);
+
+		// Calculate grid size (columns and rows)
+		size_t cols = std::ceil(std::sqrt(nodeNum * w / h));
+		size_t rows = std::ceil(float(nodeNum) / cols);
+
+		// Calculate spacing
+		float dx = w / (cols + 1);
+		float dy = h / (rows + 1);
+
+		// Place points in the grid, center them by offsetting from the borders
+		int count = 0;
+		for (size_t row = 1; row <= rows && count < nodeNum; ++row)
+		{
+			for (size_t col = 1; col <= cols && count < nodeNum; ++col)
+			{
+				float x = col * dx;
+				float y = row * dy;
+
+				setNodePosition(m_adjList[count].first->getId(), {x, y});
+				++count;
+			}
+		}
+	}
+
 	sf::Color DrawableGraph::getNodeColor() const
 	{
 		sf::Color nodeColor = m_nodeColor; // default color

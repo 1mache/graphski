@@ -65,6 +65,8 @@ namespace graphski
 			}
 		}
 
+		void distributePoints();
+
 		// ================= State management ==================
 		bool isGraphUpdated() const { return m_updatedGraph; }
 		void setGraphNotUpdated() { m_updatedGraph = false; }
