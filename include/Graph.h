@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+
 #include "json.hpp"
 #include "IGraph.h"
 
@@ -13,9 +14,17 @@ namespace graphski
 	class Graph: public IGraph
 	{
 	public:
-		Graph() 
+		Graph(size_t reserveCount = 0)
 		{
-			m_adjList.reserve(INIT_NODES);
+			if (reserveCount > size_t(MAX_NODES))
+			{
+				std::cout << "Too much nodes requested, max is " << MAX_NODES << '\n';
+				reserveCount = size_t(INIT_NODES);
+			}
+			else if (reserveCount == 0)
+				reserveCount = size_t(INIT_NODES);
+
+			m_adjList.reserve(reserveCount);
 		}
 
 		Graph(Graph&) = delete;
