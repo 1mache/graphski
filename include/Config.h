@@ -17,6 +17,6 @@ public:
 	static constexpr sf::Color DEFAULT_NODE_COLOR{ 0xFFB200FF };
 	static constexpr sf::Color IDLE_OUTLINE_COLOR{ sf::Color::White };
 	static constexpr sf::Color MARKED_COLOR{ 0xD91656FF };
-	static constexpr sf::Color SELECTED_COLOR{ 0xD91656FF };
+	static constexpr sf::Color SELECTED_COLOR{ 0x1656D9FF };
 	static constexpr sf::Color TEXT_COLOR{ sf::Color::White };
 };

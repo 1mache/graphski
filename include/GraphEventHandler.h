@@ -11,6 +11,7 @@ namespace graphski
             : m_graph(graph)
         {
             m_clickClock.start();
+            m_selectedNodes.reserve(graph.nodeCount());
         }
 		GraphEventHandler(const GraphEventHandler&) = delete;
 		GraphEventHandler& operator=(const GraphEventHandler&) = delete;   
@@ -34,8 +35,9 @@ namespace graphski
         DrawableGraph& m_graph;
             
         sf::Clock m_clickClock;
-        sf::Time  m_lastClick = sf::microseconds(0);
-
+        sf::Time  m_lastClick = sf::milliseconds(0);
+        
+        std::vector<NodeId> m_selectedNodes;
     private:
         // key constants
         static constexpr sf::Keyboard::Key WRITE_TO_FILE_KEY  = sf::Keyboard::Key::W;

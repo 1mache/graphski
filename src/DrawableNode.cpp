@@ -8,15 +8,20 @@ namespace graphski
 		if (val)
 			highlight(s_markedColor);
 		else
-			highlight(s_outlineColor);
+			if(m_selected)
+				highlight(s_selectColor);
+			else
+				highlight(s_outlineColor);
 	}
 
-	void DrawableNode::select(bool val)
+	void DrawableNode::toggleSelect()
 	{
-		if (val)
-			highlight(s_selectColor);
-		else
+		if (m_selected)
 			highlight(s_outlineColor);
+		else
+			highlight(s_selectColor);
+
+		m_selected = !m_selected;
 	}
 
 	void DrawableNode::initCircleComponent()

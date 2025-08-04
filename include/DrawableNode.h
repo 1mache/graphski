@@ -32,8 +32,8 @@ namespace graphski
 
 		// when the node is marked 
 		void mark(bool val = true) override;
-		// when the node is selected (selected on screen by user)
-		void select(bool val = true);
+		// when the node is selected or unselected (on screen by user)
+		void toggleSelect();
 		
 		// returns bounds of the object based on bounds of circle
 		sf::FloatRect getGlobalBounds()
@@ -66,6 +66,8 @@ namespace graphski
 		sf::CircleShape m_circle;
 		sf::Text        m_nameTxt;
 		sf::Color		m_nodeColor;
+
+		bool m_selected = false; // is the node selected by user
 
 		// Note: this assumes theres only one graph
 		// can be changed to be set by specific graph pointer

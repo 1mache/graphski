@@ -45,6 +45,12 @@ namespace graphski
 			m_updatedGraph = true;
 		}
 
+		void toggleSelectNode(NodeId id)
+		{
+			getNode(id)->toggleSelect();
+			m_updatedGraph = true;
+		}
+
 		void transpose() override
 		{
 			Graph<DrawableNode, DrawableEdge>::transpose();

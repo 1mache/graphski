@@ -1,6 +1,5 @@
 #include "GraphEventHandler.h"
-#include "GraphEventHandler.h"
-#include "GraphEventHandler.h"
+
 namespace graphski
 {
     void GraphEventHandler::processEvent(const std::optional<sf::Event>& event)
@@ -21,7 +20,7 @@ namespace graphski
             handleKeyPressed(*key);
     }
 
-    void graphski::GraphEventHandler::handleMouseButtonPressed(const sf::Event::MouseButtonPressed& event)
+    void GraphEventHandler::handleMouseButtonPressed(const sf::Event::MouseButtonPressed& event)
     {
         if (event.button == sf::Mouse::Button::Left)
         {
@@ -41,9 +40,10 @@ namespace graphski
             if (isDoubleClick(timeSinceLastClick))
             {
                 handleNodeDoubleClick(id.value());
-                // restart clock and lastClick
+                // restart clock and reset lastClick
                 m_clickClock.restart();
                 m_lastClick = sf::milliseconds(0);
+                return;
             }
             else m_lastClick = m_clickClock.getElapsedTime();
 
@@ -79,7 +79,11 @@ namespace graphski
 
     void GraphEventHandler::handleNodeDoubleClick(NodeId nodeId)
     {
-        std::cout << "I am double clicking it" << '\n';
+		std::cout << "Node " << nodeId << " double clicked.\n";
+
+        m_graph.toggleSelectNode(nodeId);
+		// TODO: node can be pushed multiple times, should check for duplicates?
+		m_selectedNodes.push_back(nodeId);
     }
 
     void GraphEventHandler::handleMouseButtonReleased(const sf::Event::MouseButtonReleased& event)
