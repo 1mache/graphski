@@ -82,8 +82,6 @@ namespace graphski
 		std::cout << "Node " << nodeId << " double clicked.\n";
 
         m_graph.toggleSelectNode(nodeId);
-		// TODO: node can be pushed multiple times, should check for duplicates?
-		m_selectedNodes.push_back(nodeId);
     }
 
     void GraphEventHandler::handleMouseButtonReleased(const sf::Event::MouseButtonReleased& event)

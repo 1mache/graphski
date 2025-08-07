@@ -178,7 +178,7 @@ namespace graphski
         {
             std::cerr << "Error: trying to add edge between non-existing nodes: "
                 << (int)fromNodeId << " and " << (int)toNodeId << std::endl;
-            return;
+			throw std::invalid_argument("Invalid node id(s) provided for edge creation.");
         }
 
         // check if edge already exists

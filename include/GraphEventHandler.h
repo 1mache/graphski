@@ -11,7 +11,6 @@ namespace graphski
             : m_graph(graph)
         {
             m_clickClock.start();
-            m_selectedNodes.reserve(graph.nodeCount());
         }
 		GraphEventHandler(const GraphEventHandler&) = delete;
 		GraphEventHandler& operator=(const GraphEventHandler&) = delete;   
@@ -33,11 +32,12 @@ namespace graphski
 
     private:
         DrawableGraph& m_graph;
-            
+        
+		// clock for double click detection
         sf::Clock m_clickClock;
+		// when was the last click
         sf::Time  m_lastClick = sf::milliseconds(0);
         
-        std::vector<NodeId> m_selectedNodes;
     private:
         // key constants
         static constexpr sf::Keyboard::Key WRITE_TO_FILE_KEY  = sf::Keyboard::Key::W;

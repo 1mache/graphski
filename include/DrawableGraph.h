@@ -10,6 +10,12 @@ namespace graphski
 	class DrawableGraph : public Graph<DrawableNode, DrawableEdge>, public sf::Drawable
 	{
 	public:
+		DrawableGraph(size_t reserveCount = 0) :
+			Graph<DrawableNode, DrawableEdge>(reserveCount)
+		{
+			m_selectedNodes.reserve(reserveCount);
+		}
+
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 		void makeEmpty() override
@@ -17,9 +23,21 @@ namespace graphski
 			Graph<DrawableNode, DrawableEdge>::makeEmpty();
 			m_updatedGraph = true;
 			m_interactionMode = InteractionMode::None;
+
+			m_selectedNodes.clear();
+			m_selectedNodes.reserve(nodeCount());
 		}
 
-		NodeId addNode(std::string name = "") override;
+		NodeId addNode(std::string name = "") override
+		{
+			NodeId id = Graph<DrawableNode, DrawableEdge>::addNode(name);
+			m_adjList[id].first->setColor(getNodeColor()); // set color for the new node
+
+			m_selectedNodes.push_back(false);
+
+			m_updatedGraph = true;
+			return id;
+		}
 		NodeId addNode(sf::Vector2f position, std::string name = ""); 
 
 		// edge mode version
@@ -45,11 +63,7 @@ namespace graphski
 			m_updatedGraph = true;
 		}
 
-		void toggleSelectNode(NodeId id)
-		{
-			getNode(id)->toggleSelect();
-			m_updatedGraph = true;
-		}
+		void toggleSelectNode(NodeId id);
 
 		void transpose() override
 		{
@@ -160,11 +174,10 @@ namespace graphski
 		bool m_updatedGraph = true; // indicates if the graph has been updated with the last events
 
 		InteractionMode m_interactionMode = InteractionMode::None; // current interaction mode
+		NodeId			m_movedId  = 0; // id of the node that we're moving
+		NodeId			m_fromId = 0, m_toId = 0; // ids of nodes used for edge creation
 
-		NodeId m_movedId  = 0; // id of the node that we're moving
-
-		NodeId m_fromId = 0, m_toId = 0; // ids of nodes used for edge creation
-
+		std::vector<bool> m_selectedNodes; // bool at index i indicates if the node with id i is selected 
 	private:
 		// helper fucntion: calculates the difference between two colors
 		constexpr uint32_t colorDifference(const sf::Color& a, const sf::Color& b) const
