@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 #include "json.hpp"
 #include "IGraph.h"
@@ -45,6 +46,8 @@ namespace graphski
         virtual NodeId addNode(std::string name = "") override; 
         // creates an edge between to given nodes, gets them by ids
         virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) override; 
+		// deletes an edge between two nodes, gets them by ids
+		virtual void deleteEdge(NodeId fromNodeId, NodeId toNodeId);
         // marks the node of given id
         virtual void markNode(NodeId id, bool val = true) override; 
         // gets an array of neighbor ids for the given node id
@@ -64,6 +67,7 @@ namespace graphski
         const NodeT* getNode(NodeId id) const; // const version
         EdgeT* getEdge(const EdgeLocator& edgeId);
         const EdgeT* getEdge(const EdgeLocator& edgeId) const; // const version
+
         // returns the json representation of the node, used in saveToFile
         virtual nlohmann::json serializeNode(const NodeT* node) const; 
         // creates and returns a new node given json representation of it, used in loadFromFile
@@ -188,10 +192,7 @@ namespace graphski
         for (const EdgeT* edge : m_adjList[fromNodeId].second)
         {
             if (edge->getTo()->getId() == toNodeId)
-            {
-                // TODO: remove edge
-                return; 
-            }
+				return; // edge already exists, do not add it again
         }
 
         EdgeT* newEdge = new EdgeT(fromPtr, toPtr);
@@ -201,6 +202,32 @@ namespace graphski
         toPtr->setDIn(toPtr->getDIn() + 1);
 
         m_adjList[fromNodeId].second.push_back(newEdge);
+    }
+
+    template<typename NodeT, typename EdgeT>
+    void Graph<NodeT, EdgeT>::deleteEdge(NodeId fromNodeId, NodeId toNodeId)
+    {
+        NodeT* fromPtr = getNode(fromNodeId),
+            * toPtr = getNode(toNodeId);
+
+        if (!fromPtr || !toPtr)
+        {
+            std::cerr << "Error: trying to add edge between non-existing nodes: "
+                << (int)fromNodeId << " and " << (int)toNodeId << std::endl;
+            throw std::invalid_argument("Invalid node id(s) provided for edge creation.");
+        }
+
+		auto& edges = m_adjList[fromNodeId].second;
+        auto it = std::find_if(edges.begin(),edges.end(),
+            [&](EdgeT* edge) { return edge->getTo()->getId() == toNodeId; });
+
+        if(it == edges.end())
+            return; // edge does not exist, nothing to delete
+
+		edges.erase(it);
+        fromPtr->setDOut(fromPtr->getDOut() - 1);
+		toPtr->setDIn(toPtr->getDIn() - 1);
+	
     }
 
     template<typename NodeT, typename EdgeT>
