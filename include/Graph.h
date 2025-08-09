@@ -46,8 +46,8 @@ namespace graphski
         virtual NodeId addNode(std::string name = "") override; 
         // creates an edge between to given nodes, gets them by ids
         virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) override; 
-		// deletes an edge between two nodes, gets them by ids
-		virtual void deleteEdge(NodeId fromNodeId, NodeId toNodeId);
+		// deletes an edge between two nodes, gets them by ids. returns true if successful
+		virtual bool deleteEdge(NodeId fromNodeId, NodeId toNodeId);
         // marks the node of given id
         virtual void markNode(NodeId id, bool val = true) override; 
         // gets an array of neighbor ids for the given node id
@@ -205,7 +205,7 @@ namespace graphski
     }
 
     template<typename NodeT, typename EdgeT>
-    void Graph<NodeT, EdgeT>::deleteEdge(NodeId fromNodeId, NodeId toNodeId)
+    bool Graph<NodeT, EdgeT>::deleteEdge(NodeId fromNodeId, NodeId toNodeId)
     {
         NodeT* fromPtr = getNode(fromNodeId),
             * toPtr = getNode(toNodeId);
@@ -222,12 +222,13 @@ namespace graphski
             [&](EdgeT* edge) { return edge->getTo()->getId() == toNodeId; });
 
         if(it == edges.end())
-            return; // edge does not exist, nothing to delete
+            return false; // edge does not exist, nothing to delete
 
 		edges.erase(it);
         fromPtr->setDOut(fromPtr->getDOut() - 1);
 		toPtr->setDIn(toPtr->getDIn() - 1);
-	
+
+		return true; // edge was successfully deleted
     }
 
     template<typename NodeT, typename EdgeT>

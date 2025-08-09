@@ -27,7 +27,7 @@ int main()
 	graphski::RandomGraphGenerator generator(graph, nodeCount);
 	generator.setProbabilities(graphski::RandomGraphGenerator::Distributions::IndexDependent);
     generator.generate();
-    graph.distributePoints();
+    graph.arrangeNodesEvenly();
 
     while (window.isOpen())
     {

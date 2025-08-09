@@ -48,19 +48,13 @@ namespace graphski
 			return id;
 		}
 
-		// edge mode version
-		void addEdge();
+		// override: deletes edge if it already exists
+		void addEdge(NodeId fromNodeId, NodeId toNodeId) override;
 
-		void addEdge(NodeId fromNodeId, NodeId toNodeId) override
+		bool deleteEdge(NodeId fromNodeId, NodeId toNodeId) override
 		{
-			Graph<DrawableNode, DrawableEdge>::addEdge(fromNodeId, toNodeId);
 			m_updatedGraph = true;
-		}
-
-		void deleteEdge(NodeId fromNodeId, NodeId toNodeId) override
-		{
-			Graph<DrawableNode, DrawableEdge>::deleteEdge(fromNodeId, toNodeId);
-			m_updatedGraph = true;
+			return Graph<DrawableNode, DrawableEdge>::deleteEdge(fromNodeId, toNodeId);
 		}
 		
 		void markNode(NodeId id, bool val = true) override
@@ -90,7 +84,11 @@ namespace graphski
 			}
 		}
 
-		void distributePoints();
+		// a node was selected to be source or destination for an edge
+		void selectNodeForNewEdge(NodeId id);
+
+		// evenly distributes nodes on screen
+		void arrangeNodesEvenly();
 
 		// ================= State management ==================
 		bool isGraphUpdated() const { return m_updatedGraph; }
@@ -110,26 +108,6 @@ namespace graphski
 		{
 			if (nodeIdInBounds(id))
 				m_movedId = id; 
-		}
-
-		bool inEdgeMode() const { return m_interactionMode == InteractionMode::Edge; }
-		void setEdgeMode(bool val) 
-		{
-			if (val) m_interactionMode = InteractionMode::Edge;
-			else m_interactionMode = InteractionMode::None;
-		}
-
-
-		void setEdgeFromId(NodeId id)
-		{
-			if (nodeIdInBounds(id))
-				m_fromId = id;
-		}
-
-		void setEdgeToId(NodeId id)
-		{
-			if (nodeIdInBounds(id))
-				m_toId = id;
 		}
 
 		void loadFromFile() override

@@ -35,20 +35,7 @@ namespace graphski
         std::optional<NodeId> id = m_graph.posInNode(position);
 
         if (id.has_value())
-        {
-            if (m_graph.inEdgeMode())
-            {
-                m_graph.setEdgeToId(id.value());
-                m_graph.addEdge();
-                // done with constructing this edge
-                m_graph.setEdgeMode(false);
-            }
-            else
-            {
-                m_graph.setEdgeMode(true);
-                m_graph.setEdgeFromId(id.value());
-            }
-        }
+			m_graph.selectNodeForNewEdge(id.value());
     }
 
     void GraphEventHandler::handleLMBPressed(sf::Vector2f& position)

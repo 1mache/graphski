@@ -27,21 +27,14 @@ namespace graphski
 			drawNode(target, states, m_movedId);
 	}
 
-	void DrawableGraph::addEdge()
+	void DrawableGraph::addEdge(NodeId fromNodeId, NodeId toNodeId)
 	{
-		if (m_interactionMode != InteractionMode::Edge)
-		{
-			std::cout << "Cannot add edge, not in edge mode" << std::endl;
-			return;
-		}
+		// if edge exists delete it.
+		bool deleteStatus = deleteEdge(m_fromId, m_toId);
+		if(!deleteStatus) // otherwise create it
+			Graph<DrawableNode, DrawableEdge>::addEdge(fromNodeId, toNodeId);
 
-		auto neighbors = getNeighbors(m_fromId);
-		auto it = std::find(neighbors.begin(), neighbors.end(), m_toId);
-		// edge already exists
-		if (it != neighbors.end())
-			deleteEdge(m_fromId, m_toId);
-		else
-			addEdge(m_fromId, m_toId);
+		m_updatedGraph = true;
 	}
 
 	void DrawableGraph::toggleSelectNode(NodeId id)
@@ -70,7 +63,23 @@ namespace graphski
 		return std::nullopt;
 	}
 
-	void DrawableGraph::distributePoints()
+	void DrawableGraph::selectNodeForNewEdge(NodeId id)
+	{
+		if (m_interactionMode == InteractionMode::Edge)
+		{
+			m_toId = id;
+			addEdge(m_fromId, m_toId);
+			// done with constructing this edge
+			m_interactionMode = InteractionMode::None;
+		}
+		else
+		{
+			m_fromId = id;
+			m_interactionMode = InteractionMode::Edge;
+		}
+	}
+
+	void DrawableGraph::arrangeNodesEvenly()
 	{
 		size_t nodeNum = nodeCount();
 
