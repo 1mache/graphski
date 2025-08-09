@@ -1,4 +1,6 @@
 #pragma once
+#include <algorithm>
+
 #include "Graph.h"
 #include "SFML/Graphics.hpp"
 #include "Utils.h"
@@ -47,19 +49,17 @@ namespace graphski
 		}
 
 		// edge mode version
-		void addEdge()
-		{
-			if(m_interactionMode != InteractionMode::Edge)
-			{
-				std::cout << "Cannot add edge, not in edge mode" << std::endl;
-				return;
-			}
-			addEdge(m_fromId, m_toId);
-		}
+		void addEdge();
 
 		void addEdge(NodeId fromNodeId, NodeId toNodeId) override
 		{
 			Graph<DrawableNode, DrawableEdge>::addEdge(fromNodeId, toNodeId);
+			m_updatedGraph = true;
+		}
+
+		void deleteEdge(NodeId fromNodeId, NodeId toNodeId) override
+		{
+			Graph<DrawableNode, DrawableEdge>::deleteEdge(fromNodeId, toNodeId);
 			m_updatedGraph = true;
 		}
 		
@@ -116,7 +116,7 @@ namespace graphski
 		void setEdgeMode(bool val) 
 		{
 			if (val) m_interactionMode = InteractionMode::Edge;
-			else m_interactionMode = InteractionMode::Edge;
+			else m_interactionMode = InteractionMode::None;
 		}
 
 

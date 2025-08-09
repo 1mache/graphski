@@ -9,7 +9,6 @@ namespace graphski
 		// draw all the edges first
 		for (NodeId i = 0; i < m_adjList.size(); i++)
 		{
-			// draw all the edges
 			for (NodeId j = 0; j < m_adjList[i].second.size(); j++)
 				drawEdge(target, states, EdgeLocator(i,j));
 		}
@@ -26,6 +25,23 @@ namespace graphski
 		// draw the moved node last
 		if((m_interactionMode == InteractionMode::Move))
 			drawNode(target, states, m_movedId);
+	}
+
+	void DrawableGraph::addEdge()
+	{
+		if (m_interactionMode != InteractionMode::Edge)
+		{
+			std::cout << "Cannot add edge, not in edge mode" << std::endl;
+			return;
+		}
+
+		auto neighbors = getNeighbors(m_fromId);
+		auto it = std::find(neighbors.begin(), neighbors.end(), m_toId);
+		// edge already exists
+		if (it != neighbors.end())
+			deleteEdge(m_fromId, m_toId);
+		else
+			addEdge(m_fromId, m_toId);
 	}
 
 	void DrawableGraph::toggleSelectNode(NodeId id)
