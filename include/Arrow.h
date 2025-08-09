@@ -21,10 +21,8 @@ namespace graphski
 		void setSelfArrowRadius(float radius) 
 		{
 			if (radius < 0.f)
-			{
-				std::cerr << "Error: self arrow radius cannot be negative" << std::endl;
-				return;
-			}
+				throw std::invalid_argument("Self arrow radius cannot be negative");
+
 			m_selfArrowRadius = radius; 
 		}
 

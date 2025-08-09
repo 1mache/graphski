@@ -33,12 +33,18 @@ namespace graphski
 			NodeId id = Graph<DrawableNode, DrawableEdge>::addNode(name);
 			m_adjList[id].first->setColor(getNodeColor()); // set color for the new node
 
-			m_selectedNodes.push_back(false);
+			m_selectedNodes.push_back(false); // extend the selected nodes vector
 
 			m_updatedGraph = true;
 			return id;
 		}
-		NodeId addNode(sf::Vector2f position, std::string name = ""); 
+
+		NodeId addNode(sf::Vector2f position, std::string name = "")
+		{
+			NodeId id = addNode(name);
+			setNodePosition(id, position); // set the position of the new node
+			return id;
+		}
 
 		// edge mode version
 		void addEdge()

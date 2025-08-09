@@ -28,25 +28,14 @@ namespace graphski
 			drawNode(target, states, m_movedId);
 	}
 
-	NodeId DrawableGraph::addNode(sf::Vector2f position, std::string name)
-	{
-		NodeId id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
-		// push back new node with empty edges list
-
-		auto* newNode = new DrawableNode(id, name, getNodeColor());
-		newNode->setPosition(position);
-		m_adjList.push_back({newNode , {} });
-
-		m_updatedGraph = true;
-		return id;
-	}
-
 	void DrawableGraph::toggleSelectNode(NodeId id)
 	{
-		getNode(id)->toggleSelect();
+		auto* node = getNode(id);
+		if(node) node->toggleSelect();
 
-		if (id >= m_selectedNodes.size())
+		if (id >= m_selectedNodes.size()) // should never happen
 			throw std::out_of_range("Node id out of bounds in selected nodes vector");
+
 		m_selectedNodes[id] = !m_selectedNodes[id]; // toggle selection state
 
 		m_updatedGraph = true;

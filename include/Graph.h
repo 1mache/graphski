@@ -159,10 +159,7 @@ namespace graphski
         NodeId id = nodeCount(); // TODO: this wont work if nodes can be deleted (ok for now)
 
         if (id >= MAX_NODES)
-        {
-            std::cerr << "Error: maximum number of nodes reached: " << MAX_NODES << std::endl;
-            return MAX_NODES; // or throw an exception
-		}
+			throw std::overflow_error("Maximum number of nodes exceeded");
 
         m_adjList.push_back({ new NodeT(id, name), {} });
         return id;
@@ -186,9 +183,8 @@ namespace graphski
         {
             if (edge->getTo()->getId() == toNodeId)
             {
-                std::cerr << "Error: trying to add an edge that already exists between nodes: "
-                    << (int)fromNodeId << " and " << (int)toNodeId << std::endl;
-                return;
+                // TODO: remove edge
+                return; 
             }
         }
 
@@ -204,7 +200,9 @@ namespace graphski
     template<typename NodeT, typename EdgeT>
     void Graph<NodeT, EdgeT>::markNode(NodeId id, bool val)
     {
-        getNode(id)->mark(val);
+        auto* node = getNode(id);
+		if (node)
+            node->mark(val);
     }
 
     template<typename NodeT, typename EdgeT>
@@ -214,7 +212,12 @@ namespace graphski
             return {};
 
         std::vector<NodeId> result;
-        result.reserve(getNode(id)->getDOut());
+
+		auto* node = getNode(id);
+        if(!node)
+			throw std::invalid_argument("Node with given id does not exist.");
+
+        result.reserve(node->getDOut());
 
         for (const EdgeT* edge : m_adjList[id].second)
         {
