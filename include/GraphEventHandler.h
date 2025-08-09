@@ -19,6 +19,8 @@ namespace graphski
     
     private:
         void handleMouseButtonPressed(const sf::Event::MouseButtonPressed& event);
+        void handleRMBPressed(sf::Vector2f& position);
+		void handleLMBPressed(sf::Vector2f& position);
         void handleNodeDoubleClick(NodeId nodeId);
         void handleMouseButtonReleased(const sf::Event::MouseButtonReleased& event);
         void handleMouseMoved(const sf::Event::MouseMoved& event);

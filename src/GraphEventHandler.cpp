@@ -22,59 +22,62 @@ namespace graphski
 
     void GraphEventHandler::handleMouseButtonPressed(const sf::Event::MouseButtonPressed& event)
     {
+        sf::Vector2f position(event.position);
         if (event.button == sf::Mouse::Button::Left)
-        {
-            sf::Vector2f position(event.position);
-
-			// is there a node where we clicked?
-            std::optional<NodeId> id = m_graph.posInNode(position);
-
-            if (!id.has_value())
-            {
-                m_graph.addNode(position);
-                return;
-            }
-
-            // double click logic
-            auto timeSinceLastClick = m_clickClock.getElapsedTime() - m_lastClick;
-            if (isDoubleClick(timeSinceLastClick))
-            {
-                handleNodeDoubleClick(id.value());
-                // restart clock and reset lastClick
-                m_clickClock.restart();
-                m_lastClick = sf::milliseconds(0);
-                return;
-            }
-            else m_lastClick = m_clickClock.getElapsedTime();
-
-            // moveMode
-            m_graph.setMoveMode(true);
-            m_graph.setMovedId(id.value()); // remember the moved node`s index
-            m_graph.markNode(id.value());
-        }
+			handleLMBPressed(position);
 
         if (event.button == sf::Mouse::Button::Right)
-        {
-            sf::Vector2f position(event.position);
+			handleRMBPressed(position);
+    }
 
-            std::optional<NodeId> id = m_graph.posInNode(position);
-            
-            if (id.has_value())
+    void GraphEventHandler::handleRMBPressed(sf::Vector2f& position)
+    {
+        std::optional<NodeId> id = m_graph.posInNode(position);
+
+        if (id.has_value())
+        {
+            if (m_graph.inEdgeMode())
             {
-                if (m_graph.inEdgeMode())
-                {
-                    m_graph.setEdgeToId(id.value());
-                    m_graph.addEdge();
-                    // done with constructing this edge
-                    m_graph.setEdgeMode(false);
-                }
-                else
-                {
-					m_graph.setEdgeMode(true);
-                    m_graph.setEdgeFromId(id.value());
-                }
+                m_graph.setEdgeToId(id.value());
+                m_graph.addEdge();
+                // done with constructing this edge
+                m_graph.setEdgeMode(false);
+            }
+            else
+            {
+                m_graph.setEdgeMode(true);
+                m_graph.setEdgeFromId(id.value());
             }
         }
+    }
+
+    void GraphEventHandler::handleLMBPressed(sf::Vector2f& position)
+    {
+        // is there a node where we clicked?
+        std::optional<NodeId> id = m_graph.posInNode(position);
+
+        if (!id.has_value())
+        {
+            m_graph.addNode(position);
+            return;
+        }
+
+        // double click logic
+        auto timeSinceLastClick = m_clickClock.getElapsedTime() - m_lastClick;
+        if (isDoubleClick(timeSinceLastClick))
+        {
+            handleNodeDoubleClick(id.value());
+            // restart clock and reset lastClick
+            m_clickClock.restart();
+            m_lastClick = sf::milliseconds(0);
+            return;
+        }
+        else m_lastClick = m_clickClock.getElapsedTime();
+
+        // moveMode
+        m_graph.setMoveMode(true);
+        m_graph.setMovedId(id.value()); // remember the moved node`s index
+        m_graph.markNode(id.value());
     }
 
     void GraphEventHandler::handleNodeDoubleClick(NodeId nodeId)
