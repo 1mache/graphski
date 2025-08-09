@@ -63,13 +63,20 @@ namespace graphski
 			m_updatedGraph = true;
 		}
 
-		void toggleSelectNode(NodeId id);
 
 		void transpose() override
 		{
 			Graph<DrawableNode, DrawableEdge>::transpose();
 			m_updatedGraph = true;
 		}
+
+		void loadFromFile() override
+		{
+			Graph<DrawableNode, DrawableEdge>::loadFromFile();
+			m_updatedGraph = true;
+		}
+
+		void toggleSelectNode(NodeId id);
 
 		// checks if a position is in a certain node, returns its id if it is
 		std::optional<NodeId> posInNode(sf::Vector2f position);
@@ -84,37 +91,42 @@ namespace graphski
 			}
 		}
 
+		//============================== Interaction modes ==============================
+		void startMovingNode(NodeId id)
+		{
+			m_interactionMode = InteractionMode::Move;
+			m_movedId = id;
+			markNode(id);
+		}
+
+		void moveNode(sf::Vector2f position)
+		{
+			if (inMoveMode())
+			{
+				setNodePosition(m_movedId, position);
+				m_updatedGraph = true;
+			}
+			else
+				std::cerr << "Trying to call moveNode while not in move mode." << std::endl;
+		}
+
+		void stopMovingNode()
+		{
+			m_interactionMode = InteractionMode::None;
+			markNode(m_movedId, false);
+		}
+
+		bool inMoveMode() const { return m_interactionMode == InteractionMode::Move; }
+
 		// a node was selected to be source or destination for an edge
 		void selectNodeForNewEdge(NodeId id);
-
+		// ==============================================================================
+		
 		// evenly distributes nodes on screen
 		void arrangeNodesEvenly();
 
-		// ================= State management ==================
 		bool isGraphUpdated() const { return m_updatedGraph; }
 		void setGraphNotUpdated() { m_updatedGraph = false; }
-
-		bool inMoveMode() const 
-		{ return m_interactionMode == InteractionMode::Move; }
-
-		void setMoveMode(bool val) 
-		{
-			if(val) m_interactionMode = InteractionMode::Move;
-			else m_interactionMode = InteractionMode::None;
-		}
-
-		NodeId getMovedId() const { return m_movedId; }
-		void setMovedId(NodeId id) 
-		{
-			if (nodeIdInBounds(id))
-				m_movedId = id; 
-		}
-
-		void loadFromFile() override
-		{
-			Graph<DrawableNode, DrawableEdge>::loadFromFile();
-			m_updatedGraph = true;
-		}
 
 	private:
 		// returns a color for a node (random or not depends on Config)

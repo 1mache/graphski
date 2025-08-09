@@ -61,10 +61,8 @@ namespace graphski
         }
         else m_lastClick = m_clickClock.getElapsedTime();
 
-        // moveMode
-        m_graph.setMoveMode(true);
-        m_graph.setMovedId(id.value()); // remember the moved node`s index
-        m_graph.markNode(id.value());
+		// tell graph we are moving this nodes
+        m_graph.startMovingNode(id.value());
     }
 
     void GraphEventHandler::handleNodeDoubleClick(NodeId nodeId)
@@ -80,10 +78,7 @@ namespace graphski
         if (event.button == sf::Mouse::Button::Left)
         {
             if (m_graph.inMoveMode())
-            {
-				m_graph.setMoveMode(false);
-                m_graph.markNode(m_graph.getMovedId(), false); // unmark the moved node
-            }
+                m_graph.stopMovingNode();
         }
     }
 
@@ -95,7 +90,7 @@ namespace graphski
             sf::Vector2f newPosition(event.position);
             //TODO: add more sophisticated screen bounds checking
             if (posInBounds(newPosition))
-                m_graph.setNodePosition(m_graph.getMovedId(), newPosition);
+				m_graph.moveNode(newPosition);
         }
     }
 
