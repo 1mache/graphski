@@ -11,7 +11,7 @@ namespace graphski
 		{
 			// draw all the edges
 			for (NodeId j = 0; j < m_adjList[i].second.size(); j++)
-				drawEdge(target, states, { i, j });
+				drawEdge(target, states, EdgeLocator(i,j));
 		}
 
 		// draw all the unmoved nodes
@@ -105,7 +105,7 @@ namespace graphski
 		target.draw(*drawableNode, states);
 	}
 
-	void DrawableGraph::drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const
+	void DrawableGraph::drawEdge(sf::RenderTarget& target, sf::RenderStates states, const EdgeLocator edgeId) const
 	{
 		const auto* drawableEdge = getEdge(edgeId);
 		target.draw(*drawableEdge, states);

@@ -143,7 +143,7 @@ namespace graphski
 		sf::Color getNodeColor() const;
 
 		void drawNode(sf::RenderTarget& target, sf::RenderStates states, NodeId nodeId) const;
-		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeId edgeId) const;
+		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeLocator edgeId) const;
 
 		// override function to serialize a drawable node
 		nlohmann::json serializeNode(const DrawableNode* node) const override

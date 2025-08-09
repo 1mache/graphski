@@ -13,6 +13,15 @@ namespace graphski
     template<typename NodeT, typename EdgeT>
     class Graph : public IGraph
     {
+	protected: // because only classes that see m_adjList need this
+        struct EdgeLocator
+        {
+            EdgeLocator(NodeId _nodeId, size_t _neighborId) :
+                nodeId(_nodeId), neighborId(_neighborId) {}
+            NodeId nodeId;
+            size_t neighborId; // index of the neighbor in the node's edges vector
+        };
+
     public:
         Graph(size_t reserveCount = 0);
         
@@ -53,8 +62,8 @@ namespace graphski
         bool nodeIdInBounds(NodeId id) const; 
         NodeT* getNode(NodeId id);
         const NodeT* getNode(NodeId id) const; // const version
-        EdgeT* getEdge(const EdgeId& edgeId);
-        const EdgeT* getEdge(const EdgeId& edgeId) const; // const version
+        EdgeT* getEdge(const EdgeLocator& edgeId);
+        const EdgeT* getEdge(const EdgeLocator& edgeId) const; // const version
         // returns the json representation of the node, used in saveToFile
         virtual nlohmann::json serializeNode(const NodeT* node) const; 
         // creates and returns a new node given json representation of it, used in loadFromFile
@@ -63,9 +72,6 @@ namespace graphski
         // adjacency list contains pairs node : its edges
         using AdjacencyList = std::vector<std::pair<NodeT*, std::vector<EdgeT*>>>;
         AdjacencyList m_adjList;
-
-        // pair of node id and edges id inside node's edges vector
-        using EdgeId = std::pair<NodeId, NodeId>;
 
     private:
         // deletes all nodes and edges
@@ -372,29 +378,23 @@ namespace graphski
     template<typename NodeT, typename EdgeT>
     const NodeT* Graph<NodeT, EdgeT>::getNode(NodeId id) const
     {
-        if (!nodeIdInBounds(id))
-            return nullptr;
-        return m_adjList[id].first;
+        return const_cast<Graph*>(this)->getNode(id);
     }
 
     template<typename NodeT, typename EdgeT>
-    EdgeT* Graph<NodeT, EdgeT>::getEdge(const EdgeId& edgeId) 
+    EdgeT* Graph<NodeT, EdgeT>::getEdge(const EdgeLocator& edgeId)
     {
-        if (!nodeIdInBounds(edgeId.first))
+        if (!nodeIdInBounds(edgeId.nodeId))
             return nullptr;
-        if (!nodeIdInBounds(edgeId.second))
-            return nullptr;
-        return m_adjList[edgeId.first].second[edgeId.second];
+        
+		auto& neighbors = m_adjList[edgeId.nodeId].second;
+		return neighbors[edgeId.neighborId]; // return the edge at the index
     }
 
     template<typename NodeT, typename EdgeT>
-    const EdgeT* Graph<NodeT, EdgeT>::getEdge(const EdgeId& edgeId) const
+    const EdgeT* Graph<NodeT, EdgeT>::getEdge(const EdgeLocator& edgeId) const
     {
-        if (!nodeIdInBounds(edgeId.first))
-            return nullptr;
-        if (!nodeIdInBounds(edgeId.second))
-            return nullptr;
-        return m_adjList[edgeId.first].second[edgeId.second];
+		return const_cast<Graph*>(this)->getEdge(edgeId);
     }
 
     template<typename NodeT, typename EdgeT>
