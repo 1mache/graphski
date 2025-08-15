@@ -27,6 +27,33 @@ namespace graphski
 			drawNode(target, states, m_movedId);
 	}
 
+	void DrawableGraph::makeEmpty()
+	{
+		Graph::makeEmpty();
+		m_updatedGraph = true;
+		m_interactionMode = InteractionMode::None;
+
+		m_selectedNodes.clear();
+		m_selectedNodes.reserve(nodeCount());
+	}
+
+	NodeId DrawableGraph::addNode(std::string name)
+	{
+		NodeId id = Graph::addNode(name);
+
+		m_selectedNodes.push_back(false); // extend the selected nodes vector
+
+		m_updatedGraph = true;
+		return id;
+	}
+
+	NodeId DrawableGraph::addNode(sf::Vector2f position, std::string name)
+	{
+		NodeId id = addNode(name);
+		setNodePosition(id, position); // set the position of the new node
+		return id;
+	}
+
 	void DrawableGraph::addEdge(NodeId fromNodeId, NodeId toNodeId)
 	{
 		// if edge exists delete it.
@@ -62,6 +89,24 @@ namespace graphski
 		}
 
 		return std::nullopt;
+	}
+
+	void DrawableGraph::startMovingNode(NodeId id)
+	{
+		m_interactionMode = InteractionMode::Move;
+		m_movedId = id;
+		markNode(id);
+	}
+
+	void DrawableGraph::moveNode(sf::Vector2f position)
+	{
+		if (inMoveMode())
+		{
+			setNodePosition(m_movedId, position);
+			m_updatedGraph = true;
+		}
+		else
+			std::cerr << "Trying to call moveNode while not in move mode." << std::endl;
 	}
 
 	void DrawableGraph::selectNodeForNewEdge(NodeId id)
@@ -110,6 +155,25 @@ namespace graphski
 		}
 	}
 
+	DrawableNode* DrawableGraph::createNode(NodeId id, const std::string& name) const
+	{
+		auto* node = new DrawableNode(id, name);
+		node->setColor(getNodeColor()); // set color for the new node
+		return node;
+	}
+
+	DrawableNode* DrawableGraph::createNode(const Node* node) const
+	{
+		if (!node)
+			throw std::invalid_argument("Cannot create a drawable node from a null pointer.");
+
+		const DrawableNode* drawableNode = dynamic_cast<const DrawableNode*>(node);
+		if (drawableNode)
+			return new DrawableNode(*drawableNode); // copy the drawable node if possible
+
+		return createNode(node->getId(), node->getName());
+	}
+
 	DrawableEdge* DrawableGraph::createEdge(Node* from, Node* to) const
 	{
 		DrawableNode* fromDrawable = dynamic_cast<DrawableNode*>(from);
@@ -144,5 +208,29 @@ namespace graphski
 	{
 		const auto* drawableEdge = getEdge(edgeId);
 		target.draw(*drawableEdge, states);
+	}
+
+	nlohmann::json DrawableGraph::serializeNode(NodeId nodeId) const
+	{
+		// call base function which writes all the base data to the json
+		auto nodeJson = Graph::serializeNode(nodeId);
+		auto* node = getNode(nodeId);
+
+		// add position 
+		nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
+		return nodeJson;
+	}
+
+	DrawableNode* DrawableGraph::deserializeNode(const nlohmann::json& nodeJson) const
+	{
+		// call base function to get the node without position
+		Node* node = Graph::deserializeNode(nodeJson);
+		DrawableNode* drawableNode = static_cast<DrawableNode*>(
+			createNode(node) // create a drawable node from the base node
+			);
+		// set the position
+		drawableNode->setPosition({ nodeJson["position"][0], nodeJson["position"][1] });
+
+		return drawableNode;
 	}
 }

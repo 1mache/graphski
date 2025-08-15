@@ -20,34 +20,12 @@ namespace graphski
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-		void makeEmpty() override
-		{
-			Graph::makeEmpty();
-			m_updatedGraph = true;
-			m_interactionMode = InteractionMode::None;
+		void makeEmpty() override;
 
-			m_selectedNodes.clear();
-			m_selectedNodes.reserve(nodeCount());
-		}
+		NodeId addNode(std::string name = "") override;
+		NodeId addNode(sf::Vector2f position, std::string name = "");
 
-		NodeId addNode(std::string name = "") override
-		{
-			NodeId id = Graph::addNode(name);
-
-			m_selectedNodes.push_back(false); // extend the selected nodes vector
-
-			m_updatedGraph = true;
-			return id;
-		}
-
-		NodeId addNode(sf::Vector2f position, std::string name = "")
-		{
-			NodeId id = addNode(name);
-			setNodePosition(id, position); // set the position of the new node
-			return id;
-		}
-
-		// override: deletes edge if it already exists
+		// override functionality: deletes edge if it already exists
 		void addEdge(NodeId fromNodeId, NodeId toNodeId) override;
 
 		bool deleteEdge(NodeId fromNodeId, NodeId toNodeId) override
@@ -61,7 +39,6 @@ namespace graphski
 			Graph::markNode(id, val);
 			m_updatedGraph = true;
 		}
-
 
 		void transpose() override
 		{
@@ -91,24 +68,11 @@ namespace graphski
 		}
 
 		//============================== Interaction modes ==============================
-		void startMovingNode(NodeId id)
-		{
-			m_interactionMode = InteractionMode::Move;
-			m_movedId = id;
-			markNode(id);
-		}
-
-		void moveNode(sf::Vector2f position)
-		{
-			if (inMoveMode())
-			{
-				setNodePosition(m_movedId, position);
-				m_updatedGraph = true;
-			}
-			else
-				std::cerr << "Trying to call moveNode while not in move mode." << std::endl;
-		}
-
+		// when you want to move a node
+		void startMovingNode(NodeId id);
+		// used to change the moved node position
+		void moveNode(sf::Vector2f position);
+		// stops moving a node, resets the interaction mode
 		void stopMovingNode()
 		{
 			m_interactionMode = InteractionMode::None;
@@ -123,30 +87,15 @@ namespace graphski
 		
 		// evenly distributes nodes on screen
 		void arrangeNodesEvenly();
-
+		
 		bool isGraphUpdated() const { return m_updatedGraph; }
 		void setGraphNotUpdated() { m_updatedGraph = false; }
 
 	private:
-		// factory methods for creating nodes and edges
-		DrawableNode* createNode(NodeId id, const std::string& name = "") const override
-		{
-			auto* node = new DrawableNode(id, name);
-			node->setColor(getNodeColor()); // set color for the new node
-			return node;
-		}
+		// factory methods for creating nodes and edges. overrides the base Graph methods
+		DrawableNode* createNode(NodeId id, const std::string& name = "") const override;
 		
-		DrawableNode* createNode(const Node* node) const override
-		{
-			if(!node)
-				throw std::invalid_argument("Cannot create a drawable node from a null pointer.");
-
-			const DrawableNode* drawableNode = dynamic_cast<const DrawableNode*>(node);
-			if(drawableNode)
-				return new DrawableNode(*drawableNode); // copy the drawable node if possible
-			
-			return createNode(node->getId(), node->getName());
-		}
+		DrawableNode* createNode(const Node* node) const override;
 		
 		DrawableEdge* createEdge(NodeId fromId, NodeId toId) const override
 		{
@@ -184,30 +133,9 @@ namespace graphski
 		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeLocator edgeId) const;
 
 		// override function to serialize a drawable node
-		nlohmann::json serializeNode(NodeId nodeId) const override
-		{
-			// call base function which writes all the base data to the json
-			auto nodeJson = Graph::serializeNode(nodeId);
-			auto* node = getNode(nodeId);
-
-			// add position 
-			nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
-			return nodeJson;
-		}
-
+		nlohmann::json serializeNode(NodeId nodeId) const override;
 		// override function to deserialize a drawable node
-		DrawableNode* deserializeNode(const nlohmann::json& nodeJson) const override
-		{
-			// call base function to get the node without position
-			Node* node = Graph::deserializeNode(nodeJson);
-			DrawableNode* drawableNode = static_cast<DrawableNode*>(
-				createNode(node) // create a drawable node from the base node
-			);
-			// set the position
-			drawableNode->setPosition({nodeJson["position"][0], nodeJson["position"][1]});
-
-			return drawableNode;
-		}
+		DrawableNode* deserializeNode(const nlohmann::json& nodeJson) const override;
 
 	private:
 		enum class InteractionMode

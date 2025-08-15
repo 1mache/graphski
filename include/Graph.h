@@ -77,11 +77,15 @@ namespace graphski
         
         virtual Node* createNode(const Node* node) const
         {
+            if(!node)
+				throw std::invalid_argument("Cannot create a node from a null pointer.");
             return new Node(*node);
         }
         
         virtual Edge* createEdge(Node* from, Node* to) const
         {
+			if (!from || !to)
+				throw std::invalid_argument("Cannot create an edge from null pointers.");
             return new Edge(from, to);
 		}
 
