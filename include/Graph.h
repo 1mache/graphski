@@ -94,7 +94,10 @@ namespace graphski
             return new Edge(getNode(fromId), getNode(toId));
         }
 
+		// checks if node id is in bounds of the graphs
         bool nodeIdInBounds(NodeId id) const;
+		// checks if edge exists between two nodes, returns true if it does
+        bool edgeExists(NodeId fromNodeId, NodeId toNodeId) const;
 
 		// private getters for nodes and edges for internal use
         virtual Node* getNode(NodeId id);

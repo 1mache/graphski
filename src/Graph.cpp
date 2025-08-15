@@ -81,11 +81,7 @@ namespace graphski
         }
 
         // check if edge already exists
-        auto& edges = m_adjList[fromNodeId].second;
-        auto it = std::find_if(edges.begin(), edges.end(),
-            [&](Edge* edge) { return edge->getTo()->getId() == toNodeId; });
-
-        if (it != edges.end())
+		if (edgeExists(fromNodeId, toNodeId))
             return; // edge already exists
 
         Edge* newEdge = createEdge(fromPtr, toPtr);
@@ -279,6 +275,17 @@ namespace graphski
             return false;
         }
         return true;
+    }
+
+    bool Graph::edgeExists(NodeId fromNodeId, NodeId toNodeId) const
+    {
+        auto& edges = m_adjList[fromNodeId].second;
+        auto it = std::find_if(edges.begin(), edges.end(),
+            [&](Edge* edge) { return edge->getTo()->getId() == toNodeId; });
+
+        if (it != edges.end())
+            return true;
+        return false;
     }
 
     Node* Graph::getNode(NodeId id)
