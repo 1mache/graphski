@@ -9,11 +9,11 @@
 
 namespace graphski
 {
-	class DrawableGraph : public Graph<DrawableNode, DrawableEdge>, public sf::Drawable
+	class DrawableGraph : public Graph, public sf::Drawable
 	{
 	public:
 		DrawableGraph(size_t reserveCount = 0) :
-			Graph<DrawableNode, DrawableEdge>(reserveCount)
+			Graph(reserveCount)
 		{
 			m_selectedNodes.reserve(reserveCount);
 		}
@@ -22,7 +22,7 @@ namespace graphski
 
 		void makeEmpty() override
 		{
-			Graph<DrawableNode, DrawableEdge>::makeEmpty();
+			Graph::makeEmpty();
 			m_updatedGraph = true;
 			m_interactionMode = InteractionMode::None;
 
@@ -32,8 +32,7 @@ namespace graphski
 
 		NodeId addNode(std::string name = "") override
 		{
-			NodeId id = Graph<DrawableNode, DrawableEdge>::addNode(name);
-			m_adjList[id].first->setColor(getNodeColor()); // set color for the new node
+			NodeId id = Graph::addNode(name);
 
 			m_selectedNodes.push_back(false); // extend the selected nodes vector
 
@@ -54,25 +53,25 @@ namespace graphski
 		bool deleteEdge(NodeId fromNodeId, NodeId toNodeId) override
 		{
 			m_updatedGraph = true;
-			return Graph<DrawableNode, DrawableEdge>::deleteEdge(fromNodeId, toNodeId);
+			return Graph::deleteEdge(fromNodeId, toNodeId);
 		}
 		
 		void markNode(NodeId id, bool val = true) override
 		{
-			Graph<DrawableNode, DrawableEdge>::markNode(id, val);
+			Graph::markNode(id, val);
 			m_updatedGraph = true;
 		}
 
 
 		void transpose() override
 		{
-			Graph<DrawableNode, DrawableEdge>::transpose();
+			Graph::transpose();
 			m_updatedGraph = true;
 		}
 
 		void loadFromFile() override
 		{
-			Graph<DrawableNode, DrawableEdge>::loadFromFile();
+			Graph::loadFromFile();
 			m_updatedGraph = true;
 		}
 
@@ -129,6 +128,55 @@ namespace graphski
 		void setGraphNotUpdated() { m_updatedGraph = false; }
 
 	private:
+		// factory methods for creating nodes and edges
+		DrawableNode* createNode(NodeId id, const std::string& name = "") const override
+		{
+			auto* node = new DrawableNode(id, name);
+			node->setColor(getNodeColor()); // set color for the new node
+			return node;
+		}
+		
+		DrawableNode* createNode(const Node* node) const override
+		{
+			if(!node)
+				throw std::invalid_argument("Cannot create a drawable node from a null pointer.");
+
+			const DrawableNode* drawableNode = dynamic_cast<const DrawableNode*>(node);
+			if(drawableNode)
+				return new DrawableNode(*drawableNode); // copy the drawable node if possible
+			
+			return createNode(node->getId(), node->getName());
+		}
+		
+		DrawableEdge* createEdge(NodeId fromId, NodeId toId) const override
+		{
+			return new DrawableEdge(getNode(fromId), getNode(toId));
+		}
+
+		DrawableEdge* createEdge(Node* from, Node* to) const override;
+
+		// node and edge getters overrides
+		DrawableNode* getNode(NodeId id) override
+		{
+			return static_cast<DrawableNode*>(Graph::getNode(id));
+		}
+
+		const DrawableNode* getNode(NodeId id) const override
+		{
+			return static_cast<const DrawableNode*>(Graph::getNode(id));
+		}
+
+		DrawableEdge* getEdge(const EdgeLocator& edgeId) override
+		{
+			return static_cast<DrawableEdge*>(Graph::getEdge(edgeId));
+		}
+
+		const DrawableEdge* getEdge(const EdgeLocator& edgeId) const override
+		{
+			return static_cast<const DrawableEdge*>(Graph::getEdge(edgeId));
+		}
+
+
 		// returns a color for a node (random or not depends on Config)
 		sf::Color getNodeColor() const;
 
@@ -136,10 +184,12 @@ namespace graphski
 		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeLocator edgeId) const;
 
 		// override function to serialize a drawable node
-		nlohmann::json serializeNode(const DrawableNode* node) const override
+		nlohmann::json serializeNode(NodeId nodeId) const override
 		{
-			// call base function 
-			auto nodeJson = Graph<DrawableNode, DrawableEdge>::serializeNode(node);
+			// call base function which writes all the base data to the json
+			auto nodeJson = Graph::serializeNode(nodeId);
+			auto* node = getNode(nodeId);
+
 			// add position 
 			nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
 			return nodeJson;
@@ -149,12 +199,14 @@ namespace graphski
 		DrawableNode* deserializeNode(const nlohmann::json& nodeJson) const override
 		{
 			// call base function to get the node without position
-			auto* node = Graph<DrawableNode, DrawableEdge>::deserializeNode(nodeJson);
+			Node* node = Graph::deserializeNode(nodeJson);
+			DrawableNode* drawableNode = static_cast<DrawableNode*>(
+				createNode(node) // create a drawable node from the base node
+			);
 			// set the position
-			node->setPosition({nodeJson["position"][0], nodeJson["position"][1]});
-			node->setColor(getNodeColor()); // set color
+			drawableNode->setPosition({nodeJson["position"][0], nodeJson["position"][1]});
 
-			return node;
+			return drawableNode;
 		}
 
 	private:

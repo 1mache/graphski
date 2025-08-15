@@ -30,9 +30,9 @@ namespace graphski
 	void DrawableGraph::addEdge(NodeId fromNodeId, NodeId toNodeId)
 	{
 		// if edge exists delete it.
-		bool deleteStatus = deleteEdge(m_fromId, m_toId);
+		bool deleteStatus = deleteEdge(fromNodeId, toNodeId);
 		if(!deleteStatus) // otherwise create it
-			Graph<DrawableNode, DrawableEdge>::addEdge(fromNodeId, toNodeId);
+			Graph::addEdge(fromNodeId, toNodeId);
 
 		m_updatedGraph = true;
 	}
@@ -53,9 +53,10 @@ namespace graphski
 	std::optional<NodeId> DrawableGraph::posInNode(sf::Vector2f position)
 	{
 		// checks if bounds contain position for every node in graph 
-		for (NodeId i = 0; i < m_adjList.size(); i++)
+		for (const auto& pair: m_adjList)
 		{
-			auto* drawableNode = m_adjList[i].first;
+			NodeId i = pair.first->getId();
+			auto* drawableNode = getNode(i);
 			if(drawableNode->getGlobalBounds().contains(position))
 				return i;
 		}
@@ -107,6 +108,15 @@ namespace graphski
 				++count;
 			}
 		}
+	}
+
+	DrawableEdge* DrawableGraph::createEdge(Node* from, Node* to) const
+	{
+		DrawableNode* fromDrawable = dynamic_cast<DrawableNode*>(from);
+		DrawableNode* toDrawable = dynamic_cast<DrawableNode*>(to);
+		if (!fromDrawable || !toDrawable)
+			throw std::invalid_argument("Non-drawable nodes provided for edge creation.");
+		return new DrawableEdge(fromDrawable, toDrawable);
 	}
 
 	sf::Color DrawableGraph::getNodeColor() const

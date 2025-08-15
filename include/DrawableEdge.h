@@ -6,14 +6,24 @@
 
 namespace graphski
 {
-	class DrawableEdge : public Edge<DrawableNode>, public sf::Drawable
+	class DrawableEdge : public Edge, public sf::Drawable
 	{
 	public:
-		DrawableEdge(DrawableNode* from, DrawableNode* to) : Edge(from, to),
+		DrawableEdge(const DrawableNode* from, const DrawableNode* to) : Edge(from, to),
 			m_arrow(from->getPosition(), to->getPosition(), LINE_THICKNESS, s_idleColor)
 		{};
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+		const DrawableNode* getFrom() const override 
+		{ 
+			return static_cast<const DrawableNode*>(Edge::getFrom()); 
+		}
+
+		const DrawableNode* getTo() const override 
+		{ 
+			return static_cast<const DrawableNode*>(Edge::getTo()); 
+		}
 
 	private:
 		// mark and selection colors are the same across all nodes
