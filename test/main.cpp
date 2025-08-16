@@ -13,7 +13,7 @@ int main()
 {
     using NodeId = graphski::NodeId;
 
-    srand(time(nullptr)); // seed the random number generator
+    srand((unsigned int)time(nullptr)); // seed the random number generator
 
     sf::RenderWindow window (sf::VideoMode({ Config::WINDOW_WIDTH , Config::WINDOW_HEIGHT }),
                              "Graphski");

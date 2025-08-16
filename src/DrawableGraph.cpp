@@ -133,15 +133,15 @@ namespace graphski
 		const float h = float(Config::WINDOW_HEIGHT);
 
 		// Calculate grid size (columns and rows)
-		size_t cols = std::ceil(std::sqrt(nodeNum * w / h));
-		size_t rows = std::ceil(float(nodeNum) / cols);
+		size_t cols = (size_t)std::ceil(std::sqrt(nodeNum * w / h));
+		size_t rows = (size_t)std::ceil(float(nodeNum) / cols);
 
 		// Calculate spacing
 		float dx = w / (cols + 1);
 		float dy = h / (rows + 1);
 
 		// Place points in the grid, center them by offsetting from the borders
-		int count = 0;
+		size_t count = 0;
 		for (size_t row = 1; row <= rows && count < nodeNum; ++row)
 		{
 			for (size_t col = 1; col <= cols && count < nodeNum; ++col)
