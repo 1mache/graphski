@@ -219,7 +219,7 @@ namespace graphski
             std::vector<NodeId> neighbors;
             for (const Edge* edge : pair.second)
                 // get all the id's of the nodes that are connected to this one
-                neighbors.push_back(static_cast<const Node*>(edge->getTo())->getId());
+                neighbors.push_back(edge->getTo()->getId());
 
             nodeJson["neighbors"] = neighbors;
             nodesArr.push_back(nodeJson);

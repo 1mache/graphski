@@ -225,9 +225,8 @@ namespace graphski
 	{
 		// call base function to get the node without position
 		Node* node = Graph::deserializeNode(nodeJson);
-		DrawableNode* drawableNode = static_cast<DrawableNode*>(
-			createNode(node) // create a drawable node from the base node
-			);
+		DrawableNode* drawableNode = createNode(node);
+
 		// set the position
 		drawableNode->setPosition({ nodeJson["position"][0], nodeJson["position"][1] });
 

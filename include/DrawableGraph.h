@@ -107,22 +107,38 @@ namespace graphski
 		// node and edge getters overrides
 		DrawableNode* getNode(NodeId id) override
 		{
-			return static_cast<DrawableNode*>(Graph::getNode(id));
+			auto* res = dynamic_cast<DrawableNode*>(Graph::getNode(id));
+			if (!res) // should never happen
+				throw std::runtime_error("Node with id " + std::to_string(id) + " is not a DrawableNode.");
+			return res;
 		}
 
 		const DrawableNode* getNode(NodeId id) const override
 		{
-			return static_cast<const DrawableNode*>(Graph::getNode(id));
+			auto* res = dynamic_cast<const DrawableNode*>(Graph::getNode(id));
+			if (!res) // should never happen
+				throw std::runtime_error("Node with id " + std::to_string(id) + " is not a DrawableNode.");
+			return res;
 		}
 
 		DrawableEdge* getEdge(const EdgeLocator& edgeId) override
 		{
-			return static_cast<DrawableEdge*>(Graph::getEdge(edgeId));
+			auto* res = dynamic_cast<DrawableEdge*>(Graph::getEdge(edgeId));
+			if (!res) // should never happen
+				throw std::runtime_error(std::string("Edge with locator ") + 
+					"{" + std::to_string(edgeId.nodeId) + ", " + std::to_string(edgeId.neighborId) + "}" +
+					" is not a DrawableEdge.");
+			return res;
 		}
 
 		const DrawableEdge* getEdge(const EdgeLocator& edgeId) const override
 		{
-			return static_cast<const DrawableEdge*>(Graph::getEdge(edgeId));
+			auto* res = dynamic_cast<const DrawableEdge*>(Graph::getEdge(edgeId));
+			if (!res) // should never happen
+				throw std::runtime_error(std::string("Edge with locator ") +
+					"{" + std::to_string(edgeId.nodeId) + ", " + std::to_string(edgeId.neighborId) + "}" +
+					" is not a DrawableEdge.");
+			return res;
 		}
 
 

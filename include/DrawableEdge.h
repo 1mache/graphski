@@ -17,12 +17,18 @@ namespace graphski
 
 		const DrawableNode* getFrom() const override 
 		{ 
-			return static_cast<const DrawableNode*>(Edge::getFrom()); 
+			auto* res = dynamic_cast<const DrawableNode*>(Edge::getFrom()); 
+			if(!res)
+				throw std::runtime_error("\'from\' node is not a DrawableNode.");
+			return res;
 		}
 
 		const DrawableNode* getTo() const override 
 		{ 
-			return static_cast<const DrawableNode*>(Edge::getTo()); 
+			auto* res = dynamic_cast<const DrawableNode*>(Edge::getTo());
+			if (!res)
+				throw std::runtime_error("\'to\' node is not a DrawableNode.");
+			return res;
 		}
 
 	private:
