@@ -23,7 +23,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 add_executable(graphski ${SOURCES})
 
 # 3. Modern C++ Standard definition (Target-centric)
-target_compile_features(graphski PRIVATE cxx_std_17)
+target_compile_features(graphski PRIVATE cxx_std_20)
 
 # Set compiler warnings (pedantic/permissive- intentionally omitted)
 target_compile_options(graphski PRIVATE
