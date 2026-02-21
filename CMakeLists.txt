@@ -53,6 +53,11 @@ target_link_libraries(graphski PRIVATE
     SFML::System
 ) 
 
+# Suppress the missing PDB warnings from third-party static libraries
+target_link_options(${PROJECT_NAME} PRIVATE 
+    "/ignore:4099"
+)
+
 # 6. Output Directories
 set_target_properties(graphski PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/bin/debug"
