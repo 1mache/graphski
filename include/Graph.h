@@ -6,7 +6,7 @@
 #include <limits>
 #include <algorithm>
 
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 #include "IGraph.h"
 #include "Node.h"
 #include "Edge.h"

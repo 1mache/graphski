@@ -7,6 +7,12 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# Cmake modules
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+include(AddGitSubmodule)
+
+add_git_submodule("dependencies/nlohmann")
+
 # 2. Add source files
 # Note: While explicit listing is safest, GLOB with CONFIGURE_DEPENDS is fine for a single-file setup
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
@@ -22,10 +28,10 @@ target_compile_features(graphski PRIVATE cxx_std_17)
 # Set compiler warnings (pedantic/permissive- intentionally omitted)
 target_compile_options(graphski PRIVATE
     # If using MSVC compiler:
-    $<$<CXX_COMPILER_ID:MSVC>:/W4 /permissive->
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /permissive /WX->
     
     # If using GCC or Clang :
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic -Werror>
 )
 
 # 4. Include and Link Directories
@@ -51,11 +57,12 @@ target_link_libraries(graphski PRIVATE
     SFML::Graphics
     SFML::Window
     SFML::System
+    nlohmann_json::nlohmann_json
 ) 
 
 # Suppress the missing PDB warnings from third-party static libraries
 target_link_options(${PROJECT_NAME} PRIVATE 
-    "/ignore:4099"
+    "LINKER:/ignore:4099"
 )
 
 # 6. Output Directories
