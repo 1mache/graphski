@@ -8,7 +8,7 @@ namespace graphski
 	{
 	public:
 		Arrow(sf::Vector2f from, sf::Vector2f to, float thickness, sf::Color color):
-			m_from(from), m_to(to), m_thickness(thickness), m_color(color)
+			m_from(from), m_to(to), m_color(color), m_thickness(thickness)
 		{}
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

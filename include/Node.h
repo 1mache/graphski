@@ -51,7 +51,8 @@ namespace graphski
 
 		void setName(std::string name) { m_name = name; }
 		// ===============================================
-
+		
+		virtual ~Node() = default;
 	private:
 		// id of the node, should be unique
 		NodeId		m_id;

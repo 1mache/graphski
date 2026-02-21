@@ -127,31 +127,37 @@ namespace graphski
 
 	void DrawableGraph::arrangeNodesEvenly()
 	{
-		size_t nodeNum = nodeCount();
-
-		const float w = float(Config::WINDOW_WIDTH);
-		const float h = float(Config::WINDOW_HEIGHT);
-
+		const size_t nodeNum =nodeCount();
+		if(nodeNum == 0) return;
+		
+		const float fnodeNum = static_cast<float>(nodeNum);
+		const float w = static_cast<float>(Config::WINDOW_WIDTH);
+		const float h = static_cast<float>(Config::WINDOW_HEIGHT);
 		// Calculate grid size (columns and rows)
-		size_t cols = (size_t)std::ceil(std::sqrt(nodeNum * w / h));
-		size_t rows = (size_t)std::ceil(float(nodeNum) / cols);
+
+		float fcols = std::ceil(std::sqrt(fnodeNum * w / h));
+		float frows = std::ceil(fnodeNum / fcols);
+		size_t cols = static_cast<size_t>(fcols);
+		size_t rows = static_cast<size_t>(frows);
 
 		// Calculate spacing
-		float dx = w / (cols + 1);
-		float dy = h / (rows + 1);
+		float dx = w / (fcols + 1);
+		float dy = h / (frows + 1);
 
 		// Place points in the grid, center them by offsetting from the borders
 		size_t count = 0;
+
+		float currY = dy;
 		for (size_t row = 1; row <= rows && count < nodeNum; ++row)
 		{
+			float currX = dx;
 			for (size_t col = 1; col <= cols && count < nodeNum; ++col)
 			{
-				float x = col * dx;
-				float y = row * dy;
-
-				setNodePosition(m_adjList[count].first->getId(), {x, y});
+				setNodePosition(m_adjList[count].first->getId(), {currX, currY});
+				currX += dx;
 				++count;
 			}
+			currY += dy;
 		}
 	}
 
@@ -190,7 +196,9 @@ namespace graphski
 		{
 			do
 			{
-				nodeColor = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+				nodeColor = sf::Color(static_cast<uint8_t>(rand() % 256), 
+									  static_cast<uint8_t>(rand() % 256), 
+									  static_cast<uint8_t>(rand() % 256));
 				nodeColor += sf::Color(0xFF050505); // add some white to the color for pastel effect
 			} while (colorDifference(nodeColor, Config::TEXT_COLOR) < MIN_COLOR_DIFFERENCE);
 		}

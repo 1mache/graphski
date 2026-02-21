@@ -5,7 +5,7 @@ namespace graphski
 {
 	class GraphAlgorithms
 	{
-		IGraph& m_graph;
+		[[maybe_unused]] IGraph& m_graph;
 
 	public:
 		GraphAlgorithms(IGraph& graph) : m_graph(graph) {}
