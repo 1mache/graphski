@@ -34,6 +34,33 @@ target_compile_options(graphski PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic -Werror>
 )
 
+# Analyzers:
+# ==========================================
+# 1. CLANG-TIDY (The Strict Linter)
+# ==========================================
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+if(CLANG_TIDY_EXE)
+    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
+    # Run clang-tidy on all C++ files. 
+    # We enable all warnings (*) but disable a few overly annoying/irrelevant ones.
+    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE};-checks=*,-fuchsia-*,-llvm-*,-llvmlibc-*,-modernize-use-trailing-return-type")
+else()
+    message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
+endif()
+
+# ==========================================
+# 2. CPPCHECK (The Deep Static Analyzer)
+# ==========================================
+find_program(CPPCHECK_EXE NAMES "cppcheck")
+if(CPPCHECK_EXE)
+    message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
+    # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
+    set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
+else()
+    message(WARNING "cppcheck not found! Please install it and add to PATH.")
+endif()
+
+
 # 4. Include and Link Directories
 # Using CMAKE_CURRENT_SOURCE_DIR is safer if this ever becomes a subproject
 target_include_directories(graphski PRIVATE
