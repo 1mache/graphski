@@ -20,6 +20,32 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
 )
 
+# Analyzers:
+# ==========================================
+# 1. CLANG-TIDY (The Strict Linter)
+# ==========================================
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+if(CLANG_TIDY_EXE)
+    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
+    # Run clang-tidy on all C++ files using checks from .clang-tidy.
+    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+else()
+    message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
+endif()
+
+# ==========================================
+# 2. CPPCHECK (The Deep Static Analyzer)
+# ==========================================
+find_program(CPPCHECK_EXE NAMES "cppcheck")
+if(CPPCHECK_EXE)
+    message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
+    # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
+    set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
+else()
+    message(WARNING "cppcheck not found! Please install it and add to PATH.")
+endif()
+
+
 add_executable(graphski ${SOURCES})
 
 # 3. Modern C++ Standard definition (Target-centric)
@@ -70,29 +96,3 @@ set_target_properties(graphski PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/bin/debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/bin/release"
 )
-
-# Analyzers:
-# ==========================================
-# 1. CLANG-TIDY (The Strict Linter)
-# ==========================================
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
-if(CLANG_TIDY_EXE)
-    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
-    # Run clang-tidy on all C++ files. 
-    # We enable all warnings (*) but disable a few overly annoying/irrelevant ones.
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE};-checks=*,-fuchsia-*,-llvm-*,-llvmlibc-*,-modernize-use-trailing-return-type")
-else()
-    message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
-endif()
-
-# ==========================================
-# 2. CPPCHECK (The Deep Static Analyzer)
-# ==========================================
-find_program(CPPCHECK_EXE NAMES "cppcheck")
-if(CPPCHECK_EXE)
-    message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
-    # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
-    set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
-else()
-    message(WARNING "cppcheck not found! Please install it and add to PATH.")
-endif()
