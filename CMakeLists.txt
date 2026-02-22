@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.15...3.28)
 project(graphski LANGUAGES CXX)
 
+# Cmake modules
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+include(AddGitSubmodule)
+# Add nlohmann/json as a git submodule 
+add_git_submodule("dependencies/nlohmann")
+
 # 1. Handle Build Types for VS Code (Single-Config Generators)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
-
-# Cmake modules
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
-include(AddGitSubmodule)
-
-add_git_submodule("dependencies/nlohmann")
 
 # 2. Add source files
 # Note: While explicit listing is safest, GLOB with CONFIGURE_DEPENDS is fine for a single-file setup
@@ -33,33 +33,6 @@ target_compile_options(graphski PRIVATE
     # If using GCC or Clang :
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic -Werror>
 )
-
-# Analyzers:
-# ==========================================
-# 1. CLANG-TIDY (The Strict Linter)
-# ==========================================
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
-if(CLANG_TIDY_EXE)
-    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
-    # Run clang-tidy on all C++ files. 
-    # We enable all warnings (*) but disable a few overly annoying/irrelevant ones.
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE};-checks=*,-fuchsia-*,-llvm-*,-llvmlibc-*,-modernize-use-trailing-return-type")
-else()
-    message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
-endif()
-
-# ==========================================
-# 2. CPPCHECK (The Deep Static Analyzer)
-# ==========================================
-find_program(CPPCHECK_EXE NAMES "cppcheck")
-if(CPPCHECK_EXE)
-    message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
-    # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
-    set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
-else()
-    message(WARNING "cppcheck not found! Please install it and add to PATH.")
-endif()
-
 
 # 4. Include and Link Directories
 # Using CMAKE_CURRENT_SOURCE_DIR is safer if this ever becomes a subproject
@@ -97,3 +70,29 @@ set_target_properties(graphski PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/bin/debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/bin/release"
 )
+
+# Analyzers:
+# ==========================================
+# 1. CLANG-TIDY (The Strict Linter)
+# ==========================================
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+if(CLANG_TIDY_EXE)
+    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
+    # Run clang-tidy on all C++ files. 
+    # We enable all warnings (*) but disable a few overly annoying/irrelevant ones.
+    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE};-checks=*,-fuchsia-*,-llvm-*,-llvmlibc-*,-modernize-use-trailing-return-type")
+else()
+    message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
+endif()
+
+# ==========================================
+# 2. CPPCHECK (The Deep Static Analyzer)
+# ==========================================
+find_program(CPPCHECK_EXE NAMES "cppcheck")
+if(CPPCHECK_EXE)
+    message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
+    # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
+    set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
+else()
+    message(WARNING "cppcheck not found! Please install it and add to PATH.")
+endif()
