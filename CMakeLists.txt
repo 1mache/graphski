@@ -20,31 +20,31 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
 )
 
+option(STATIC_ANALYSIS "Enable static analysis tools (clang-tidy, cppcheck)" OFF)
+
 # Analyzers:
-# ==========================================
-# 1. CLANG-TIDY (The Strict Linter)
-# ==========================================
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
-if(CLANG_TIDY_EXE)
-    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
-    # Run clang-tidy on all C++ files using checks from .clang-tidy.
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
-else()
-    message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
-endif()
+if(STATIC_ANALYSIS)
+    find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+    if(CLANG_TIDY_EXE)
+        message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
+        # Run clang-tidy on all C++ files using checks from .clang-tidy.
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+    else()
+        message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
+    endif()
 
-# ==========================================
-# 2. CPPCHECK (The Deep Static Analyzer)
-# ==========================================
-find_program(CPPCHECK_EXE NAMES "cppcheck")
-if(CPPCHECK_EXE)
-    message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
-    # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
-    set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
-else()
-    message(WARNING "cppcheck not found! Please install it and add to PATH.")
+    # ==========================================
+    # 2. CPPCHECK (The Deep Static Analyzer)
+    # ==========================================
+    find_program(CPPCHECK_EXE NAMES "cppcheck")
+    if(CPPCHECK_EXE)
+        message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
+        # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
+        set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
+    else()
+        message(WARNING "cppcheck not found! Please install it and add to PATH.")
+    endif()
 endif()
-
 
 add_executable(graphski ${SOURCES})
 
@@ -64,6 +64,9 @@ target_compile_options(graphski PRIVATE
 # Using CMAKE_CURRENT_SOURCE_DIR is safer if this ever becomes a subproject
 target_include_directories(graphski PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+target_include_directories(graphski SYSTEM PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/nlohmann"
 )
 
