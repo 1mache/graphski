@@ -10,8 +10,23 @@ file(COPY ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json DESTINATION ${CMAKE_
 # Cmake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 include(AddGitSubmodule)
-# Add nlohmann/json as a git submodule 
-add_git_submodule("dependencies/nlohmann")
+include(FetchContent)
+# Fetch nlohmann/json
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json
+    GIT_TAG v3.11.3 
+    GIT_SHALLOW TRUE
+) 
+FetchContent_MakeAvailable(nlohmann_json)  
+# Fetch catch2
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2
+    GIT_TAG v3.13.0
+    GIT_SHALLOW TRUE
+) 
+FetchContent_MakeAvailable(Catch2)
 
 # 1. Handle Build Types for VS Code (Single-Config Generators)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -94,6 +109,11 @@ target_link_libraries(graphski PRIVATE
     SFML::System
     nlohmann_json::nlohmann_json
 ) 
+
+target_link_libraries(graphski PRIVATE
+    nlohmann_json::nlohmann_json
+    Catch2::Catch2
+)
 
 # Suppress the missing PDB warnings from third-party static libraries
 target_link_options(${PROJECT_NAME} PRIVATE 
