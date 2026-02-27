@@ -7,7 +7,7 @@ namespace graphski
 	class Node
 	{
 	public:
-		explicit Node(NodeId id, std::string name = "") :m_id(id), m_name(name)
+		explicit Node(NodeId id, std::string_view name = "") :m_id(id), m_name(name)
 		{
 			if (name.size() == 0) // if empty string was passed
 				m_name = std::to_string(m_id); //set the name to be the id (as string)
@@ -18,9 +18,9 @@ namespace graphski
 			return other.m_id == m_id;
 		}
 
-		operator NodePeek() const
+		explicit operator NodePeek() const
 		{
-			return NodePeek{ m_id, m_name, m_dIn, m_dOut };
+			return NodePeek{ .id = m_id, .name = m_name, .dIn = m_dIn, .dOut = m_dOut };
 		}
 
 		// =================Marking===================
@@ -52,6 +52,10 @@ namespace graphski
 		void setName(std::string name) { m_name = name; }
 		// ===============================================
 		
+		Node(const Node&) = default;
+		Node& operator=(const Node&) = delete;
+		Node(Node&&) = default;
+		Node& operator=(Node&&) = default;
 		virtual ~Node() = default;
 	private:
 		// id of the node, should be unique

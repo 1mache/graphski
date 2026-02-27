@@ -331,7 +331,7 @@ namespace graphski
 
     void Graph::deleteAdjList()
     {
-        for (auto pair : m_adjList)
+        for (const auto& pair : m_adjList)
         {
             auto* node = pair.first;
 
@@ -345,4 +345,4 @@ namespace graphski
         }
     }
 
-}
+} // namespace graphski
