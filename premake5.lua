@@ -1,58 +1,109 @@
+-- File groups
+HEADERS  = "include/**.h"
+IMPLEMENTATION  = "src/**.cpp"
+APP_SOURCES     = "test/**.cpp"
+
 workspace "graphski"
-	configurations { "Debug", "Release" }
-	platforms { "Win32" ,"Win64" } 
+    configurations { "Debug", "Release" }
+    platforms { "Win32" ,"Win64" }
 
+    startproject "graphski-app"
+
+------------------------
+-- LIBRARY PROJECT
+------------------------
 project "graphski"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17" -- required by SFML
+    kind "StaticLib"
+    language "C++"
+    cppdialect "C++17"
 
-	files {
-		"src/**.h",
-		"src/**.cpp"
-	}
+    files {
+        HEADERS,
+        IMPLEMENTATION
+    }
+    includedirs { 
+        "include/",
+        "src/private_headers/",
+        "dependencies/SFML-3.0.0/include",
+        "dependencies/nlohmann"
+    }
+    libdirs { "dependencies/SFML-3.0.0/lib" }
+    defines { "SFML_STATIC" }
 
-	-- Set up filters in Visual Studio:
     vpaths {
-        ["Header Files"] = { "src/**.h" },
-        ["Source Files"] = { "src/**.cpp" }
+        ["Public Headers"]   = { HEADERS },
+        ["Source Files"]     = { IMPLEMENTATION }
     }
 
-	-- add SFML includes
-	includedirs { 
-		"dependencies/SFML-3.0.0/include",
-		"dependencies/nlohmann"
-	}
-	-- add SFML lib path for linker
-	libdirs { "dependencies/SFML-3.0.0/lib" }
-	
-	--using static libraries
-	defines { "SFML_STATIC" } 
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        runtime "Debug"
+        symbols "On"
+        targetdir "build/debug"
 
-	filter ("configurations:Debug")
-		defines{"DEBUG"}
-		runtime "Debug"
-		links {
-			"sfml-system-s-d.lib",
-			"sfml-graphics-s-d.lib",
-			"sfml-window-s-d.lib",
-			"freetyped.lib",
-			"opengl32.lib",
-			"gdi32.lib",
-    		"winmm.lib"
-		}
-		targetdir "bin/debug"
+    filter "configurations:Release"
+        runtime "Release"
+        optimize "On"
+        targetdir "build/release"
 
-	filter ("configurations:Release")
-		runtime "Release"
-		links {
-			"sfml-system-s.lib",
-			"sfml-graphics-s.lib",
-			"sfml-window-s.lib",
-			"freetype.lib",
-			"opengl32.lib",
-			"gdi32.lib",
-    		"winmm.lib"
-		}
-		optimize "On"
-		targetdir "bin/release"
+------------------------
+-- APP / TEST PROJECT
+------------------------
+project "graphski-app"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+
+    files { APP_SOURCES }
+    includedirs { 
+        "include/",
+        "src/private_headers/",
+        "dependencies/SFML-3.0.0/include",
+        "dependencies/nlohmann"
+    }
+    libdirs { 
+        "dependencies/SFML-3.0.0/lib", 
+        "build/debug", -- For Debug
+        "build/release" -- For Release
+    }
+    links { 
+        "graphski",
+        "freetyped.lib",
+        "opengl32.lib",
+        "gdi32.lib",
+        "winmm.lib"
+    }
+    defines { "SFML_STATIC" }
+
+    vpaths {
+        ["App Sources"] = { APP_SOURCES }
+    }
+
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        runtime "Debug"
+        symbols "On"
+        targetdir "build/debug"
+        links {
+            "sfml-system-s-d.lib",
+            "sfml-graphics-s-d.lib",
+            "sfml-window-s-d.lib",
+            "freetyped.lib",
+            "opengl32.lib",
+            "gdi32.lib",
+            "winmm.lib"
+        }
+
+    filter "configurations:Release"
+        runtime "Release"
+        optimize "On"
+        targetdir "build/release"
+        links {
+            "sfml-system-s.lib",
+            "sfml-graphics-s.lib",
+            "sfml-window-s.lib",
+            "freetype.lib",
+            "opengl32.lib",
+            "gdi32.lib",
+            "winmm.lib"
+        }

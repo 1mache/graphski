@@ -1,138 +1,45 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <cmath>
+
 #include "DrawableGraph.h"
 #include "DrawableNode.h"
+#include "GraphEventHandler.h"
+#include "RandomGraphGenerator.h"
 
-constexpr unsigned int WINDOW_WIDTH = 800u, WINDOW_HEIGHT = 600u;
-
-bool posInBounds(sf::Vector2f position)
-{
-    return (0 <= position.x && position.x <= WINDOW_WIDTH) &&
-           (0 <= position.y && position.y <= WINDOW_HEIGHT);
-
-}
 
 int main()
 {
-    constexpr sf::Keyboard::Key WRITE_TO_FILE_KEY = sf::Keyboard::Key::W;
+    using NodeId = graphski::NodeId;
 
-    srand(time(nullptr)); // seed the random number generator
+    srand((unsigned int)time(nullptr)); // seed the random number generator
 
-    sf::RenderWindow window (sf::VideoMode({ WINDOW_WIDTH , WINDOW_HEIGHT }), "Graphski");
+    sf::RenderWindow window (sf::VideoMode({ Config::WINDOW_WIDTH , Config::WINDOW_HEIGHT }),
+                             "Graphski");
+
     window.setVerticalSyncEnabled(true);
 
-    sf::ContextSettings settings;
-    settings.antiAliasingLevel = 8;
-
     graphski::DrawableGraph graph;
-    bool updatedGraph = true;
+	graphski::GraphEventHandler graphEvents(graph);
 
-    bool edgeMode = false;
-    uint8_t fromId = 0, toId = 0;
+	NodeId nodeCount = 16; // number of nodes in the graph
+	graphski::RandomGraphGenerator generator(graph, nodeCount);
+	generator.setProbabilities(graphski::RandomGraphGenerator::Distributions::IndexDependent);
+    generator.generate();
+    graph.arrangeNodesEvenly();
 
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
         {
-            if (auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
-            {
-                if (mouseButtonPressed->button == sf::Mouse::Button::Left)
-                {
-                    sf::Vector2f position(mouseButtonPressed->position);
-
-                    std::optional<uint8_t> id = graph.posInNode(position);
-
-                    if(id.has_value())
-                    {
-                        graph.setMoveMode(true);
-                        graph.setMovedNodeId(id.value()); // remember the moved node`s index
-                        auto* node = graph.getNode(id.value());
-
-                        // TODO: bug if 2 nodes are one on top of another, bottom one also gets marked
-                        node->mark(); // select the moved node
-                        updatedGraph = true;
-                        std::cout << "Im inside the node " << (int)id.value() << std::endl;
-                    }
-
-                    if(!graph.isInMoveMode())
-                    {
-                        graph.addNode(position);
-                        updatedGraph = true;
-                    }
-                }
-                if (mouseButtonPressed->button == sf::Mouse::Button::Right) 
-                {
-                    sf::Vector2f position(mouseButtonPressed->position);
-                    
-                    std::optional<uint8_t> id = graph.posInNode(position);
-                    if (id.has_value())
-                    {
-                        auto* node = graph.getNode(id.value());
-                        if (edgeMode)
-                        {
-                            toId = id.value();
-                            if(toId != fromId) // if its node from node to itself
-                            {
-                                graph.addEdge(fromId, toId);
-                                // done with constructing this edge
-                                edgeMode = false;
-                                updatedGraph = true;
-
-                            }
-                        }
-                        else
-                        {
-                            edgeMode = true;
-                            fromId = id.value();
-                        }
-                    }
-                }
-            }
-
-            if(auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
-            {
-                // disable moveMode when left mouse button is released
-                if(mouseButtonReleased->button == sf::Mouse::Button::Left)
-                {
-                    if(graph.isInMoveMode())
-                    {
-                        graph.setMoveMode(false);
-                        graph.getNode(graph.getMovedNodeId())->mark(false); // unmark the moved node
-                        updatedGraph = true;
-                    }
-                }
-            }
-
-            if(auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
-            {
-                // if we're moving something right now
-                if(graph.isInMoveMode())
-                {
-                    //TODO: add more sophisticated screen bounds checking
-                    sf::Vector2f newPosition(mouseMoved->position);
-                    if(posInBounds(newPosition))
-                    {
-                        auto* dNode = (graphski::DrawableNode*)(graph.getNode(graph.getMovedNodeId()));
-                        dNode->setPosition(newPosition);
-                        updatedGraph = true;
-                    }
-                }
-            }
-
-            if (auto* key =  event->getIf<sf::Event::KeyPressed>())
-            {
-				if (key->code == WRITE_TO_FILE_KEY)
-					graph.saveToFile();
-            }
-
             if (event->is<sf::Event::Closed>())
-            {
                 window.close();
-            }
+
+            graphEvents.processEvent(event);
         }
 
-        if(updatedGraph)
+        if(graph.isGraphUpdated())
         {
             window.clear();
 
@@ -140,7 +47,7 @@ int main()
 
             window.display();
 
-            updatedGraph = false;
+            graph.setGraphNotUpdated();
         }
     }
 }

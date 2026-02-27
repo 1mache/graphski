@@ -2,28 +2,14 @@
 #include <iostream>
 #include "SFML/Graphics.hpp"
 #include "Node.h"
-#include "DrawableGraph.h"
 #include "Config.h"
 
 namespace graphski
 {
 	class DrawableNode : public Node, public sf::Drawable, public sf::Transformable
 	{
-		// visual components
-		sf::CircleShape m_circle;
-		sf::Text        m_nameTxt;
-		sf::Color		m_nodeColor;
-
-		// TODO: this assumes theres only one graph
-		// can be changed to be set by specific graph pointer
-		// mark and selection colors are the same across all nodes
-		inline static sf::Color s_markedColor  = DrawableGraph::MARKED_COLOR;
-		inline static sf::Color s_selectColor  = DrawableGraph::SELECTED_COLOR;
-		inline static sf::Color s_textColor    = DrawableGraph::TEXT_COLOR; // color when not selected or marked
-		inline static sf::Color s_outlineColor = DrawableGraph::IDLE_OUTLINE_COLOR; // color when not selected or marked
-
 	public:
-		DrawableNode(uint8_t id, sf::Color nodeColor, std::string name = "") :
+		DrawableNode(NodeId id, std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
 			Node(id, name),
 			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
 		{		
@@ -46,13 +32,20 @@ namespace graphski
 
 		// when the node is marked 
 		void mark(bool val = true) override;
-		// when the node is selected (selected on screen by user)
-		void select(bool val = true);
+		// when the node is selected or unselected (on screen by user)
+		void toggleSelect();
 		
 		// returns bounds of the object based on bounds of circle
 		sf::FloatRect getGlobalBounds()
 		{
 			return getTransform().transformRect(m_circle.getGlobalBounds());
+		}
+
+		// set the node color
+		void setColor(sf::Color color)
+		{
+			m_nodeColor = color;
+			m_circle.setFillColor(m_nodeColor);
 		}
 
 	private:
@@ -68,12 +61,28 @@ namespace graphski
 			m_nameTxt.setFillColor(color);
 		}
 
+	private:
+		// visual components
+		sf::CircleShape m_circle;
+		sf::Text        m_nameTxt;
+		sf::Color		m_nodeColor;
+
+		bool m_selected = false; // is the node selected by user
+
+		// Note: this assumes theres only one graph
+		// can be changed to be set by specific graph pointer
+		// mark and selection colors are the same across all nodes
+		inline static sf::Color s_markedColor  =  Config::MARKED_COLOR;
+		inline static sf::Color s_selectColor  =  Config::SELECTED_COLOR;
+		inline static sf::Color s_textColor    = Config::TEXT_COLOR; // color when not selected or marked
+		inline static sf::Color s_outlineColor = Config::IDLE_OUTLINE_COLOR; // color when not selected or marked
+
 	public: // constants
 		static constexpr float        NODE_RADIUS = 30.f;
 	private: 
 		static constexpr float        NODE_OUTLINE_THICKNSS = 5.f;
 		static constexpr unsigned int CIRCLE_RES = 10u;
 		static constexpr unsigned int NAME_TEXT_SIZE = 30u; //TODO: these will probably not be constexp
-		static constexpr uint8_t      MAX_DISPLAYED_CHARS = 3u;
+		static constexpr NodeId       MAX_DISPLAYED_CHARS = 3u;
 	};
 }
