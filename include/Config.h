@@ -1,17 +1,34 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <vector>
+#include <filesystem>
+#include <cassert>
 
 class Config
 {
-
-	inline static sf::Font s_txtFont = sf::Font("fonts/InriaSans.ttf");
 public:
+	static const sf::Font& getFont()
+	{
+		static bool initialized = false;
+		static sf::Font s_font;
+		if(!std::filesystem::exists(FONT_PATH))
+			throw std::runtime_error("Font file not found at: " + std::string(FONT_PATH));
+		
+		if(!initialized)
+		{
+			if(!s_font.openFromFile(FONT_PATH))
+				throw std::runtime_error("Failed to load font from file: " + std::string(FONT_PATH));
+			initialized = true;
+		}
+
+		return s_font;
+	}
+
 	static constexpr unsigned int WINDOW_WIDTH = 800u, WINDOW_HEIGHT = 600u;
 
-	static const sf::Font& getFont(){ return s_txtFont; }
-
 	static constexpr bool crazyColors = true;
+
+	// Font path
+	static constexpr const char* FONT_PATH = "fonts/InriaSans.ttf";
 
 	// Colors
 	static constexpr sf::Color DEFAULT_NODE_COLOR{ 0xFFB200FF };
