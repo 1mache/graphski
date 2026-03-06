@@ -135,3 +135,10 @@ set_target_properties(${PROJECT_APP_TARGET} PROPERTIES
 
 enable_testing()
 add_subdirectory(tests)
+
+# Copies the "fonts" folder to the same directory as the compiled executable
+add_custom_command(TARGET ${PROJECT_APP_TARGET} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/fonts"
+    "$<TARGET_FILE_DIR:${PROJECT_APP_TARGET}>/fonts"
+)
