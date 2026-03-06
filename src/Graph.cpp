@@ -51,10 +51,10 @@ namespace graphski
     NodePeek Graph::peekNode(NodeId id) const
     {
         if (!nodeIdInBounds(id))
-            return { 0, "", 0, 0 };
+            return { "", 0, 0, 0 };
 
         const Node* node = m_adjList[id].first;
-        return NodePeek(*node);
+        return static_cast<NodePeek>(*node);
     }
 
     NodeId Graph::addNode(std::string name)
@@ -154,7 +154,7 @@ namespace graphski
         for (const auto& pair : m_adjList)
         {
             Node* node = pair.first;
-            result.push_back({ NodePeek(*node), getNeighbors(node->getId()) });
+            result.push_back({ static_cast<NodePeek>(*node), getNeighbors(node->getId()) });
         }
         return result;
     }

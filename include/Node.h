@@ -20,7 +20,7 @@ namespace graphski
 
 		explicit operator NodePeek() const
 		{
-			return NodePeek{ .id = m_id, .name = m_name, .dIn = m_dIn, .dOut = m_dOut };
+			return NodePeek{ .name = m_name, .id = m_id, .dIn = m_dIn, .dOut = m_dOut };
 		}
 
 		// =================Marking===================
