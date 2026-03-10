@@ -23,14 +23,21 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
 ) 
 FetchContent_MakeAvailable(nlohmann_json)  
-# Fetch catch2
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2
-    GIT_TAG v3.13.0
-    GIT_SHALLOW TRUE
-) 
-FetchContent_MakeAvailable(Catch2)
+# Fetch catch2 and include Ctest
+include(CTest)
+if(BUILD_TESTING)
+    FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2
+        GIT_TAG v3.13.0
+        GIT_SHALLOW TRUE
+    ) 
+    FetchContent_MakeAvailable(Catch2)
+
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+    include(Catch)
+    add_subdirectory(tests)
+endif()
 
 # 1. Handle Build Types for VS Code (Single-Config Generators)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -132,9 +139,6 @@ set_target_properties(${PROJECT_APP_TARGET} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/bin/debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/bin/release"
 )
-
-enable_testing()
-add_subdirectory(tests)
 
 # Copies the "fonts" folder to the same directory as the compiled executable
 add_custom_command(TARGET ${PROJECT_APP_TARGET} POST_BUILD
