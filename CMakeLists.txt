@@ -70,19 +70,16 @@ if(STATIC_ANALYSIS)
         # Run clang-tidy on all C++ files using checks from .clang-tidy.
         set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
     else()
-        message(WARNING "clang-tidy not found! Is LLVM in your PATH?")
+        message(WARNING "clang-tidy not found!")
     endif()
 
-    # ==========================================
-    # 2. CPPCHECK (The Deep Static Analyzer)
-    # ==========================================
     find_program(CPPCHECK_EXE NAMES "cppcheck")
     if(CPPCHECK_EXE)
         message(STATUS "Found cppcheck: ${CPPCHECK_EXE}")
-        # Run cppcheck. Enable all checks, but suppress missing system includes (like <iostream>).
+        # Enable all checks, but suppress missing system includes (like <iostream>).
         set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};--enable=all;--suppress=missingIncludeSystem;--inconclusive")
     else()
-        message(WARNING "cppcheck not found! Please install it and add to PATH.")
+        message(WARNING "cppcheck not found!")
     endif()
 endif()
 
