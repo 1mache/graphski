@@ -1,5 +1,9 @@
 set(TEST_MAIN "unit_tests")
-set(TEST_SOURCES "test.cpp")
+set(TEST_SOURCES 
+    "NodeTests.cpp"
+    "EdgeTests.cpp"
+    "GraphTests.cpp"
+)
 set(TEST_INCLUDES "./") 
 
 add_executable(${TEST_MAIN} ${TEST_SOURCES})
