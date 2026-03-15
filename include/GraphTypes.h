@@ -12,8 +12,8 @@ namespace graphski
 
 	struct NodePeek
 	{
+		std::string_view name;
 		NodeId		id;
-		std::string name;
 		NodeId		dIn, dOut; // in and out degrees
 	};
 
