@@ -37,7 +37,7 @@ namespace graphski
 		inline static sf::Color s_markedColor   = Config::MARKED_COLOR;
 		inline static sf::Color s_selectedColor = Config::SELECTED_COLOR;
 
-		// cached arrow component. needs to be changed in draw function which is const, 
+		// why mutable: it is a cached arrow component. it needs to be changed in draw function which is const, 
 		// this is simply a visual component of the edge. it does not affect the edge logic
 		mutable Arrow m_arrow;
 	
