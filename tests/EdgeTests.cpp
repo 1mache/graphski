@@ -13,18 +13,6 @@ TEST_CASE("Edge Initialization and Connections", "[Edge]") {
         
         REQUIRE(edge.getFrom() == &fromNode);
         REQUIRE(edge.getTo() == &toNode);
-        REQUIRE_FALSE(edge.isMarked());
-    }
-
-    SECTION("Marking edges") {
-        Edge edge(&fromNode, &toNode);
-        REQUIRE_FALSE(edge.isMarked());
-
-        edge.mark();
-        REQUIRE(edge.isMarked());
-
-        edge.mark(false);
-        REQUIRE_FALSE(edge.isMarked());
     }
 
     SECTION("Equality operator") {

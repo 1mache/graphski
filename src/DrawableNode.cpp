@@ -4,7 +4,7 @@ namespace graphski
 {
 	void DrawableNode::mark(bool val)
 	{
-		Node::mark(val);
+		m_marked = val;
 		if (val)
 			highlight(s_markedColor);
 		else

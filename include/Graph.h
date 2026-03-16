@@ -54,9 +54,7 @@ namespace graphski
         // creates an edge between to given nodes, gets them by ids
         virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) override; 
 		// deletes an edge between two nodes, gets them by ids. returns true if successful
-		virtual bool deleteEdge(NodeId fromNodeId, NodeId toNodeId);
-        // marks the node of given id
-        virtual void markNode(NodeId id, bool val = true) override; 
+		virtual bool deleteEdge(NodeId fromNodeId, NodeId toNodeId); 
         // gets an array of neighbor ids for the given node id
         std::vector<NodeId> getNeighbors(NodeId id) const override; 
         // gets a peek of the adjacency list. all in terms of ids, not pointers

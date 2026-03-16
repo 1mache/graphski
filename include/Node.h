@@ -23,13 +23,6 @@ namespace graphski
 			return NodePeek{ .name = m_name, .id = m_id, .dIn = m_dIn, .dOut = m_dOut };
 		}
 
-		// =================Marking===================
-		
-		// marks the node, usually we want to mark true
-		virtual void mark(bool val = true) { m_marked = val; }
-
-		bool isMarked() const { return m_marked; }
-		// ===========================================
 		// =================Degrees===================
 
 		NodeId getDIn() const { return m_dIn; }
@@ -53,17 +46,16 @@ namespace graphski
 		// ===============================================
 		
 		Node(const Node&) = default;
-		Node& operator=(const Node&) = delete;
+		Node& operator=(const Node&) = delete; // TODO: allow later.
 		Node(Node&&) = default;
 		Node& operator=(Node&&) = default;
+
 		virtual ~Node() = default;
 	private:
 		// id of the node, should be unique
 		NodeId		m_id;
 		// if we want to give our node a name like A,B,C
 		std::string m_name;
-		// is the node marked, used for various algorithms
-		bool		m_marked = false;
 
 		// in Degree, out Degree
 		NodeId		m_dIn = 0, 

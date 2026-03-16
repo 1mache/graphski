@@ -31,7 +31,7 @@ namespace graphski
 		}
 
 		// when the node is marked 
-		void mark(bool val = true) override;
+		void mark(bool val = true);
 		// when the node is selected or unselected (on screen by user)
 		void toggleSelect();
 		
@@ -62,6 +62,8 @@ namespace graphski
 		}
 
 	private:
+		bool m_marked = false;
+
 		// visual components
 		sf::CircleShape m_circle;
 		sf::Text        m_nameTxt;

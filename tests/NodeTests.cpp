@@ -12,7 +12,6 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
         REQUIRE(node.getDIn() == 0);
         REQUIRE(node.getDOut() == 0);
         REQUIRE(node.getD() == 0);
-        REQUIRE_FALSE(node.isMarked());
     }
 
     SECTION("Constructor with an explicit name") {
@@ -31,17 +30,6 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
         REQUIRE(node.getDIn() == 5);
         REQUIRE(node.getDOut() == 3);
         REQUIRE(node.getD() == 8);
-    }
-
-    SECTION("Marking functionality") {
-        Node node(1);
-        REQUIRE_FALSE(node.isMarked());
-        
-        node.mark();
-        REQUIRE(node.isMarked());
-        
-        node.mark(false);
-        REQUIRE_FALSE(node.isMarked());
     }
 
     SECTION("Equality operator") {

@@ -120,19 +120,6 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
     }
 }
 
-TEST_CASE("Graph Node Marking", "[Graph][Mark]") {
-    Graph g;
-    NodeId id = g.addNode();
-    
-    // Using a valid way to test markings if the interface provides it.
-    // If we only have markNode, we can verify via some operations that check marks, 
-    // or test that markNode doesn't throw. For comprehensive test:
-    REQUIRE_NOTHROW(g.markNode(id, true));
-    REQUIRE_NOTHROW(g.markNode(id, false));
-    // Check out of bounds is safely ignored
-    REQUIRE_NOTHROW(g.markNode(999, true));
-}
-
 TEST_CASE("Graph Serialization", "[Graph][JSON]") {
     Graph g1;
     NodeId idA = g1.addNode("A");

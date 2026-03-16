@@ -119,13 +119,6 @@ namespace graphski
         return true; // edge was successfully deleted
     }
 
-    void Graph::markNode(NodeId id, bool val)
-    {
-        auto* node = getNode(id);
-        if (node)
-            node->mark(val);
-    }
-
     std::vector<NodeId> Graph::getNeighbors(NodeId id) const
     {
         if (!nodeIdInBounds(id))

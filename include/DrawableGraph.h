@@ -34,9 +34,11 @@ namespace graphski
 			return Graph::deleteEdge(fromNodeId, toNodeId);
 		}
 		
-		void markNode(NodeId id, bool val = true) override
+		void markNode(NodeId id, bool val = true)
 		{
-			Graph::markNode(id, val);
+			auto* node = getNode(id);
+			if (node)
+				node->mark(val);
 			m_updatedGraph = true;
 		}
 

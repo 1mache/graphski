@@ -20,8 +20,6 @@ namespace graphski
 		virtual NodeId addNode(std::string name = "") = 0;
 		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
 
-		virtual void markNode(NodeId id, bool val = true) = 0;
-
 		virtual std::vector<NodeId> getNeighbors(NodeId id) const = 0;
 		virtual AdjacencyListPeek getAdjacencyList() const = 0;
 	};

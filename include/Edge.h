@@ -19,19 +19,11 @@ namespace graphski
 			return (other.m_to == m_to && other.m_from == m_from);
 		}
 
-		// marks the node, usually we want to mark true
-		virtual void mark(bool val = true) { m_marked = val; }
-
-		bool isMarked() const { return m_marked; }
-
 		virtual const Node* getFrom() const { return m_from;}
 
 		virtual const Node* getTo() const { return m_to; }
-
 	private:
 		const Node* m_from = nullptr;
 		const Node* m_to   = nullptr;
-
-		bool m_marked = false;
 	};
 }
