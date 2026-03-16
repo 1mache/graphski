@@ -13,7 +13,7 @@ namespace graphski
 
 		virtual void makeEmpty() = 0;
 
-		virtual NodeId nodeCount() const = 0;
+		virtual size_t nodeCount() const = 0;
 		virtual size_t edgeCount() const = 0;
 
 		virtual const Node& node(NodeId id) const = 0;
@@ -22,6 +22,6 @@ namespace graphski
 		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
 
 		virtual std::vector<NodeId> getNeighbors(NodeId id) const = 0;
-		virtual AdjacencyListView getAdjacencyList() const = 0;
+		virtual AdjacencyList getAdjacencyList() const = 0;
 	};
 }

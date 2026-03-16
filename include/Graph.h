@@ -41,13 +41,17 @@ namespace graphski
         // clears the graph
         virtual void makeEmpty() override;
         // how many nodes are there
-        NodeId nodeCount() const override
+        size_t nodeCount() const override
         {
-            return (NodeId)m_adjList.size();
+            return m_nodes.size();
         }
         // how many edges are there
-        size_t edgeCount() const override; 
-        // peek node info by id
+        size_t edgeCount() const override
+        {
+            return std::accumulate(m_adjList.begin(), m_adjList.end(), 0u,
+                [](size_t sum, const auto& neighbors) { return sum + neighbors.size();});
+        }
+        // node const ref by id
         const Node& node(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
         virtual NodeId addNode(std::string name = "") override; 
@@ -57,14 +61,18 @@ namespace graphski
 		virtual bool deleteEdge(NodeId fromNodeId, NodeId toNodeId); 
         // gets an array of neighbor ids for the given node id
         std::vector<NodeId> getNeighbors(NodeId id) const override; 
-        // gets a peek of the adjacency list. all in terms of ids, not pointers
-        AdjacencyListView getAdjacencyList() const override; 
-        // transposes the graph 
-        virtual void transpose(); 
-        // saves the graph to a file in json format
-        void saveToFile() const; 
-        // loads the graph from a file in json format
-        virtual void loadFromFile(); 
+        // gets a copy of the adjacency list.
+        AdjacencyList getAdjacencyList() const override
+        {
+            return m_adjList; // return a copy and thats ok! 
+        }
+
+        // // transposes the graph 
+        // virtual void transpose(); 
+        // // saves the graph to a file in json format
+        // void saveToFile() const; 
+        // // loads the graph from a file in json format
+        // virtual void loadFromFile(); 
 
     protected:
 		// factory methods for creating nodes and edges
@@ -100,22 +108,21 @@ namespace graphski
 		// private getters for nodes and edges for internal use
         virtual Node* getNode(NodeId id);
         virtual const Node* getNode(NodeId id) const; // const version
-        virtual Edge* getEdge(const EdgeLocator& edgeId);
-        virtual const Edge* getEdge(const EdgeLocator& edgeId) const; // const version
 
         // returns the json representation of the node, used in saveToFile
         virtual nlohmann::json serializeNode(NodeId nodeId) const;
         // creates and returns a new node given json representation of it, used in loadFromFile
         virtual Node* deserializeNode(const nlohmann::json& j) const; 
 
+        std::vector<Node*> m_nodes;
         AdjacencyList m_adjList;
 
     private:
         // deletes all nodes and edges
         void deleteAdjList(); 
 
-        static constexpr NodeId MAX_NODES = std::numeric_limits<NodeId>::max();
-        static constexpr NodeId INIT_NODES = 10;
+        static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();
+        static constexpr size_t RESERVE_NODES = 10;
 		
         // TODO: make this dynamic
         static constexpr const char* FILE_NAME = "graph.json";
