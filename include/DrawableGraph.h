@@ -6,7 +6,7 @@
 #include "Graph.h"
 #include "Utils.h"
 #include "DrawableNode.h"
-#include "DrawableEdge.h"
+#include "Arrow.h"
 
 namespace graphski
 {
@@ -97,13 +97,6 @@ namespace graphski
 		DrawableNode* createNode(NodeId id, const std::string& name = "") const override;
 		
 		DrawableNode* createNode(const Node* node) const override;
-		
-		DrawableEdge* createEdge(NodeId fromId, NodeId toId) const override
-		{
-			return new DrawableEdge(getNode(fromId), getNode(toId));
-		}
-
-		DrawableEdge* createEdge(Node* from, Node* to) const override;
 
 		// node and edge getters overrides
 		DrawableNode* getNode(NodeId id) override

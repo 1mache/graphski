@@ -1,6 +1,5 @@
 #include "DrawableGraph.h"
 #include "DrawableNode.h"
-#include "DrawableEdge.h"
 
 namespace graphski
 {
@@ -176,15 +175,6 @@ namespace graphski
 			return new DrawableNode(*drawableNode); // copy the drawable node if possible
 
 		return createNode(node->getId(), node->getName());
-	}
-
-	DrawableEdge* DrawableGraph::createEdge(Node* from, Node* to) const
-	{
-		DrawableNode* fromDrawable = dynamic_cast<DrawableNode*>(from);
-		DrawableNode* toDrawable = dynamic_cast<DrawableNode*>(to);
-		if (!fromDrawable || !toDrawable)
-			throw std::invalid_argument("Non-drawable nodes provided for edge creation.");
-		return new DrawableEdge(fromDrawable, toDrawable);
 	}
 
 	sf::Color DrawableGraph::getNodeColor() const

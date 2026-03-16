@@ -8,7 +8,6 @@
 namespace graphski
 {
 	class Node;
-	class Edge;
 	
 	// global alias for node id type
 	using NodeId = uint16_t;

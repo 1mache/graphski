@@ -9,7 +9,6 @@
 #include "nlohmann/json.hpp"
 #include "IGraph.h"
 #include "Node.h"
-#include "Edge.h"
 
 namespace graphski
 {
@@ -86,18 +85,6 @@ namespace graphski
             if(!node)
 				throw std::invalid_argument("Cannot create a node from a null pointer.");
             return new Node(*node);
-        }
-        
-        virtual Edge* createEdge(Node* from, Node* to) const
-        {
-			if (!from || !to)
-				throw std::invalid_argument("Cannot create an edge from null pointers.");
-            return new Edge(from, to);
-		}
-
-        virtual Edge* createEdge(NodeId fromId, NodeId toId) const
-        {
-            return new Edge(getNode(fromId), getNode(toId));
         }
 
 		// checks if node id is in bounds of the graphs
