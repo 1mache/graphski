@@ -35,16 +35,11 @@ namespace graphski
 
 		NodeId getId() const { return m_id; }
 
-		std::string getName() const { return m_name; }
+		const std::string& getName() const { return m_name; }
 
-		void setName(std::string name) { m_name = name; }
+		void setName(std::string_view name) { m_name = name; }
 		// ===============================================
 		
-		Node(const Node&) = default;
-		Node& operator=(const Node&) = delete; // TODO: allow later.
-		Node(Node&&) = default;
-		Node& operator=(Node&&) = default;
-
 		virtual ~Node() = default;
 	private:
 		// id of the node, should be unique
