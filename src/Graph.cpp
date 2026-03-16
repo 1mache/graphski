@@ -48,13 +48,10 @@ namespace graphski
         return count;
     }
 
-    NodePeek Graph::peekNode(NodeId id) const
+    const Node& Graph::node(NodeId id) const
     {
-        if (!nodeIdInBounds(id))
-            return { "", 0, 0, 0 };
-
-        const Node* node = m_adjList[id].first;
-        return static_cast<NodePeek>(*node);
+        auto* node = getNode(id);
+        return *node;
     }
 
     NodeId Graph::addNode(std::string name)
@@ -140,14 +137,13 @@ namespace graphski
         return result;
     }
 
-    AdjacencyListPeek Graph::getAdjacencyList() const
+    AdjacencyListView Graph::getAdjacencyList() const
     {
-        AdjacencyListPeek result;
+        AdjacencyListView result;
         result.reserve(m_adjList.size());
         for (const auto& pair : m_adjList)
         {
-            Node* node = pair.first;
-            result.push_back({ static_cast<NodePeek>(*node), getNeighbors(node->getId()) });
+            result.push_back(getNeighbors(pair.first->getId()));
         }
         return result;
     }

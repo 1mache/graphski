@@ -48,7 +48,7 @@ namespace graphski
         // how many edges are there
         size_t edgeCount() const override; 
         // peek node info by id
-        NodePeek peekNode(NodeId id) const override; 
+        const Node& node(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
         virtual NodeId addNode(std::string name = "") override; 
         // creates an edge between to given nodes, gets them by ids
@@ -58,7 +58,7 @@ namespace graphski
         // gets an array of neighbor ids for the given node id
         std::vector<NodeId> getNeighbors(NodeId id) const override; 
         // gets a peek of the adjacency list. all in terms of ids, not pointers
-        AdjacencyListPeek getAdjacencyList() const override; 
+        AdjacencyListView getAdjacencyList() const override; 
         // transposes the graph 
         virtual void transpose(); 
         // saves the graph to a file in json format
@@ -108,8 +108,6 @@ namespace graphski
         // creates and returns a new node given json representation of it, used in loadFromFile
         virtual Node* deserializeNode(const nlohmann::json& j) const; 
 
-        // adjacency list contains pairs node : its edges
-        using AdjacencyList = std::vector<std::pair<Node*, std::vector<Edge*>>>;
         AdjacencyList m_adjList;
 
     private:

@@ -18,11 +18,6 @@ namespace graphski
 			return other.m_id == m_id;
 		}
 
-		explicit operator NodePeek() const
-		{
-			return NodePeek{ .name = m_name, .id = m_id, .dIn = m_dIn, .dOut = m_dOut };
-		}
-
 		// =================Degrees===================
 
 		NodeId getDIn() const { return m_dIn; }

@@ -21,11 +21,11 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
         REQUIRE(id1 == 0);
         REQUIRE(id2 == 1);
 
-        auto peek1 = g.peekNode(id1);
-        REQUIRE(peek1.name == "A");
+        auto node1 = g.node(id1);
+        REQUIRE(node1.getName() == "A");
 
-        auto peek2 = g.peekNode(id2);
-        REQUIRE(peek2.name == "1");
+        auto node2 = g.node(id2);
+        REQUIRE(node2.getName() == "1");
     }
 
     SECTION("Clearing Graph") {
@@ -53,14 +53,14 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         REQUIRE(g.edgeCount() == 2);
 
         // Check degrees via peekNode
-        REQUIRE(g.peekNode(id1).dOut == 1);
-        REQUIRE(g.peekNode(id1).dIn == 0);
+        REQUIRE(g.node(id1).getDOut() == 1);
+        REQUIRE(g.node(id1).getDIn() == 0);
 
-        REQUIRE(g.peekNode(id2).dOut == 1);
-        REQUIRE(g.peekNode(id2).dIn == 1);
+        REQUIRE(g.node(id2).getDOut() == 1);
+        REQUIRE(g.node(id2).getDIn() == 1);
 
-        REQUIRE(g.peekNode(id3).dOut == 0);
-        REQUIRE(g.peekNode(id3).dIn == 1);
+        REQUIRE(g.node(id3).getDOut() == 0);
+        REQUIRE(g.node(id3).getDIn() == 1);
         
         // Check Neighbors
         auto neighbors1 = g.getNeighbors(id1);
@@ -109,14 +109,14 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         REQUIRE(n1.empty()); // Now id1 should have no outgoing edges
         
         // Check new degrees
-        REQUIRE(g.peekNode(id1).dIn == 1);
-        REQUIRE(g.peekNode(id1).dOut == 0);
+        REQUIRE(g.node(id1).getDIn() == 1);
+        REQUIRE(g.node(id1).getDOut() == 0);
         
-        REQUIRE(g.peekNode(id2).dIn == 1);
-        REQUIRE(g.peekNode(id2).dOut == 1);
+        REQUIRE(g.node(id2).getDIn() == 1);
+        REQUIRE(g.node(id2).getDOut() == 1);
 
-        REQUIRE(g.peekNode(id3).dIn == 0);
-        REQUIRE(g.peekNode(id3).dOut == 1);
+        REQUIRE(g.node(id3).getDIn() == 0);
+        REQUIRE(g.node(id3).getDOut() == 1);
     }
 }
 
@@ -142,9 +142,9 @@ TEST_CASE("Graph Serialization", "[Graph][JSON]") {
         REQUIRE(g2.edgeCount() == 2);
 
         // Verify nodes 
-        REQUIRE(g2.peekNode(idA).name == "A");
-        REQUIRE(g2.peekNode(idB).name == "B");
-        REQUIRE(g2.peekNode(idC).name == "C");
+        REQUIRE(g2.node(idA).getName() == "A");
+        REQUIRE(g2.node(idB).getName() == "B");
+        REQUIRE(g2.node(idC).getName() == "C");
 
         // Verify edges match 
         auto neighborsA = g2.getNeighbors(idA);

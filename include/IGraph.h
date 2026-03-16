@@ -8,6 +8,7 @@ namespace graphski
 	class IGraph
 	{
 	public:
+
 		virtual ~IGraph() = default;
 
 		virtual void makeEmpty() = 0;
@@ -15,12 +16,12 @@ namespace graphski
 		virtual NodeId nodeCount() const = 0;
 		virtual size_t edgeCount() const = 0;
 
-		virtual NodePeek peekNode(NodeId id) const = 0;
+		virtual const Node& node(NodeId id) const = 0;
 
 		virtual NodeId addNode(std::string name = "") = 0;
 		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
 
 		virtual std::vector<NodeId> getNeighbors(NodeId id) const = 0;
-		virtual AdjacencyListPeek getAdjacencyList() const = 0;
+		virtual AdjacencyListView getAdjacencyList() const = 0;
 	};
 }

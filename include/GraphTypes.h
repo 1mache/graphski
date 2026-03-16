@@ -7,17 +7,14 @@
 
 namespace graphski
 {
+	class Node;
+	class Edge;
+	
 	// global alias for node id type
 	using NodeId = uint16_t;
 
-	struct NodePeek
-	{
-		std::string_view name;
-		NodeId		id;
-		NodeId		dIn, dOut; // in and out degrees
-	};
+	// adjacency list contains pairs node : its edges
+    using AdjacencyList = std::vector<std::pair<Node*, std::vector<Edge*>>>;
 
-	// adjacency list type for peeking into the graph
-	// pairs for nodeId : neighbors ids
-	using AdjacencyListPeek = std::vector<std::pair<NodePeek, std::vector<NodeId>>>;
+	using AdjacencyListView = std::vector<std::vector<NodeId>>;
 }
