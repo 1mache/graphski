@@ -9,7 +9,7 @@ namespace graphski
 		// draw all the edges first
 		for (NodeId i = 0; i < m_adjList.size(); i++)
 		{
-			for (NodeId j = 0; j < m_adjList[i].second.size(); j++)
+			for (NodeId j = 0; j < m_adjList[i].size(); j++)
 				drawEdge(target, states, EdgeLocator(i,j));
 		}
 
@@ -34,7 +34,6 @@ namespace graphski
 		m_interactionMode = InteractionMode::None;
 
 		m_selectedNodes.clear();
-		m_selectedNodes.reserve(nodeCount());
 	}
 
 	NodeId DrawableGraph::addNode(std::string name)
@@ -80,12 +79,11 @@ namespace graphski
 	std::optional<NodeId> DrawableGraph::posInNode(sf::Vector2f position)
 	{
 		// checks if bounds contain position for every node in graph 
-		for (const auto& pair: m_adjList)
+		for (size_t i = 0; i < m_nodes.size(); ++i)
 		{
-			NodeId i = pair.first->getId();
-			auto* drawableNode = getNode(i);
+			auto* drawableNode = getNode(static_cast<NodeId>(i));
 			if(drawableNode->getGlobalBounds().contains(position))
-				return i;
+				return static_cast<NodeId>(i);
 		}
 
 		return std::nullopt;
@@ -127,7 +125,7 @@ namespace graphski
 
 	void DrawableGraph::arrangeNodesEvenly()
 	{
-		const size_t nodeNum =nodeCount();
+		const size_t nodeNum = nodeCount();
 		if(nodeNum == 0) return;
 		
 		const float fnodeNum = static_cast<float>(nodeNum);
@@ -153,7 +151,7 @@ namespace graphski
 			float currX = dx;
 			for (size_t col = 1; col <= cols && count < nodeNum; ++col)
 			{
-				setNodePosition(m_adjList[count].first->getId(), {currX, currY});
+				setNodePosition(static_cast<NodeId>(count), {currX, currY});
 				currX += dx;
 				++count;
 			}
@@ -214,8 +212,25 @@ namespace graphski
 
 	void DrawableGraph::drawEdge(sf::RenderTarget& target, sf::RenderStates states, const EdgeLocator edgeId) const
 	{
-		const auto* drawableEdge = getEdge(edgeId);
-		target.draw(*drawableEdge, states);
+		const auto* from = getNode(edgeId.nodeId);
+		const auto* to = getNode(m_adjList[edgeId.nodeId][edgeId.neighborId]);
+		// TODO: is there a way to cache it? 
+		Arrow edge{from->getPosition(), to->getPosition(), EDGE_THICKNESS, Config::IDLE_OUTLINE_COLOR};
+
+		// self edge case
+		if (from == to)
+		{
+			edge.setSelfArrowRadius(DrawableNode::NODE_RADIUS / 2);
+			edge.setSelfArrowOffset(DrawableNode::NODE_RADIUS * SELF_EDGE_OFFSET.normalized());
+			edge.drawSelfArrow(target, states);
+			return;
+		}
+
+		// set the offset so that the arrow hits the side of the node
+		float offsetExtra = 0.9f; // + shorten it a bit to make it look better
+		edge.setHeadOffset(DrawableNode::NODE_RADIUS * offsetExtra);
+
+		edge.draw(target, states);
 	}
 
 	nlohmann::json DrawableGraph::serializeNode(NodeId nodeId) const

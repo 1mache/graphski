@@ -99,10 +99,10 @@ namespace graphski
         switch (event.code)
         {
         case WRITE_TO_FILE_KEY:
-            m_graph.saveToFile();
+            //m_graph.saveToFile();
             break;
         case LOAD_FROM_FILE_KEY:
-            m_graph.loadFromFile();
+            //m_graph.loadFromFile();
 			break;
 
         case CLEAR_GRAPH_KEY:
@@ -110,7 +110,7 @@ namespace graphski
 			break;
 
         case TRANSPOSE_KEY:
-			m_graph.transpose();
+			// m_graph.transpose();
 			break;
 
         default:

@@ -1,8 +1,9 @@
 #pragma once
 #include <algorithm>
 
-#include "Graph.h"
 #include "SFML/Graphics.hpp"
+
+#include "Graph.h"
 #include "Utils.h"
 #include "DrawableNode.h"
 #include "DrawableEdge.h"
@@ -14,9 +15,7 @@ namespace graphski
 	public:
 		DrawableGraph(size_t reserveCount = 0) :
 			Graph(reserveCount)
-		{
-			m_selectedNodes.reserve(reserveCount);
-		}
+		{}
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -42,17 +41,17 @@ namespace graphski
 			m_updatedGraph = true;
 		}
 
-		void transpose() override
-		{
-			Graph::transpose();
-			m_updatedGraph = true;
-		}
+		// void transpose() override
+		// {
+		// 	Graph::transpose();
+		// 	m_updatedGraph = true;
+		// }
 
-		void loadFromFile() override
-		{
-			Graph::loadFromFile();
-			m_updatedGraph = true;
-		}
+		// void loadFromFile() override
+		// {
+		// 	Graph::loadFromFile();
+		// 	m_updatedGraph = true;
+		// }
 
 		void toggleSelectNode(NodeId id);
 
@@ -123,27 +122,6 @@ namespace graphski
 			return res;
 		}
 
-		DrawableEdge* getEdge(const EdgeLocator& edgeId) override
-		{
-			auto* res = dynamic_cast<DrawableEdge*>(Graph::getEdge(edgeId));
-			if (!res) // should never happen
-				throw std::runtime_error(std::string("Edge with locator ") + 
-					"{" + std::to_string(edgeId.nodeId) + ", " + std::to_string(edgeId.neighborId) + "}" +
-					" is not a DrawableEdge.");
-			return res;
-		}
-
-		const DrawableEdge* getEdge(const EdgeLocator& edgeId) const override
-		{
-			auto* res = dynamic_cast<const DrawableEdge*>(Graph::getEdge(edgeId));
-			if (!res) // should never happen
-				throw std::runtime_error(std::string("Edge with locator ") +
-					"{" + std::to_string(edgeId.nodeId) + ", " + std::to_string(edgeId.neighborId) + "}" +
-					" is not a DrawableEdge.");
-			return res;
-		}
-
-
 		// returns a color for a node (random or not depends on Config)
 		sf::Color getNodeColor() const;
 
@@ -164,6 +142,11 @@ namespace graphski
 		};
 
 		sf::Color m_nodeColor{ Config::DEFAULT_NODE_COLOR };
+
+		static constexpr float EDGE_THICKNESS = 5.f;
+
+		// position offset of the self edge circle relative to the node center
+		static constexpr sf::Vector2f SELF_EDGE_OFFSET{ -1.f, -1.f };
 
 		bool m_updatedGraph = true; // indicates if the graph has been updated with the last events
 
