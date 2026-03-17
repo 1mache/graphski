@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include "Graph.h"
+#include "GraphFunctions.h"
 #include <cstdio> // for std::remove
 
 using namespace graphski;
@@ -89,35 +90,35 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         REQUIRE(resultFalse == false);
     }
 
-    // SECTION("Graph Transposition") {
-    //     g.addEdge(id1, id2);
-    //     g.addEdge(id2, id3);
+    SECTION("Graph Transposition") {
+        g.addEdge(id1, id2);
+        g.addEdge(id2, id3);
 
-    //     g.transpose();
+        transposeGraph(g);
 
-    //     REQUIRE(g.edgeCount() == 2);
+        REQUIRE(g.edgeCount() == 2);
         
-    //     auto n3 = g.getNeighbors(id3);
-    //     REQUIRE(n3.size() == 1);
-    //     REQUIRE(n3[0] == id2); // Reversed direction
+        auto n3 = g.getNeighbors(id3);
+        REQUIRE(n3.size() == 1);
+        REQUIRE(n3[0] == id2); // Reversed direction
         
-    //     auto n2 = g.getNeighbors(id2);
-    //     REQUIRE(n2.size() == 1);
-    //     REQUIRE(n2[0] == id1); // Reversed direction
+        auto n2 = g.getNeighbors(id2);
+        REQUIRE(n2.size() == 1);
+        REQUIRE(n2[0] == id1); // Reversed direction
 
-    //     auto n1 = g.getNeighbors(id1);
-    //     REQUIRE(n1.empty()); // Now id1 should have no outgoing edges
+        auto n1 = g.getNeighbors(id1);
+        REQUIRE(n1.empty()); // Now id1 should have no outgoing edges
         
-    //     // Check new degrees
-    //     REQUIRE(g.node(id1).getDIn() == 1);
-    //     REQUIRE(g.node(id1).getDOut() == 0);
+        // Check new degrees
+        REQUIRE(g.node(id1).getDIn() == 1);
+        REQUIRE(g.node(id1).getDOut() == 0);
         
-    //     REQUIRE(g.node(id2).getDIn() == 1);
-    //     REQUIRE(g.node(id2).getDOut() == 1);
+        REQUIRE(g.node(id2).getDIn() == 1);
+        REQUIRE(g.node(id2).getDOut() == 1);
 
-    //     REQUIRE(g.node(id3).getDIn() == 0);
-    //     REQUIRE(g.node(id3).getDOut() == 1);
-    // }
+        REQUIRE(g.node(id3).getDIn() == 0);
+        REQUIRE(g.node(id3).getDOut() == 1);
+    }
 }
 
 TEST_CASE("Graph Serialization", "[Graph][JSON]") {

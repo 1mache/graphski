@@ -117,50 +117,6 @@ namespace graphski
         return m_adjList[id]; // return a copy of the neighbors vector
     }
 
-    // void Graph::transpose()
-    // {
-    //     std::cout << "I am transposing it" << std::endl;
-
-    //     // new Adjacency list sized like the original and filled with empty pairs
-    //     AdjacencyList newAdjList{ m_adjList.size(), {nullptr, {}} };
-
-    //     // fill it with nodes
-    //     for (const auto& pair : m_adjList)
-    //     {
-    //         Node* node = pair.first;
-
-    //         Node* newNode = createNode(node);
-    //         // swap in and out degrees for new node
-    //         newNode->setDIn(node->getDOut());
-    //         newNode->setDOut(node->getDIn());
-
-    //         newAdjList[newNode->getId()] = { newNode, {} };
-    //     }
-
-    //     // fill it with opposite edges
-    //     for (const auto& pair : m_adjList)
-    //     {
-    //         // pointer to new node with same id from new list
-    //         NodeId nodeId = pair.first->getId();
-    //         auto* node = newAdjList[nodeId].first;
-    //         auto& edges = pair.second;
-
-    //         for (const auto& edge : edges)
-    //         {
-    //             NodeId toId = edge->getTo()->getId();
-    //             // its crucial to use newAdjList here, not m_adjList when accessing nodes
-    //             auto* edgeTarget = newAdjList[toId].first;
-    //             newAdjList[toId].second.push_back(
-    //                 createEdge(edgeTarget, node) // create flipped edge
-    //             );
-    //         }
-    //     }
-
-    //     // free previous adjlist
-    //     deleteAdjList();
-    //     m_adjList = std::move(newAdjList);
-    // }
-
     // void Graph::saveToFile() const
     // {
     //     // initialize the file

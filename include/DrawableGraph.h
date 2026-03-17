@@ -41,12 +41,6 @@ namespace graphski
 			m_updatedGraph = true;
 		}
 
-		// void transpose() override
-		// {
-		// 	Graph::transpose();
-		// 	m_updatedGraph = true;
-		// }
-
 		// void loadFromFile() override
 		// {
 		// 	Graph::loadFromFile();
@@ -89,8 +83,8 @@ namespace graphski
 		// evenly distributes nodes on screen
 		void arrangeNodesEvenly();
 		
-		bool isGraphUpdated() const { return m_updatedGraph; }
-		void setGraphNotUpdated() { m_updatedGraph = false; }
+		bool isUpdated() const { return m_updatedGraph; }
+		void setUpdated(bool value) { m_updatedGraph = value; }
 
 	private:
 		// factory methods for creating nodes and edges. overrides the base Graph methods
@@ -158,5 +152,6 @@ namespace graphski
 		// min color difference (for random color selection)
 		static constexpr uint32_t MIN_COLOR_DIFFERENCE = Utils::absDiff(Config::DEFAULT_NODE_COLOR.toInteger(),
 																		Config::TEXT_COLOR.toInteger());
+
 	};
 }

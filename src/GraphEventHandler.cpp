@@ -110,7 +110,8 @@ namespace graphski
 			break;
 
         case TRANSPOSE_KEY:
-			// m_graph.transpose();
+			transposeGraph(m_graph);
+            m_graph.setUpdated(true); // to prevent rearranging nodes after transposition
 			break;
 
         default:

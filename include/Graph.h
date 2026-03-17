@@ -66,8 +66,6 @@ namespace graphski
             return m_adjList; // return a copy and thats ok! 
         }
 
-        // // transposes the graph 
-        // virtual void transpose(); 
         // // saves the graph to a file in json format
         // void saveToFile() const; 
         // // loads the graph from a file in json format
@@ -113,5 +111,7 @@ namespace graphski
 		
         // TODO: make this dynamic
         static constexpr const char* FILE_NAME = "graph.json";
+
+        friend void transposeGraph(Graph& graph); 
     };
 }

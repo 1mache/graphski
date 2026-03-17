@@ -39,7 +39,7 @@ int main()
             graphEvents.processEvent(event);
         }
 
-        if(graph.isGraphUpdated())
+        if(graph.isUpdated())
         {
             window.clear();
 
@@ -47,7 +47,7 @@ int main()
 
             window.display();
 
-            graph.setGraphNotUpdated();
+            graph.setUpdated(false);
         }
     }
 }

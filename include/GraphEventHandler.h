@@ -1,5 +1,6 @@
 #pragma once
 #include "DrawableGraph.h"
+#include "GraphFunctions.h"
 #include "Config.h"
 
 namespace graphski 
