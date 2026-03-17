@@ -17,6 +17,11 @@ namespace graphski
 			Graph(reserveCount)
 		{}
 
+		DrawableGraph(const DrawableGraph&) = delete;
+		DrawableGraph& operator=(const DrawableGraph&) = delete;
+		DrawableGraph(DrawableGraph&&) noexcept = delete;
+		DrawableGraph& operator=(DrawableGraph&&) noexcept = delete; 
+
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 		void makeEmpty() override;
