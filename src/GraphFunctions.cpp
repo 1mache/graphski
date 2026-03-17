@@ -29,4 +29,64 @@ void transposeGraph(Graph &graph)
     
     graph.m_adjList = std::move(newAdjList);
 }
+
+void saveToFile(const Graph &graph, std::string_view fileName)
+{
+    // initialize the file
+    nlohmann::json j;
+    // write the number of nodes
+    j["nodeCount"] = graph.nodeCount();
+    // initialize the array of neighbors in json 
+    auto& nodesArr = j["nodes"] = nlohmann::json::array();
+
+    for (size_t i = 0; i < graph.nodeCount(); ++i)
+    {
+        NodeId nodeId = static_cast<NodeId>(i);
+        auto nodeJson = graph.serializeNode(nodeId);
+
+        nodeJson["neighbors"] = graph.getNeighbors(nodeId); // add neighbors to the node json
+        nodesArr.push_back(nodeJson);
+    }
+
+    std::ofstream file(fileName.data());
+    if (!file.is_open())
+    {
+        std::cout << "Error opening file for writing: " << fileName << std::endl;
+    }
+
+    file << j.dump(2); // pretty print with 2 spaces (you can change this)
+    file.close();
+    std::cout << "Graph saved to " << fileName << std::endl;
+}
+void loadFromFile(Graph &graph, std::string_view fileName)
+{
+    nlohmann::json j;
+    std::ifstream file(fileName.data());
+    if (file.is_open())
+    {
+        file >> j;
+        file.close();
+    }
+    else
+    {
+        std::cout << "Error opening file" << std::endl;
+        return;
+    }
+
+    graph.makeEmpty(); // clear the graph before loading
+    graph.m_nodes.reserve(j["nodeCount"].get<NodeId>());
+    graph.m_adjList.resize(j["nodeCount"].get<NodeId>(), std::vector<NodeId>{});
+
+    // create nodes
+    for (auto& node : j["nodes"])
+        graph.m_nodes.push_back(graph.deserializeNode(node));
+
+    // add edges
+    for (auto& node : j["nodes"])
+    {
+        NodeId id = node["id"];
+        for (NodeId neighbor : node["neighbors"])
+            graph.m_adjList[id].push_back(neighbor);
+    }
+}
 } // namespace graphski

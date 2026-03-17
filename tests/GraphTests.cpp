@@ -130,35 +130,36 @@ TEST_CASE("Graph Serialization", "[Graph][JSON]") {
     g1.addEdge(idA, idB);
     g1.addEdge(idB, idC);
 
-    // SECTION("Save and Load") {
-    //     // Save to json
-    //     g1.saveToFile();
+    SECTION("Save and Load") {
+        std::string_view filename = "serialized_test.json";
+        // Save to json
+        saveToFile(g1, filename);
 
-    //     // Load into a new graph
-    //     Graph g2;
-    //     g2.loadFromFile();
+        // Load into a new graph
+        Graph g2;
+        loadFromFile(g2, filename);
 
-    //     // Verify structure matches g1
-    //     REQUIRE(g2.nodeCount() == 3);
-    //     REQUIRE(g2.edgeCount() == 2);
+        // Verify structure matches g1
+        REQUIRE(g2.nodeCount() == 3);
+        REQUIRE(g2.edgeCount() == 2);
 
-    //     // Verify nodes 
-    //     REQUIRE(g2.node(idA).getName() == "A");
-    //     REQUIRE(g2.node(idB).getName() == "B");
-    //     REQUIRE(g2.node(idC).getName() == "C");
+        // Verify nodes 
+        REQUIRE(g2.node(idA).getName() == "A");
+        REQUIRE(g2.node(idB).getName() == "B");
+        REQUIRE(g2.node(idC).getName() == "C");
 
-    //     // Verify edges match 
-    //     auto neighborsA = g2.getNeighbors(idA);
-    //     REQUIRE(neighborsA.size() == 1);
-    //     REQUIRE(neighborsA[0] == idB);
+        // Verify edges match 
+        auto neighborsA = g2.getNeighbors(idA);
+        REQUIRE(neighborsA.size() == 1);
+        REQUIRE(neighborsA[0] == idB);
 
-    //     auto neighborsB = g2.getNeighbors(idB);
-    //     REQUIRE(neighborsB.size() == 1);
-    //     REQUIRE(neighborsB[0] == idC);
+        auto neighborsB = g2.getNeighbors(idB);
+        REQUIRE(neighborsB.size() == 1);
+        REQUIRE(neighborsB[0] == idC);
 
-    //     REQUIRE(g2.getNeighbors(idC).empty());
+        REQUIRE(g2.getNeighbors(idC).empty());
         
-    //     // Cleanup generated json file testing artifact 
-    //     std::remove("graph.json");
-    // }
+        // Cleanup generated json file testing artifact 
+        std::remove(filename.data());
+    }
 }

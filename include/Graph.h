@@ -66,11 +66,6 @@ namespace graphski
             return m_adjList; // return a copy and thats ok! 
         }
 
-        // // saves the graph to a file in json format
-        // void saveToFile() const; 
-        // // loads the graph from a file in json format
-        // virtual void loadFromFile(); 
-
     protected:
 		// factory methods for creating nodes and edges
         virtual Node* createNode(NodeId id, const std::string& name = "") const
@@ -109,9 +104,8 @@ namespace graphski
         static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();
         static constexpr size_t RESERVE_NODES = 10;
 		
-        // TODO: make this dynamic
-        static constexpr const char* FILE_NAME = "graph.json";
-
         friend void transposeGraph(Graph& graph); 
+        friend void saveToFile(const Graph& graph, std::string_view fileName);
+        friend void loadFromFile(Graph& graph, std::string_view fileName);
     };
 }
