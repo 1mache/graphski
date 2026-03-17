@@ -14,27 +14,18 @@ namespace graphski
 {
     class Graph : public IGraph
     {
-	protected: // because only classes that see m_adjList need this
-        struct EdgeLocator
-        {
-            EdgeLocator(NodeId _nodeId, size_t _neighborId) :
-                nodeId(_nodeId), neighborId(_neighborId) {}
-            NodeId nodeId;
-            size_t neighborId; // index of the neighbor in the node's edges vector
-        };
-
     public:
         Graph(size_t reserveCount = 0);
         
-        Graph(Graph&) = delete;
+        Graph(Graph& other) = delete;
         Graph& operator=(Graph&) = delete;
 
-        Graph(Graph&& other); 
-        Graph& operator=(Graph&& other); 
+        Graph(Graph&& other) = delete; 
+        Graph& operator=(Graph&& other) = delete; 
 
         virtual ~Graph()
         {
-            deleteAdjList();
+            cleanUp();
         }
 
         // clears the graph
@@ -98,12 +89,15 @@ namespace graphski
         AdjacencyList m_adjList;
 
     private:
-        // deletes all nodes and edges
-        void deleteAdjList(); 
+        // frees all nodes and deletes edges
+        void cleanUp(); 
 
         static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();
         static constexpr size_t RESERVE_NODES = 10;
-		
+        
+    // Friends:
+        friend void swap(Graph& first, Graph& second) noexcept; // for copy and swap idiom
+
         friend void transposeGraph(Graph& graph); 
         friend void saveToFile(const Graph& graph, std::string_view fileName);
         friend void loadFromFile(Graph& graph, std::string_view fileName);

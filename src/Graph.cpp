@@ -16,27 +16,9 @@ namespace graphski
         m_adjList.reserve(reserveCount);
     }
 
-    Graph::Graph(Graph&& other)
-    {
-        deleteAdjList();
-        m_nodes = std::move(other.m_nodes);
-        m_adjList = std::move(other.m_adjList);
-    }
-
-    Graph& Graph::operator=(Graph&& other)
-    {
-        if (this != &other)
-        {
-            deleteAdjList();
-            m_nodes = std::move(other.m_nodes);
-            m_adjList = std::move(other.m_adjList);
-        }
-        return *this;
-    }
-
     void Graph::makeEmpty()
     {
-        deleteAdjList();
+        cleanUp();
         m_nodes.clear();
         m_adjList.clear();
         m_nodes.reserve(RESERVE_NODES);
@@ -167,7 +149,7 @@ namespace graphski
             j["name"].get<std::string>());
     }
 
-    void Graph::deleteAdjList()
+    void Graph::cleanUp()
     {
         m_adjList.clear();
         for (const auto* node : m_nodes)

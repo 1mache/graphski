@@ -4,6 +4,7 @@
 
 namespace graphski
 {
+	class Node;
 	// General base class for graphs
 	class IGraph
 	{

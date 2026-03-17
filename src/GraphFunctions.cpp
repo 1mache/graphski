@@ -1,8 +1,15 @@
 #include "GraphFunctions.h"
+#include "Graph.h"
 namespace graphski
 {
-void transposeGraph(Graph &graph)
+void swap(Graph &first, Graph &second) noexcept
 {
+    using std::swap;
+    swap(first.m_nodes, second.m_nodes);
+    swap(first.m_adjList, second.m_adjList);
+}
+
+void transposeGraph(Graph &graph) {
     std::cout << "I am transposing it" << std::endl;
     // we can reuse the same nodes vector
     auto& nodes = graph.m_nodes; 
