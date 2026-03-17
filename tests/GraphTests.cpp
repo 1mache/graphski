@@ -163,3 +163,107 @@ TEST_CASE("Graph Serialization", "[Graph][JSON]") {
         std::remove(filename.data());
     }
 }
+
+TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
+    SECTION("Constructors create valid graph") {
+        Graph gDefault;
+        Graph gReserved(32);
+
+        REQUIRE(gDefault.nodeCount() == 0);
+        REQUIRE(gDefault.edgeCount() == 0);
+        REQUIRE(gReserved.nodeCount() == 0);
+        REQUIRE(gReserved.edgeCount() == 0);
+    }
+
+    SECTION("Copy constructor performs deep copy") {
+        Graph source;
+        NodeId a = source.addNode("A");
+        NodeId b = source.addNode("B");
+        source.addEdge(a, b);
+
+        Graph copy(source);
+
+        REQUIRE(copy.nodeCount() == source.nodeCount());
+        REQUIRE(copy.edgeCount() == source.edgeCount());
+        REQUIRE(copy.node(a).getName() == "A");
+        REQUIRE(copy.getNeighbors(a).size() == 1);
+        REQUIRE(copy.getNeighbors(a)[0] == b);
+
+        // Mutate source to verify the copy is independent.
+        source.node(a); // keep id usage explicit and readable
+        source.addNode("C");
+        source.deleteEdge(a, b);
+
+        REQUIRE(copy.nodeCount() == 2);
+        REQUIRE(copy.edgeCount() == 1);
+        REQUIRE(copy.getNeighbors(a).size() == 1);
+        REQUIRE(copy.getNeighbors(a)[0] == b);
+    }
+
+    SECTION("Move constructor transfers graph state") {
+        Graph source;
+        NodeId a = source.addNode("A");
+        NodeId b = source.addNode("B");
+        source.addEdge(a, b);
+
+        Graph moved(std::move(source));
+
+        REQUIRE(moved.nodeCount() == 2);
+        REQUIRE(moved.edgeCount() == 1);
+        REQUIRE(moved.node(a).getName() == "A");
+        REQUIRE(moved.getNeighbors(a).size() == 1);
+        REQUIRE(moved.getNeighbors(a)[0] == b);
+
+        // Moved-from object must remain valid and usable.
+        source.makeEmpty();
+        NodeId x = source.addNode("X");
+        REQUIRE(x == 0);
+        REQUIRE(source.nodeCount() == 1);
+    }
+
+    SECTION("Copy assignment copies full graph state") {
+        Graph source;
+        NodeId a = source.addNode("A");
+        NodeId b = source.addNode("B");
+        source.addEdge(a, b);
+
+        Graph target;
+        target.addNode("Old");
+
+        target = source;
+
+        REQUIRE(target.nodeCount() == 2);
+        REQUIRE(target.edgeCount() == 1);
+        REQUIRE(target.node(a).getName() == "A");
+        REQUIRE(target.getNeighbors(a).size() == 1);
+        REQUIRE(target.getNeighbors(a)[0] == b);
+
+        source.deleteEdge(a, b);
+        REQUIRE(source.edgeCount() == 0);
+        REQUIRE(target.edgeCount() == 1);
+    }
+
+    SECTION("Move assignment transfers full graph state") {
+        Graph source;
+        NodeId a = source.addNode("A");
+        NodeId b = source.addNode("B");
+        source.addEdge(a, b);
+
+        Graph target;
+        target.addNode("Old");
+        target.addNode("Data");
+
+        target = std::move(source);
+
+        REQUIRE(target.nodeCount() == 2);
+        REQUIRE(target.edgeCount() == 1);
+        REQUIRE(target.node(a).getName() == "A");
+        REQUIRE(target.getNeighbors(a).size() == 1);
+        REQUIRE(target.getNeighbors(a)[0] == b);
+
+        // Moved-from object must remain valid and usable.
+        source.makeEmpty();
+        source.addNode("AfterMove");
+        REQUIRE(source.nodeCount() == 1);
+    }
+}

@@ -17,11 +17,23 @@ namespace graphski
     public:
         Graph(size_t reserveCount = 0);
         
-        Graph(Graph& other) = delete;
-        Graph& operator=(Graph&) = delete;
+        Graph(const Graph& other);
+        Graph& operator=(const Graph& other)
+        {
+            Graph copy(other); // make a copy using the copy constructor
+            swap(*this, copy);
+            return *this;
+        }
 
-        Graph(Graph&& other) = delete; 
-        Graph& operator=(Graph&& other) = delete; 
+        Graph(Graph&& other) noexcept
+            : m_nodes(std::move(other.m_nodes)),
+              m_adjList(std::move(other.m_adjList))
+        {}
+        Graph& operator=(Graph&& other) noexcept
+        {
+            swap(*this, other);
+            return *this;
+        } 
 
         virtual ~Graph()
         {
@@ -76,10 +88,11 @@ namespace graphski
 		// checks if edge exists between two nodes, returns true if it does
         bool edgeExists(NodeId fromNodeId, NodeId toNodeId) const;
 
-		// private getters for nodes and edges for internal use
+		// private getters for nodes for internal use
         virtual Node* getNode(NodeId id);
         virtual const Node* getNode(NodeId id) const; // const version
 
+        // TODO: move these somewhere else
         // returns the json representation of the node, used in saveToFile
         virtual nlohmann::json serializeNode(NodeId nodeId) const;
         // creates and returns a new node given json representation of it, used in loadFromFile
