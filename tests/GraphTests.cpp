@@ -91,6 +91,9 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
     }
 
     SECTION("Graph Transposition") {
+        Graph empty{};
+        REQUIRE_NOTHROW(transposeGraph(empty));
+
         g.addEdge(id1, id2);
         g.addEdge(id2, id3);
 
