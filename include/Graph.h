@@ -26,15 +26,8 @@ namespace graphski
             return *this;
         }
 
-        Graph(Graph&& other) noexcept:
-            m_nodes(std::move(other.m_nodes)),
-            m_adjList(std::move(other.m_adjList))
-        {}
-        Graph& operator=(Graph&& other) noexcept
-        {
-            swap(*this, other);
-            return *this;
-        } 
+        Graph(Graph&&) = default;        
+        Graph& operator=(Graph&&) = default;
 
         virtual ~Graph() = default;
 
