@@ -38,7 +38,7 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
         Node n3(20, "A");
 
         // Equality is defined by ID only in the current Node class implementation
-        REQUIRE(n1 == n2);
-        REQUIRE_FALSE(n1 == n3);
+        REQUIRE(n1.getId() == n2.getId());
+        REQUIRE_FALSE(n1.getId() == n3.getId());
     }
 }

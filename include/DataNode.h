@@ -1,20 +1,27 @@
 #pragma once
+
 #include <string>
 #include "GraphTypes.h"
+#include "Node.h"
 
 namespace graphski 
 {
-
-	/* Base class with no data for testing, visualization and
-	other purposes where the structure of the graph is all we care about */
-	class Node
+    template <typename T>
+	class DataNode : public Node
 	{
 	public:
-		explicit Node(NodeId id, std::string_view name = "") : m_id(id), m_name(name)
+		explicit DataNode(NodeId id, T data, std::string_view name = "") :
+			m_data(data), m_id(id), m_name(name)
 		{
 			if (name.size() == 0) // if empty string was passed
 				m_name = std::to_string(m_id); //set the name to be the id (as string)
 		}
+
+		// =================Data======================
+		// by const ref when we want to look at the data but not take it out of the node
+		const T& getData() const { return m_data; }
+		// by value when we want to "take out" the data and not care about the node anymore
+		const T  retrieveData() const { return m_data; }
 
 		// =================Degrees===================
 
@@ -38,8 +45,10 @@ namespace graphski
 		void setName(std::string_view name) { m_name = name; }
 		// ===============================================
 		
-		virtual ~Node() = default;
+		virtual ~DataNode() = default;
 	private:
+		// the data of the node, can be anything
+		const T     m_data; 
 		// id of the node, should be unique
 		NodeId		m_id;
 		// if we want to give our node a name like A,B,C
