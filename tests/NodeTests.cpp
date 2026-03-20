@@ -9,9 +9,9 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
         REQUIRE(node.getId() == 42);
         // By default if the name is empty, it assigns the stringified id.
         REQUIRE(node.getName() == "42");
-        REQUIRE(node.getDIn() == 0);
-        REQUIRE(node.getDOut() == 0);
-        REQUIRE(node.getD() == 0);
+        REQUIRE(node.getDegIn() == 0);
+        REQUIRE(node.getDegOut() == 0);
+        REQUIRE(node.getDegree() == 0);
     }
 
     SECTION("Constructor with an explicit name") {
@@ -27,9 +27,9 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
 
         node.setDIn(5);
         node.setDOut(3);
-        REQUIRE(node.getDIn() == 5);
-        REQUIRE(node.getDOut() == 3);
-        REQUIRE(node.getD() == 8);
+        REQUIRE(node.getDegIn() == 5);
+        REQUIRE(node.getDegOut() == 3);
+        REQUIRE(node.getDegree() == 8);
     }
 
     SECTION("Equality operator") {

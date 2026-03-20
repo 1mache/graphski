@@ -54,14 +54,14 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         REQUIRE(g.edgeCount() == 2);
 
         // Check degrees via peekNode
-        REQUIRE(g.node(id1).getDOut() == 1);
-        REQUIRE(g.node(id1).getDIn() == 0);
+        REQUIRE(g.node(id1).getDegOut() == 1);
+        REQUIRE(g.node(id1).getDegIn() == 0);
 
-        REQUIRE(g.node(id2).getDOut() == 1);
-        REQUIRE(g.node(id2).getDIn() == 1);
+        REQUIRE(g.node(id2).getDegOut() == 1);
+        REQUIRE(g.node(id2).getDegIn() == 1);
 
-        REQUIRE(g.node(id3).getDOut() == 0);
-        REQUIRE(g.node(id3).getDIn() == 1);
+        REQUIRE(g.node(id3).getDegOut() == 0);
+        REQUIRE(g.node(id3).getDegIn() == 1);
         
         // Check Neighbors
         auto neighbors1 = g.getNeighbors(id1);
@@ -113,14 +113,14 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         REQUIRE(n1.empty()); // Now id1 should have no outgoing edges
         
         // Check new degrees
-        REQUIRE(g.node(id1).getDIn() == 1);
-        REQUIRE(g.node(id1).getDOut() == 0);
+        REQUIRE(g.node(id1).getDegIn() == 1);
+        REQUIRE(g.node(id1).getDegOut() == 0);
         
-        REQUIRE(g.node(id2).getDIn() == 1);
-        REQUIRE(g.node(id2).getDOut() == 1);
+        REQUIRE(g.node(id2).getDegIn() == 1);
+        REQUIRE(g.node(id2).getDegOut() == 1);
 
-        REQUIRE(g.node(id3).getDIn() == 0);
-        REQUIRE(g.node(id3).getDOut() == 1);
+        REQUIRE(g.node(id3).getDegIn() == 0);
+        REQUIRE(g.node(id3).getDegOut() == 1);
     }
 }
 

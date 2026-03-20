@@ -29,8 +29,8 @@ void transposeGraph(Graph &graph) {
     std::for_each(nodes.begin(), nodes.end(), 
         [](auto& nodep) {
             // swap in and out degrees for each node
-            NodeId dIn = nodep->getDIn();
-            nodep->setDIn(nodep->getDOut());
+            NodeId dIn = nodep->getDegIn();
+            nodep->setDIn(nodep->getDegOut());
             nodep->setDOut(dIn);
         });
     

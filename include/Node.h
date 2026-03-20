@@ -20,20 +20,20 @@ namespace graphski
 
 		// =================Degrees===================
 
-		NodeId getDIn() const { return m_dIn; }
+		Degree getDegIn() const { return m_dIn; }
 
-		NodeId getDOut() const { return m_dOut; }
+		Degree getDegOut() const { return m_dOut; }
 
 		// get the undirected degree
-		NodeId getD() const { return m_dIn + m_dOut; };
+		Degree getDegree() const { return m_dIn + m_dOut; };
 		
-		void setDIn(NodeId val) { m_dIn = val; }
+		void setDIn(Degree val) { m_dIn = val; }
 
-		void setDOut(NodeId val) { m_dOut = val; }
+		void setDOut(Degree val) { m_dOut = val; }
 		// ===========================================
 		// =================ID and Name===================
 
-		NodeId getId() const { return m_id; }
+		Degree getId() const { return m_id; }
 
 		const std::string& getName() const { return m_name; }
 
@@ -48,7 +48,7 @@ namespace graphski
 		std::string m_name;
 
 		// in Degree, out Degree
-		NodeId		m_dIn = 0, 
+		Degree		m_dIn = 0, 
 					m_dOut = 0;
 	};
 }

@@ -9,7 +9,6 @@ namespace graphski
 	class IGraph
 	{
 	public:
-
 		virtual ~IGraph() = default;
 
 		virtual void makeEmpty() = 0;

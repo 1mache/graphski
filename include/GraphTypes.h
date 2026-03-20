@@ -7,8 +7,10 @@
 
 namespace graphski
 {
-	// global alias for node id type
+	// alias for node id type
 	using NodeId = uint16_t;
+	// alias for degree type, max degree = max id since id is ordered 
+	using Degree = NodeId; 
 	
 	// adjacency list contains for each node, a vector of its neighbors (by id)
     using AdjacencyList = std::vector<std::vector<NodeId>>;
