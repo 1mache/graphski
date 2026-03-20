@@ -16,7 +16,7 @@ namespace graphski
     class Graph : public IGraph
     {
     public:
-        Graph(size_t reserveCount = 0);
+        explicit Graph(size_t reserveCount = 0);
         
         Graph(const Graph& other);
         Graph& operator=(const Graph& other)

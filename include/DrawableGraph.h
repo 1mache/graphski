@@ -13,7 +13,7 @@ namespace graphski
 	class DrawableGraph : public Graph, public sf::Drawable
 	{
 	public:
-		DrawableGraph(size_t reserveCount = 0) :
+		explicit DrawableGraph(size_t reserveCount = 0) :
 			Graph(reserveCount)
 		{}
 
