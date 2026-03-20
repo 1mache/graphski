@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include <memory>
 
 #include "nlohmann/json.hpp"
 #include "IGraph.h"
@@ -25,9 +26,9 @@ namespace graphski
             return *this;
         }
 
-        Graph(Graph&& other) noexcept
-            : m_nodes(std::move(other.m_nodes)),
-              m_adjList(std::move(other.m_adjList))
+        Graph(Graph&& other) noexcept:
+            m_nodes(std::move(other.m_nodes)),
+            m_adjList(std::move(other.m_adjList))
         {}
         Graph& operator=(Graph&& other) noexcept
         {
@@ -35,10 +36,7 @@ namespace graphski
             return *this;
         } 
 
-        virtual ~Graph()
-        {
-            cleanUp();
-        }
+        virtual ~Graph() = default;
 
         // clears the graph
         virtual void makeEmpty() override;
@@ -71,16 +69,16 @@ namespace graphski
 
     protected:
 		// factory methods for creating nodes and edges
-        virtual Node* createNode(NodeId id, const std::string& name = "") const
+        virtual std::unique_ptr<Node> createNode(NodeId id, const std::string& name = "") const
         {
-            return new Node(id, name);
+            return std::make_unique<Node>(id, name);
         }
         
-        virtual Node* createNode(const Node* node) const
+        virtual std::unique_ptr<Node> createNode(const Node* node) const
         {
             if(!node)
 				throw std::invalid_argument("Cannot create a node from a null pointer.");
-            return new Node(*node);
+            return std::make_unique<Node>(*node);
         }
 
 		// checks if node id is in bounds of the graphs
@@ -88,7 +86,7 @@ namespace graphski
 		// checks if edge exists between two nodes, returns true if it does
         bool edgeExists(NodeId fromNodeId, NodeId toNodeId) const;
 
-		// private getters for nodes for internal use
+		// private getters for nodes for internal use, raw pointers are non owning.
         virtual Node* getNode(NodeId id);
         virtual const Node* getNode(NodeId id) const; // const version
 
@@ -96,15 +94,12 @@ namespace graphski
         // returns the json representation of the node, used in saveToFile
         virtual nlohmann::json serializeNode(NodeId nodeId) const;
         // creates and returns a new node given json representation of it, used in loadFromFile
-        virtual Node* deserializeNode(const nlohmann::json& j) const; 
+        virtual std::unique_ptr<Node> deserializeNode(const nlohmann::json& j) const; 
 
-        std::vector<Node*> m_nodes;
+        std::vector<std::unique_ptr<Node>> m_nodes;
         AdjacencyList m_adjList;
 
-    private:
-        // frees all nodes and deletes edges
-        void cleanUp(); 
-
+    private: 
         static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();
         static constexpr size_t RESERVE_NODES = 10;
         

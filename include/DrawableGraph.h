@@ -46,12 +46,6 @@ namespace graphski
 			m_updatedGraph = true;
 		}
 
-		// void loadFromFile() override
-		// {
-		// 	Graph::loadFromFile();
-		// 	m_updatedGraph = true;
-		// }
-
 		void toggleSelectNode(NodeId id);
 
 		// checks if a position is in a certain node, returns its id if it is
@@ -93,9 +87,9 @@ namespace graphski
 
 	private:
 		// factory methods for creating nodes and edges. overrides the base Graph methods
-		DrawableNode* createNode(NodeId id, const std::string& name = "") const override;
+		std::unique_ptr<Node> createNode(NodeId id, const std::string& name = "") const override;
 		
-		DrawableNode* createNode(const Node* node) const override;
+		std::unique_ptr<Node> createNode(const Node* node) const override;
 
 		// node and edge getters overrides
 		DrawableNode* getNode(NodeId id) override
@@ -123,7 +117,7 @@ namespace graphski
 		// override function to serialize a drawable node
 		nlohmann::json serializeNode(NodeId nodeId) const override;
 		// override function to deserialize a drawable node
-		DrawableNode* deserializeNode(const nlohmann::json& nodeJson) const override;
+		std::unique_ptr<Node> deserializeNode(const nlohmann::json& nodeJson) const override;
 
 	private:
 		enum class InteractionMode

@@ -22,13 +22,12 @@ namespace graphski
     {
         m_nodes.reserve(other.nodeCount());
 
-        for (const auto* node : other.m_nodes)
-            m_nodes.push_back(createNode(node));
+        for (const auto& pnode : other.m_nodes)
+            m_nodes.push_back(createNode(pnode.get()));
     }
 
     void Graph::makeEmpty()
     {
-        cleanUp();
         m_nodes.clear();
         m_adjList.clear();
         m_nodes.reserve(RESERVE_NODES);
@@ -49,7 +48,7 @@ namespace graphski
         // TODO: this wont work if nodes can be deleted (ok for now)
         NodeId id = static_cast<NodeId>(nodeCount());
 
-        m_nodes.push_back(createNode(id, name));
+        m_nodes.emplace_back(createNode(id, name));
         m_adjList.push_back(std::vector<NodeId>());
         return id;
     }
@@ -134,14 +133,14 @@ namespace graphski
     {
         if (!nodeIdInBounds(id))
             return nullptr;
-        return m_nodes[id];
+        return m_nodes[id].get();
     }
 
     const Node* Graph::getNode(NodeId id) const
     {
         if (!nodeIdInBounds(id))
             return nullptr;
-        return m_nodes[id];
+        return m_nodes[id].get();
     }
 
     nlohmann::json Graph::serializeNode(NodeId nodeId) const
@@ -153,20 +152,10 @@ namespace graphski
         return j;
     }
 
-    Node* Graph::deserializeNode(const nlohmann::json& j) const
+    std::unique_ptr<Node> Graph::deserializeNode(const nlohmann::json& j) const
     {
         return createNode(j["id"].get<NodeId>(),
             j["name"].get<std::string>());
-    }
-
-    void Graph::cleanUp()
-    {
-        m_adjList.clear();
-        for (const auto* node : m_nodes)
-        {
-            delete node;
-        }
-        m_nodes.clear();
     }
 
 } // namespace graphski

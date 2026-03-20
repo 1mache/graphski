@@ -27,11 +27,11 @@ void transposeGraph(Graph &graph) {
     }
 
     std::for_each(nodes.begin(), nodes.end(), 
-        [](Node* node) {
+        [](auto& nodep) {
             // swap in and out degrees for each node
-            NodeId dIn = node->getDIn();
-            node->setDIn(node->getDOut());
-            node->setDOut(dIn);
+            NodeId dIn = nodep->getDIn();
+            nodep->setDIn(nodep->getDOut());
+            nodep->setDOut(dIn);
         });
     
     graph.m_adjList = std::move(newAdjList);

@@ -158,21 +158,21 @@ namespace graphski
 		}
 	}
 
-	DrawableNode* DrawableGraph::createNode(NodeId id, const std::string& name) const
+	std::unique_ptr<Node> DrawableGraph::createNode(NodeId id, const std::string& name) const
 	{
-		auto* node = new DrawableNode(id, name);
+		auto node = std::make_unique<DrawableNode>(id, name);
 		node->setColor(getNodeColor()); // set color for the new node
-		return node;
+		return std::move(node);
 	}
 
-	DrawableNode* DrawableGraph::createNode(const Node* node) const
+	std::unique_ptr<Node> DrawableGraph::createNode(const Node* node) const
 	{
 		if (!node)
 			throw std::invalid_argument("Cannot create a drawable node from a null pointer.");
 
 		const DrawableNode* drawableNode = dynamic_cast<const DrawableNode*>(node);
 		if (drawableNode)
-			return new DrawableNode(*drawableNode); // copy the drawable node if possible
+			return std::make_unique<DrawableNode>(*drawableNode); // copy the drawable node if possible
 
 		return createNode(node->getId(), node->getName());
 	}
@@ -234,15 +234,16 @@ namespace graphski
 		return nodeJson;
 	}
 
-	DrawableNode* DrawableGraph::deserializeNode(const nlohmann::json& nodeJson) const
+	std::unique_ptr<Node> DrawableGraph::deserializeNode(const nlohmann::json& nodeJson) const
 	{
 		// call base function to get the node without position
-		Node* node = Graph::deserializeNode(nodeJson);
-		DrawableNode* drawableNode = createNode(node);
+		auto nodep = Graph::deserializeNode(nodeJson);
+		auto* drawableNodePtr = dynamic_cast<DrawableNode*>(nodep.get());
+		if (!drawableNodePtr) throw std::runtime_error("Deserialized node is not a DrawableNode.");
 
 		// set the position
-		drawableNode->setPosition({ nodeJson["position"][0], nodeJson["position"][1] });
+		drawableNodePtr->setPosition({ nodeJson["position"][0], nodeJson["position"][1] });
 
-		return drawableNode;
+		return std::unique_ptr<Node>(drawableNodePtr);
 	}
 }
