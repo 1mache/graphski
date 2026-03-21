@@ -26,15 +26,15 @@ public:
         // TODO: change when we can delete nodes
         NodeId id = static_cast<NodeId>(nodeCount());
         
-        Graph::insertNode(createNode(id, std::forward<T>(data), name));
+        Graph::insertNode(createNode(std::forward<T>(data), name));
         return id;
     }
     
 private:
     // factory methods for creating nodes
-    std::unique_ptr<Node> createNode(NodeId id, T data, const std::string& name = "") const
+    std::unique_ptr<Node> createNode(T data, const std::string& name = "") const
     {
-        return std::make_unique<DataNode<T>>(id, data, name);
+        return std::make_unique<DataNode<T>>(data, name);
     }
     
     std::unique_ptr<Node> createNode(const Node* node) const

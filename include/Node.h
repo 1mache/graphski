@@ -10,11 +10,8 @@ namespace graphski
 	class Node
 	{
 	public:
-		explicit Node(NodeId id, std::string_view name = "") : m_id(id), m_name(name)
-		{
-			if (name.size() == 0) // if empty string was passed
-			m_name = std::to_string(m_id); //set the name to be the id (as string)
-		}
+		explicit Node(std::string_view name = "") : m_name(name)
+		{}
 		virtual ~Node() = default;
 		
 		
@@ -32,16 +29,11 @@ namespace graphski
 		// ===========================================
 		// =================ID and Name===================
 
-		Degree getId() const { return m_id; }
-
 		const std::string& getName() const { return m_name; }
 
 		void setName(std::string_view name) { m_name = name; }
 		// ===============================================
 	private:
-		// id of the node, should be unique
-		NodeId		m_id;
-		// if we want to give our node a name like A,B,C
 		std::string m_name;
 
 		// in Degree, out Degree

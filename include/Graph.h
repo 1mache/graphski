@@ -62,9 +62,9 @@ namespace graphski
 
     protected:
 		// factory methods for creating nodes
-        virtual std::unique_ptr<Node> createNode(NodeId id, const std::string& name = "") const
+        virtual std::unique_ptr<Node> createNode(const std::string& name = "") const
         {
-            return std::make_unique<Node>(id, name);
+            return std::make_unique<Node>(name);
         }
         
         virtual std::unique_ptr<Node> createNode(const Node* node) const

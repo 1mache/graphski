@@ -158,9 +158,9 @@ namespace graphski
 		}
 	}
 
-	std::unique_ptr<Node> DrawableGraph::createNode(NodeId id, const std::string& name) const
+	std::unique_ptr<Node> DrawableGraph::createNode(const std::string& name) const
 	{
-		auto node = std::make_unique<DrawableNode>(id, name);
+		auto node = std::make_unique<DrawableNode>(name);
 		node->setColor(getNodeColor()); // set color for the new node
 		return std::move(node);
 	}
@@ -174,7 +174,7 @@ namespace graphski
 		if (drawableNode)
 			return std::make_unique<DrawableNode>(*drawableNode); // copy the drawable node if possible
 
-		return createNode(node->getId(), node->getName());
+		return createNode(node->getName());
 	}
 
 	sf::Color DrawableGraph::getNodeColor() const

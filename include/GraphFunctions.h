@@ -10,6 +10,8 @@
 
 namespace graphski
 {
+    // createNode()
+
     void swap(Graph& first, Graph& second) noexcept;
 
     // transposes graph in place

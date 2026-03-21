@@ -87,7 +87,7 @@ namespace graphski
 
 	private:
 		// factory methods for creating nodes and edges. overrides the base Graph methods
-		std::unique_ptr<Node> createNode(NodeId id, const std::string& name = "") const override;
+		std::unique_ptr<Node> createNode(const std::string& name = "") const override;
 		
 		std::unique_ptr<Node> createNode(const Node* node) const override;
 

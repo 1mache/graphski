@@ -48,7 +48,7 @@ namespace graphski
         // TODO: this wont work if nodes can be deleted (ok for now)
         NodeId id = static_cast<NodeId>(nodeCount());
 
-        insertNode(createNode(id, name)); // create the node and add it to the graph
+        insertNode(createNode(name)); // create the node and add it to the graph
         return id;
     }
 
@@ -146,15 +146,14 @@ namespace graphski
     {
         const Node* node = getNode(nodeId);
         nlohmann::json j;
-        j["id"] = node->getId();
+        j["id"] = nodeId;
         j["name"] = node->getName();
         return j;
     }
 
     std::unique_ptr<Node> Graph::deserializeNode(const nlohmann::json& j) const
     {
-        return createNode(j["id"].get<NodeId>(),
-            j["name"].get<std::string>());
+        return createNode(j["name"].get<std::string>());
     }
 
 } // namespace graphski

@@ -10,8 +10,8 @@ namespace graphski
 	class DataNode : public Node
 	{
 	public:
-		explicit DataNode(NodeId id, T data, std::string_view name = "") :
-			m_data(data), m_id(id), m_name(name)
+		explicit DataNode(T data, std::string_view name = "") :
+			Node(name), m_data(data)
 		{
 			if (name.size() == 0) // if empty string was passed
 				m_name = std::to_string(m_id); //set the name to be the id (as string)

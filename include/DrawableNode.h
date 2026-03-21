@@ -9,8 +9,8 @@ namespace graphski
 	class DrawableNode : public Node, public sf::Drawable, public sf::Transformable
 	{
 	public:
-		DrawableNode(NodeId id, std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
-			Node(id, name),
+		DrawableNode(std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
+			Node(name),
 			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
 		{		
 			// TODO: this should be set by screen size	

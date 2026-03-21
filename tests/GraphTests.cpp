@@ -16,7 +16,7 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
     SECTION("Adding Nodes") {
         Graph g;
         NodeId id1 = g.addNode("A");
-        NodeId id2 = g.addNode(); // Default name
+        NodeId id2 = g.addNode("1");
         
         REQUIRE(g.nodeCount() == 2);
         REQUIRE(id1 == 0);
