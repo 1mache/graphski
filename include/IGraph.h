@@ -4,7 +4,7 @@
 
 namespace graphski
 {
-	class Node;
+	class INode;
 	// General base class for graphs
 	class IGraph
 	{
@@ -16,7 +16,7 @@ namespace graphski
 		virtual size_t nodeCount() const = 0;
 		virtual size_t edgeCount() const = 0;
 
-		virtual const Node& node(NodeId id) const = 0;
+		virtual const INode& node(NodeId id) const = 0;
 
 		virtual NodeId addNode(std::string name = "") = 0;
 		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;

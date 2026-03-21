@@ -10,7 +10,6 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
         REQUIRE(node.getName() == "node");
         REQUIRE(node.getDegIn() == 0);
         REQUIRE(node.getDegOut() == 0);
-        REQUIRE(node.getDegree() == 0);
     }
 
     SECTION("Setters and modifying degrees") {
@@ -19,9 +18,8 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
         REQUIRE(node.getName() == "NewName");
 
         node.setDegIn(5);
-        node.setDOut(3);
+        node.setDegOut(3);
         REQUIRE(node.getDegIn() == 5);
         REQUIRE(node.getDegOut() == 3);
-        REQUIRE(node.getDegree() == 8);
     }
 }

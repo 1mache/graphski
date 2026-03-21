@@ -1,7 +1,14 @@
 #include "GraphFunctions.h"
-#include "Graph.h"
+
+#include "nlohmann/json.hpp"
+
 namespace graphski
 {
+std::unique_ptr<Node> createNode(std::string_view name)
+{
+    return std::make_unique<Node>(name);
+}
+
 void swap(Graph &first, Graph &second) noexcept
 {
     using std::swap;
@@ -31,7 +38,7 @@ void transposeGraph(Graph &graph) {
             // swap in and out degrees for each node
             NodeId dIn = nodep->getDegIn();
             nodep->setDegIn(nodep->getDegOut());
-            nodep->setDOut(dIn);
+            nodep->setDegOut(dIn);
         });
     
     graph.m_adjList = std::move(newAdjList);

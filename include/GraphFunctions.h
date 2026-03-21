@@ -2,15 +2,16 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 #include "Graph.h"
+#include "Node.h"
 #include "GraphTypes.h"
 #include "Config.h"
-#include "nlohmann/json.hpp"
 
 namespace graphski
 {
-    // createNode()
+    std::unique_ptr<Node> createNode(std::string_view name);
 
     void swap(Graph& first, Graph& second) noexcept;
 
