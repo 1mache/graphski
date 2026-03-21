@@ -25,7 +25,7 @@ TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
         node.setName("NewName");
         REQUIRE(node.getName() == "NewName");
 
-        node.setDIn(5);
+        node.setDegIn(5);
         node.setDOut(3);
         REQUIRE(node.getDegIn() == 5);
         REQUIRE(node.getDegOut() == 3);

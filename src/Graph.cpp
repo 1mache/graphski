@@ -70,7 +70,7 @@ namespace graphski
 
         // increment degrees
         fromPtr->setDOut(fromPtr->getDegOut() + 1);
-        toPtr->setDIn(toPtr->getDegIn() + 1);
+        toPtr->setDegIn(toPtr->getDegIn() + 1);
 
         m_adjList[fromNodeId].push_back(toNodeId);
     }
@@ -91,7 +91,7 @@ namespace graphski
         if(std::erase(neighbors, toNodeId) > 0) // if it actually erased 
         {
             fromPtr->setDOut(fromPtr->getDegOut() - 1);
-            toPtr->setDIn(toPtr->getDegIn() - 1);
+            toPtr->setDegIn(toPtr->getDegIn() - 1);
             return true; // edge was deleted
         }
         

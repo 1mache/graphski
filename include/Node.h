@@ -13,11 +13,12 @@ namespace graphski
 		explicit Node(NodeId id, std::string_view name = "") : m_id(id), m_name(name)
 		{
 			if (name.size() == 0) // if empty string was passed
-				m_name = std::to_string(m_id); //set the name to be the id (as string)
+			m_name = std::to_string(m_id); //set the name to be the id (as string)
 		}
-
+		virtual ~Node() = default;
+		
+		
 		// =================Degrees===================
-
 		Degree getDegIn() const { return m_dIn; }
 
 		Degree getDegOut() const { return m_dOut; }
@@ -25,7 +26,7 @@ namespace graphski
 		// get the undirected degree
 		Degree getDegree() const { return m_dIn + m_dOut; };
 		
-		void setDIn(Degree val) { m_dIn = val; }
+		void setDegIn(Degree val) { m_dIn = val; }
 
 		void setDOut(Degree val) { m_dOut = val; }
 		// ===========================================
@@ -37,8 +38,6 @@ namespace graphski
 
 		void setName(std::string_view name) { m_name = name; }
 		// ===============================================
-		
-		virtual ~Node() = default;
 	private:
 		// id of the node, should be unique
 		NodeId		m_id;

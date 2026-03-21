@@ -30,7 +30,7 @@ void transposeGraph(Graph &graph) {
         [](auto& nodep) {
             // swap in and out degrees for each node
             NodeId dIn = nodep->getDegIn();
-            nodep->setDIn(nodep->getDegOut());
+            nodep->setDegIn(nodep->getDegOut());
             nodep->setDOut(dIn);
         });
     
