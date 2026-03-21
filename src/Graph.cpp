@@ -48,8 +48,7 @@ namespace graphski
         // TODO: this wont work if nodes can be deleted (ok for now)
         NodeId id = static_cast<NodeId>(nodeCount());
 
-        m_nodes.emplace_back(createNode(id, name));
-        m_adjList.push_back(std::vector<NodeId>());
+        insertNode(createNode(id, name)); // create the node and add it to the graph
         return id;
     }
 

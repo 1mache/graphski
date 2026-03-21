@@ -61,7 +61,7 @@ namespace graphski
         }
 
     protected:
-		// factory methods for creating nodes and edges
+		// factory methods for creating nodes
         virtual std::unique_ptr<Node> createNode(NodeId id, const std::string& name = "") const
         {
             return std::make_unique<Node>(id, name);
@@ -72,6 +72,12 @@ namespace graphski
             if(!node)
 				throw std::invalid_argument("Cannot create a node from a null pointer.");
             return std::make_unique<Node>(*node);
+        }
+        
+        void insertNode(std::unique_ptr<Node> pnode)
+        {
+            m_nodes.push_back(std::move(pnode)); 
+            m_adjList.emplace_back(std::vector<NodeId>()); // add an empty neighbors vector
         }
 
 		// checks if node id is in bounds of the graphs
