@@ -24,9 +24,11 @@ int main()
 	graphski::GraphEventHandler graphEvents(graph);
 
 	NodeId nodeCount = 16; // number of nodes in the graph
-	graphski::RandomGraphGenerator generator(graph, nodeCount);
-	generator.setProbabilities(graphski::RandomGraphGenerator::Distributions::IndexDependent);
-    generator.generate();
+    for(NodeId i = 0; i < nodeCount; ++i)
+        graph.addNode();
+    
+	graphski::RandomGraphGenerator generator(graph);
+    generator.generate(graphski::RandomGraphGenerator::Distributions::IndexDependent);
     graph.arrangeNodesEvenly();
 
     while (window.isOpen())

@@ -47,7 +47,7 @@ namespace graphski
         // node const ref by id
         const Node& node(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
-        virtual NodeId addNode(std::string name = "") override; 
+        virtual NodeId addNode(std::string name = ""); 
         // creates an edge between to given nodes, gets them by ids
         virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) override; 
 		// deletes an edge between two nodes, gets them by ids. returns true if successful
