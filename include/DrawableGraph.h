@@ -26,8 +26,8 @@ namespace graphski
 
 		void makeEmpty() override;
 
-		NodeId addNode(std::string name = "") override;
-		NodeId addNode(sf::Vector2f position, std::string name = "");
+		NodeId addNode(std::string_view name = "") override;
+		NodeId addNode(sf::Vector2f position, std::string_view name = "");
 
 		// override functionality: deletes edge if it already exists
 		void addEdge(NodeId fromNodeId, NodeId toNodeId) override;
@@ -87,7 +87,7 @@ namespace graphski
 
 	private:
 		// factory methods for creating nodes and edges. overrides the base Graph methods
-		std::unique_ptr<Node> createNode(const std::string& name = "") const override;
+		std::unique_ptr<Node> createNode(std::string_view name = "") const override;
 		
 		std::unique_ptr<Node> createNode(const Node* node) const override;
 

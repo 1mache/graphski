@@ -35,7 +35,7 @@ namespace graphski
 		m_selectedNodes.clear();
 	}
 
-	NodeId DrawableGraph::addNode(std::string name)
+	NodeId DrawableGraph::addNode(std::string_view name)
 	{
 		NodeId id = Graph::addNode(name);
 
@@ -45,7 +45,7 @@ namespace graphski
 		return id;
 	}
 
-	NodeId DrawableGraph::addNode(sf::Vector2f position, std::string name)
+	NodeId DrawableGraph::addNode(sf::Vector2f position, std::string_view name)
 	{
 		NodeId id = addNode(name);
 		setNodePosition(id, position); // set the position of the new node
@@ -158,7 +158,7 @@ namespace graphski
 		}
 	}
 
-	std::unique_ptr<Node> DrawableGraph::createNode(const std::string& name) const
+	std::unique_ptr<Node> DrawableGraph::createNode(std::string_view name) const
 	{
 		auto node = std::make_unique<DrawableNode>(name);
 		node->setColor(getNodeColor()); // set color for the new node

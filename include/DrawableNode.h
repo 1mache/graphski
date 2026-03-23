@@ -9,7 +9,7 @@ namespace graphski
 	class DrawableNode : public Node, public sf::Drawable, public sf::Transformable
 	{
 	public:
-		DrawableNode(std::string name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
+		DrawableNode(std::string_view name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
 			Node(name),
 			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
 		{		

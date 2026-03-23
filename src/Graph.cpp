@@ -40,15 +40,17 @@ namespace graphski
         return *node;
     }
 
-    NodeId Graph::addNode(std::string name)
+    NodeId Graph::addNode(std::string_view name)
     {
         if (nodeCount() >= MAX_NODES)
             throw std::overflow_error("Maximum number of nodes exceeded");
 
         // TODO: this wont work if nodes can be deleted (ok for now)
         NodeId id = static_cast<NodeId>(nodeCount());
+        // default to id as name
+        std::string finalName = name.empty() ? std::to_string(id) : std::string(name);
 
-        insertNode(createNode(name)); // create the node and add it to the graph
+        insertNode(createNode(finalName)); // create the node and add it to the graph
         return id;
     }
 
