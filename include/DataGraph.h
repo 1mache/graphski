@@ -9,15 +9,17 @@ public:
     explicit DataGraph(size_t reserveCount = 0) : Graph(reserveCount) {}
     virtual ~DataGraph() = default;
 
-    NodeId addNode(std::string_view name = "")
+    NodeId addNode(std::string_view name = "") override
     {
-        throw std::runtime_error("addNode with name only is not implemented for DataGraph");
+        NodeId id = Graph::addNode(name);        
+        m_data.push_back(T{}); // default construct data for this node
+        return id;
     }
     // have to give the graph data for this node
     NodeId addNode(T data, std::string_view name = "")
     {  
         NodeId id = Graph::addNode(name);        
-        m_data.push_back(data);
+        m_data.push_back(std::move(data)); 
         return id;
     }
 

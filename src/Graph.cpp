@@ -50,7 +50,8 @@ namespace graphski
         // default to id as name
         std::string finalName = name.empty() ? std::to_string(id) : std::string(name);
 
-        insertNode(createNode(finalName)); // create the node and add it to the graph
+        m_nodes.push_back(createNode(finalName)); // create the node and add it to the graph
+        m_adjList.emplace_back(); // add an empty neighbors vector
         return id;
     }
 

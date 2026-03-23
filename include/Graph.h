@@ -47,7 +47,7 @@ namespace graphski
         // node const ref by id
         const Node& node(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
-        virtual NodeId addNode(std::string_view name = ""); 
+        virtual NodeId addNode(std::string_view name = "") override; 
         // creates an edge between to given nodes, gets them by ids
         virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) override; 
 		// deletes an edge between two nodes, gets them by ids. returns true if successful
@@ -72,12 +72,6 @@ namespace graphski
             if(!node)
 				throw std::invalid_argument("Cannot create a node from a null pointer.");
             return std::make_unique<Node>(*node);
-        }
-        
-        void insertNode(std::unique_ptr<Node> pnode)
-        {
-            m_nodes.push_back(std::move(pnode)); 
-            m_adjList.emplace_back(std::vector<NodeId>()); // add an empty neighbors vector
         }
 
 		// checks if node id is in bounds of the graphs
