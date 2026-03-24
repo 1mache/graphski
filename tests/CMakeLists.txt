@@ -2,6 +2,7 @@ set(TEST_MAIN "unit_tests")
 set(TEST_SOURCES 
     "NodeTests.cpp"
     "GraphTests.cpp"
+    "DataGraphTests.cpp"
 )
 set(TEST_INCLUDES "./") 
 
