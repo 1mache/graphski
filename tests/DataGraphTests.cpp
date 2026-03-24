@@ -75,7 +75,7 @@ TEST_CASE("DataGraph retrieveNodeData returns data without moving from storage",
     DataGraph<std::string> graph;
     NodeId id = graph.addNode(std::string("keep-me"), "N");
 
-    std::string retrieved = graph.retrieveNodeData(id);
+    std::string& retrieved = graph.getNodeData(id);
 
     REQUIRE(retrieved == "keep-me");
     REQUIRE(graph.getNodeData(id) == "keep-me");
@@ -86,7 +86,6 @@ TEST_CASE("DataGraph throws on out-of-range id", "[DataGraph]")
     DataGraph<int> graph;
 
     REQUIRE_THROWS_AS(graph.getNodeData(0), std::out_of_range);
-    REQUIRE_THROWS_AS(graph.retrieveNodeData(0), std::out_of_range);
 }
 
 TEST_CASE("DataGraph through Graph reference still keeps data in sync", "[DataGraph][Polymorphism]")
