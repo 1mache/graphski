@@ -1,7 +1,14 @@
 #pragma once
 
+#include <stdexcept>
+#include <string_view>
+#include <utility>
+#include <vector>
+
 #include "Graph.h"
 
+namespace graphski
+{
 template<typename T>
 class DataGraph : public Graph
 {
@@ -40,9 +47,10 @@ public:
     {
         if (id >= m_data.size())
             throw std::out_of_range("Node id out of range for data retrieval.");
-        return std::move(m_data[id]);
+        return m_data[id];
     }
     
 private:
     std::vector<T> m_data;
 };
+} // namespace graphski
