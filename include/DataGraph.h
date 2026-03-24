@@ -43,7 +43,7 @@ public:
         return m_data[id];
     }
 
-    T retrieveNodeData(NodeId id)
+    T retrieveNodeData(NodeId id) const
     {
         if (id >= m_data.size())
             throw std::out_of_range("Node id out of range for data retrieval.");
