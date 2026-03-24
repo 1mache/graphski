@@ -16,6 +16,8 @@ public:
     explicit DataGraph(size_t reserveCount = 0) : Graph(reserveCount) {}
     virtual ~DataGraph() = default;
 
+    // TODO: rule of 5
+
     NodeId addNode(std::string_view name = "") override
     {
         NodeId id = Graph::addNode(name);        
@@ -43,7 +45,7 @@ public:
         return m_data[id];
     }
 
-    T retrieveNodeData(NodeId id) const
+    T& getNodeData(NodeId id)
     {
         if (id >= m_data.size())
             throw std::out_of_range("Node id out of range for data retrieval.");
