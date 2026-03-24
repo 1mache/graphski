@@ -20,9 +20,8 @@ namespace graphski
 
 	public:
 		RandomGraphGenerator(IGraph& targetGraph, size_t nodeCount):
-			m_graph(targetGraph)
+			m_graph{targetGraph}, m_nodeCount{static_cast<NodeId>(nodeCount)}
 		{
-			m_nodeCount = static_cast<NodeId>(nodeCount);
 			constexpr auto maxNodeCount = std::numeric_limits<NodeId>::max();
 			if(nodeCount > maxNodeCount)
 			{
@@ -30,7 +29,6 @@ namespace graphski
 				m_nodeCount = maxNodeCount;
 			}
 
-			m_nodes.reserve(nodeCount);
 			m_nodeProbabilities.reserve(nodeCount);
 		}
 
@@ -55,8 +53,6 @@ namespace graphski
 		IGraph& m_graph;
 		NodeId  m_nodeCount = 0;
 
-		// nodes[i] = id of node i
-		std::vector<NodeId> m_nodes;
 		// p[i] = probability edge to exist from some node j to node i
 		std::vector<float>  m_nodeProbabilities;
 

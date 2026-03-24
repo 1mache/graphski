@@ -22,10 +22,12 @@ namespace graphski
 	{
 		if (m_nodeProbabilities.size() == 0)
 			setProbabilities(Distributions::Uniform); // default to uniform distribution
-
+		
+		std::vector<NodeId> generatedNodeIds;
+		generatedNodeIds.reserve(m_nodeCount);		
 
 		for (NodeId i = 0; i < m_nodeCount; ++i)
-			m_nodes.push_back(m_graph.addNode());
+			generatedNodeIds.push_back(m_graph.addNode());
 
 		// from every node
 		for (NodeId j = 0; j < m_nodeCount; ++j)
@@ -35,7 +37,7 @@ namespace graphski
 			{
 				// add an edge with probability m_nodeProbabilities[i]
 				if(distribution(gen) < m_nodeProbabilities[i])
-					m_graph.addEdge(m_nodes[j], m_nodes[i]);
+					m_graph.addEdge(generatedNodeIds[j], generatedNodeIds[i]);
 			}
 		}
 	}
