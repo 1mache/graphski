@@ -16,7 +16,13 @@ public:
         return id;
     }
     // have to give the graph data for this node
-    NodeId addNode(T data, std::string_view name = "")
+    NodeId addNode(const T& data, std::string_view name = "")
+    {  
+        NodeId id = Graph::addNode(name);        
+        m_data.push_back(data); 
+        return id;
+    }
+    NodeId addNode(T&& data, std::string_view name = "")
     {  
         NodeId id = Graph::addNode(name);        
         m_data.push_back(std::move(data)); 
