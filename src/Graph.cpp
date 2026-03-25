@@ -34,10 +34,12 @@ namespace graphski
         m_adjList.reserve(RESERVE_NODES);    
     }
 
-    const Node& Graph::node(NodeId id) const
+    OptionalNodeConstRef Graph::node(NodeId id) const
     {
         auto* node = getNode(id);
-        return *node;
+        if (!node)
+            return {};
+        return std::cref(static_cast<const INode&>(*node));
     }
 
     NodeId Graph::addNode(std::string_view name)
@@ -45,8 +47,14 @@ namespace graphski
         if (nodeCount() >= MAX_NODES)
             throw std::overflow_error("Maximum number of nodes exceeded");
 
-        // TODO: this wont work if nodes can be deleted (ok for now)
-        NodeId id = static_cast<NodeId>(nodeCount());
+        NodeId id = static_cast<NodeId>(nodeCount()); // default to next id
+        // if there is a free id reuse it.
+        if (!m_freeNodeIds.empty())
+        {
+            id = m_freeNodeIds.front();
+            m_freeNodeIds.pop();
+        }
+
         // default to id as name
         std::string finalName = name.empty() ? std::to_string(id) : std::string(name);
 
@@ -80,7 +88,23 @@ namespace graphski
 
     bool Graph::deleteNode(NodeId nodeId)
     {
-        return false;
+        if(!getNode(nodeId))
+            return false;
+
+        m_adjList[nodeId].clear(); // clear outgoing edges
+        m_nodes[nodeId].reset(nullptr); // delete the node
+
+        // TODO: could this be done lazily?
+        for (auto& neighbors : m_adjList) // clear incoming edges
+        {
+            auto it = std::remove(neighbors.begin(), neighbors.end(), nodeId);
+            if (it != neighbors.end())
+                neighbors.erase(it, neighbors.end());
+        }
+
+        m_freeNodeIds.push(nodeId); // add this id to the free list for reuse
+
+        return true;
     }
 
     bool Graph::deleteEdge(NodeId fromNodeId, NodeId toNodeId)
@@ -127,13 +151,17 @@ namespace graphski
 
     bool Graph::edgeExists(NodeId fromNodeId, NodeId toNodeId) const
     {
+        if (!getNode(fromNodeId) || !getNode(toNodeId))
+            return false; // check for both nodes existence
+
         const auto& neighbors = m_adjList[fromNodeId];
         auto it = std::find_if(neighbors.begin(), neighbors.end(),
             [toNodeId](NodeId neighbor) { return neighbor == toNodeId; });
 
-        if (it != neighbors.end())
-            return true;
-        return false;
+        if (it == neighbors.end())
+            return false;
+
+        return true;
     }
 
     Node* Graph::getNode(NodeId id)
@@ -154,8 +182,11 @@ namespace graphski
     {
         const Node* node = getNode(nodeId);
         nlohmann::json j;
-        j["id"] = nodeId;
-        j["name"] = node->getName();
+        if(node)
+        {
+            j["id"] = nodeId;
+            j["name"] = node->getName();
+        }
         return j;
     }
 

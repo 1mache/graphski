@@ -4,13 +4,19 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <functional>
+#include <optional>
 
 namespace graphski
 {
+	class INode;
+
 	// alias for node id type
 	using NodeId = uint16_t;
 	// alias for degree type, max degree = max id since id is ordered 
 	using Degree = NodeId; 
+
+	using OptionalNodeConstRef = std::optional<std::reference_wrapper<const INode>>;
 	
 	// adjacency list contains for each node, a vector of its neighbors (by id)
     using AdjacencyList = std::vector<std::vector<NodeId>>;

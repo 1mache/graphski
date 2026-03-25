@@ -6,6 +6,7 @@
 #include <limits>
 #include <algorithm>
 #include <memory>
+#include <queue>
 
 #include "nlohmann/json.hpp"
 #include "IGraph.h"
@@ -45,7 +46,7 @@ namespace graphski
                 [](size_t sum, const auto& neighbors) { return sum + neighbors.size();});
         }
         // node const ref by id
-        const Node& node(NodeId id) const override; 
+        OptionalNodeConstRef node(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
         virtual NodeId addNode(std::string_view name = "") override; 
         // creates an edge between to given nodes, gets them by ids
@@ -92,6 +93,7 @@ namespace graphski
         virtual std::unique_ptr<Node> deserializeNode(const nlohmann::json& j) const; 
 
         std::vector<std::unique_ptr<Node>> m_nodes;
+        std::queue<NodeId> m_freeNodeIds;
         AdjacencyList m_adjList;
 
     private: 

@@ -23,10 +23,12 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
         REQUIRE(id2 == 1);
 
         auto node1 = g.node(id1);
-        REQUIRE(node1.getName() == "A");
+        REQUIRE(node1.has_value());
+        REQUIRE(node1.value().get().getName() == "A");
 
         auto node2 = g.node(id2);
-        REQUIRE(node2.getName() == "1");
+        REQUIRE(node2.has_value());
+        REQUIRE(node2.value().get().getName() == "1");
     }
 
     SECTION("Clearing Graph") {
@@ -54,14 +56,21 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         REQUIRE(g.edgeCount() == 2);
 
         // Check degrees via peekNode
-        REQUIRE(g.node(id1).getDegOut() == 1);
-        REQUIRE(g.node(id1).getDegIn() == 0);
+        auto node1 = g.node(id1);
+        auto node2 = g.node(id2);
+        auto node3 = g.node(id3);
+        REQUIRE(node1.has_value());
+        REQUIRE(node2.has_value());
+        REQUIRE(node3.has_value());
 
-        REQUIRE(g.node(id2).getDegOut() == 1);
-        REQUIRE(g.node(id2).getDegIn() == 1);
+        REQUIRE(node1.value().get().getDegOut() == 1);
+        REQUIRE(node1.value().get().getDegIn() == 0);
 
-        REQUIRE(g.node(id3).getDegOut() == 0);
-        REQUIRE(g.node(id3).getDegIn() == 1);
+        REQUIRE(node2.value().get().getDegOut() == 1);
+        REQUIRE(node2.value().get().getDegIn() == 1);
+
+        REQUIRE(node3.value().get().getDegOut() == 0);
+        REQUIRE(node3.value().get().getDegIn() == 1);
         
         // Check Neighbors
         auto neighbors1 = g.getNeighbors(id1);
@@ -74,6 +83,21 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         g.addEdge(id1, id2); // Should be ignored or handle gracefully
         
         REQUIRE(g.edgeCount() == 1); // Typically handled by simple graph structures
+    }
+
+    SECTION("Deleting Nodes") {
+        g.addEdge(id1, id2);
+        g.addEdge(id2, id3);
+        
+        bool result = g.deleteNode(id2);
+        REQUIRE(result == true);
+        REQUIRE(g.nodeCount() == 3);
+        REQUIRE(g.edgeCount() == 0); // Edges involving deleted node should be removed
+        REQUIRE_FALSE(g.node(id2).has_value());
+        
+        // Deleting non-existent node
+        bool resultFalse = g.deleteNode(999);
+        REQUIRE(resultFalse == false);
     }
 
     SECTION("Deleting Edges") {
@@ -113,14 +137,21 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         REQUIRE(n1.empty()); // Now id1 should have no outgoing edges
         
         // Check new degrees
-        REQUIRE(g.node(id1).getDegIn() == 1);
-        REQUIRE(g.node(id1).getDegOut() == 0);
-        
-        REQUIRE(g.node(id2).getDegIn() == 1);
-        REQUIRE(g.node(id2).getDegOut() == 1);
+        auto node1 = g.node(id1);
+        auto node2 = g.node(id2);
+        auto node3 = g.node(id3);
+        REQUIRE(node1.has_value());
+        REQUIRE(node2.has_value());
+        REQUIRE(node3.has_value());
 
-        REQUIRE(g.node(id3).getDegIn() == 0);
-        REQUIRE(g.node(id3).getDegOut() == 1);
+        REQUIRE(node1.value().get().getDegIn() == 1);
+        REQUIRE(node1.value().get().getDegOut() == 0);
+        
+        REQUIRE(node2.value().get().getDegIn() == 1);
+        REQUIRE(node2.value().get().getDegOut() == 1);
+
+        REQUIRE(node3.value().get().getDegIn() == 0);
+        REQUIRE(node3.value().get().getDegOut() == 1);
     }
 }
 
@@ -147,9 +178,15 @@ TEST_CASE("Graph Serialization", "[Graph][JSON]") {
         REQUIRE(g2.edgeCount() == 2);
 
         // Verify nodes 
-        REQUIRE(g2.node(idA).getName() == "A");
-        REQUIRE(g2.node(idB).getName() == "B");
-        REQUIRE(g2.node(idC).getName() == "C");
+        auto nodeA = g2.node(idA);
+        auto nodeB = g2.node(idB);
+        auto nodeC = g2.node(idC);
+        REQUIRE(nodeA.has_value());
+        REQUIRE(nodeB.has_value());
+        REQUIRE(nodeC.has_value());
+        REQUIRE(nodeA.value().get().getName() == "A");
+        REQUIRE(nodeB.value().get().getName() == "B");
+        REQUIRE(nodeC.value().get().getName() == "C");
 
         // Verify edges match 
         auto neighborsA = g2.getNeighbors(idA);
@@ -188,12 +225,14 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(copy.nodeCount() == source.nodeCount());
         REQUIRE(copy.edgeCount() == source.edgeCount());
-        REQUIRE(copy.node(a).getName() == "A");
+        auto copiedNodeA = copy.node(a);
+        REQUIRE(copiedNodeA.has_value());
+        REQUIRE(copiedNodeA.value().get().getName() == "A");
         REQUIRE(copy.getNeighbors(a).size() == 1);
         REQUIRE(copy.getNeighbors(a)[0] == b);
 
         // Mutate source to verify the copy is independent.
-        source.node(a); // keep id usage explicit and readable
+        REQUIRE(source.node(a).has_value());
         source.addNode("C");
         source.deleteEdge(a, b);
 
@@ -213,7 +252,9 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(moved.nodeCount() == 2);
         REQUIRE(moved.edgeCount() == 1);
-        REQUIRE(moved.node(a).getName() == "A");
+        auto movedNodeA = moved.node(a);
+        REQUIRE(movedNodeA.has_value());
+        REQUIRE(movedNodeA.value().get().getName() == "A");
         REQUIRE(moved.getNeighbors(a).size() == 1);
         REQUIRE(moved.getNeighbors(a)[0] == b);
 
@@ -237,7 +278,9 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        REQUIRE(target.node(a).getName() == "A");
+        auto targetNodeA = target.node(a);
+        REQUIRE(targetNodeA.has_value());
+        REQUIRE(targetNodeA.value().get().getName() == "A");
         REQUIRE(target.getNeighbors(a).size() == 1);
         REQUIRE(target.getNeighbors(a)[0] == b);
 
@@ -260,7 +303,9 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        REQUIRE(target.node(a).getName() == "A");
+        auto targetNodeA = target.node(a);
+        REQUIRE(targetNodeA.has_value());
+        REQUIRE(targetNodeA.value().get().getName() == "A");
         REQUIRE(target.getNeighbors(a).size() == 1);
         REQUIRE(target.getNeighbors(a)[0] == b);
 
