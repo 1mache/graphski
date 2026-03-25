@@ -2,6 +2,7 @@
 #include "Graph.h"
 #include "GraphFunctions.h"
 #include <cstdio> // for std::remove
+#include <stdexcept>
 
 using namespace graphski;
 
@@ -43,7 +44,7 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
     }
 }
 
-TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
+TEST_CASE("Graph Operations", "[Graph]") {
     Graph g;
     NodeId id1 = g.addNode("A");
     NodeId id2 = g.addNode("B");
@@ -91,9 +92,21 @@ TEST_CASE("Graph Edge Operations", "[Graph][Edge]") {
         
         bool result = g.deleteNode(id2);
         REQUIRE(result == true);
-        REQUIRE(g.nodeCount() == 3);
+        REQUIRE(g.nodeCount() == 2);
         REQUIRE(g.edgeCount() == 0); // Edges involving deleted node should be removed
         REQUIRE_FALSE(g.node(id2).has_value());
+
+        // Any edge operation using a deleted node id should fail.
+        REQUIRE_THROWS_AS(g.addEdge(id1, id2), std::invalid_argument);
+        REQUIRE_THROWS_AS(g.deleteEdge(id1, id2), std::invalid_argument);
+
+        // Next insertion should reuse the freed node id.
+        NodeId reusedId = g.addNode("D");
+        REQUIRE(reusedId == id2);
+        REQUIRE(g.nodeCount() == 3);
+        auto reusedNode = g.node(reusedId);
+        REQUIRE(reusedNode.has_value());
+        REQUIRE(reusedNode.value().get().getName() == "D");
         
         // Deleting non-existent node
         bool resultFalse = g.deleteNode(999);
