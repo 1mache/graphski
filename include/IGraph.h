@@ -21,6 +21,9 @@ namespace graphski
 		virtual NodeId addNode(std::string_view name = "") = 0;
 		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
 
+		virtual bool deleteNode(NodeId id) = 0;
+		virtual bool deleteEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
+
 		virtual std::vector<NodeId> getNeighbors(NodeId id) const = 0;
 		virtual AdjacencyList getAdjacencyList() const = 0;
 	};

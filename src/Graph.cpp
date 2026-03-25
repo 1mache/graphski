@@ -78,6 +78,11 @@ namespace graphski
         m_adjList[fromNodeId].push_back(toNodeId);
     }
 
+    bool Graph::deleteNode(NodeId nodeId)
+    {
+        return false;
+    }
+
     bool Graph::deleteEdge(NodeId fromNodeId, NodeId toNodeId)
     {
         Node* fromPtr = getNode(fromNodeId),
