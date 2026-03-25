@@ -16,7 +16,15 @@ public:
     explicit DataGraph(size_t reserveCount = 0) : Graph(reserveCount) {}
     virtual ~DataGraph() = default;
 
-    // TODO: rule of 5
+    DataGraph(const DataGraph& other) : Graph(other), m_data(other.m_data) {}
+    DataGraph& operator=(const DataGraph& other)
+    {
+        DataGraph copy(other); // make a copy using the copy constructor
+        swap(*this, copy);
+        return *this;
+    }
+    DataGraph(DataGraph&&) = default;
+    DataGraph& operator=(DataGraph&&) = default;
 
     NodeId addNode(std::string_view name = "") override
     {

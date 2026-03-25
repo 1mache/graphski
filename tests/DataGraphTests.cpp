@@ -128,3 +128,113 @@ TEST_CASE("DataGraph addNode chooses copy for lvalue and move for rvalue", "[Dat
         REQUIRE(TrackingPayload::copyCtorCount == 0);
     }
 }
+
+TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
+{
+    SECTION("Constructors create valid DataGraph")
+    {
+        DataGraph<int> gDefault;
+        DataGraph<int> gReserved(32);
+
+        REQUIRE(gDefault.nodeCount() == 0);
+        REQUIRE(gDefault.edgeCount() == 0);
+        REQUIRE(gReserved.nodeCount() == 0);
+        REQUIRE(gReserved.edgeCount() == 0);
+    }
+
+    SECTION("Copy constructor copies graph topology and payload")
+    {
+        DataGraph<std::string> source;
+        NodeId a = source.addNode("data-A", "A");
+        NodeId b = source.addNode("data-B", "B");
+        source.addEdge(a, b);
+
+        DataGraph<std::string> copy(source);
+
+        REQUIRE(copy.nodeCount() == source.nodeCount());
+        REQUIRE(copy.edgeCount() == source.edgeCount());
+        REQUIRE(copy.node(a).getName() == "A");
+        REQUIRE(copy.node(b).getName() == "B");
+        REQUIRE(copy.getNodeData(a) == "data-A");
+        REQUIRE(copy.getNodeData(b) == "data-B");
+
+        source.getNodeData(a) = "changed";
+        source.deleteEdge(a, b);
+
+        REQUIRE(copy.getNodeData(a) == "data-A");
+        REQUIRE(copy.edgeCount() == 1);
+    }
+
+    SECTION("Move constructor transfers graph topology and payload")
+    {
+        DataGraph<std::string> source;
+        NodeId a = source.addNode("data-A", "A");
+        NodeId b = source.addNode("data-B", "B");
+        source.addEdge(a, b);
+
+        DataGraph<std::string> moved(std::move(source));
+
+        REQUIRE(moved.nodeCount() == 2);
+        REQUIRE(moved.edgeCount() == 1);
+        REQUIRE(moved.node(a).getName() == "A");
+        REQUIRE(moved.node(b).getName() == "B");
+        REQUIRE(moved.getNodeData(a) == "data-A");
+        REQUIRE(moved.getNodeData(b) == "data-B");
+
+        source.makeEmpty();
+        NodeId x = source.addNode("new-data", "X");
+        REQUIRE(x == 0);
+        REQUIRE(source.nodeCount() == 1);
+        REQUIRE(source.getNodeData(x) == "new-data");
+    }
+
+    SECTION("Copy assignment copies graph topology and payload")
+    {
+        DataGraph<std::string> source;
+        NodeId a = source.addNode("data-A", "A");
+        NodeId b = source.addNode("data-B", "B");
+        source.addEdge(a, b);
+
+        DataGraph<std::string> target;
+        target.addNode("old-data", "Old");
+
+        target = source;
+
+        REQUIRE(target.nodeCount() == 2);
+        REQUIRE(target.edgeCount() == 1);
+        REQUIRE(target.node(a).getName() == "A");
+        REQUIRE(target.node(b).getName() == "B");
+        REQUIRE(target.getNodeData(a) == "data-A");
+        REQUIRE(target.getNodeData(b) == "data-B");
+
+        source.getNodeData(a) = "changed";
+        REQUIRE(target.getNodeData(a) == "data-A");
+    }
+
+    SECTION("Move assignment transfers graph topology and payload")
+    {
+        DataGraph<std::string> source;
+        NodeId a = source.addNode("data-A", "A");
+        NodeId b = source.addNode("data-B", "B");
+        source.addEdge(a, b);
+
+        DataGraph<std::string> target;
+        target.addNode("old-data", "Old");
+        target.addNode("old-data-2", "Old2");
+
+        target = std::move(source);
+
+        REQUIRE(target.nodeCount() == 2);
+        REQUIRE(target.edgeCount() == 1);
+        REQUIRE(target.node(a).getName() == "A");
+        REQUIRE(target.node(b).getName() == "B");
+        REQUIRE(target.getNodeData(a) == "data-A");
+        REQUIRE(target.getNodeData(b) == "data-B");
+
+        source.makeEmpty();
+        NodeId x = source.addNode("after-move", "X");
+        REQUIRE(x == 0);
+        REQUIRE(source.nodeCount() == 1);
+        REQUIRE(source.getNodeData(x) == "after-move");
+    }
+}
