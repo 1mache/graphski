@@ -94,7 +94,10 @@ namespace graphski
 		// node and edge getters overrides
 		DrawableNode* getNode(NodeId id) override
 		{
-			auto* res = dynamic_cast<DrawableNode*>(Graph::getNode(id));
+			auto* node = Graph::getNode(id);
+			if(!node)
+				return nullptr;
+			auto* res = dynamic_cast<DrawableNode*>(node);
 			if (!res) // should never happen
 				throw std::runtime_error("Node with id " + std::to_string(id) + " is not a DrawableNode.");
 			return res;

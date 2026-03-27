@@ -65,8 +65,9 @@ namespace graphski
 	void DrawableGraph::toggleSelectNode(NodeId id)
 	{
 		auto* node = getNode(id);
-		if(node) node->toggleSelect();
-
+		if(!node) return; // deleted or non existing node 
+		
+		node->toggleSelect();
 		if (id >= m_selectedNodes.size()) // should never happen
 			throw std::out_of_range("Node id out of bounds in selected nodes vector");
 
@@ -81,7 +82,7 @@ namespace graphski
 		for (size_t i = 0; i < nodeCount(); ++i)
 		{
 			auto* drawableNode = getNode(static_cast<NodeId>(i));
-			if(drawableNode->getGlobalBounds().contains(position))
+			if(drawableNode && drawableNode->getGlobalBounds().contains(position))
 				return static_cast<NodeId>(i);
 		}
 
@@ -197,6 +198,7 @@ namespace graphski
 	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, NodeId nodeId) const
 	{
 		const auto* drawableNode = getNode(nodeId);
+		if(!drawableNode) return; // deleted or non existing node	
 		target.draw(*drawableNode, states);
 	}
 
@@ -204,6 +206,9 @@ namespace graphski
 	{
 		const auto* from = getNode(edgeId.nodeId);
 		const auto* to = getNode(m_adjList[edgeId.nodeId][edgeId.neighborId]);
+		// note: actually from should never be null because we delete out edges immediately
+		if(!from || !to) return; 
+
 		// TODO: is there a way to cache it? 
 		Arrow edge{from->getPosition(), to->getPosition(), EDGE_THICKNESS, Config::IDLE_OUTLINE_COLOR};
 
@@ -230,7 +235,8 @@ namespace graphski
 		auto* node = getNode(nodeId);
 
 		// add position 
-		nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
+		if(node)
+			nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
 		return nodeJson;
 	}
 

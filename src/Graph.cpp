@@ -192,6 +192,7 @@ namespace graphski
 
     std::unique_ptr<Node> Graph::deserializeNode(const nlohmann::json& j) const
     {
+        // TODO: needs to be placed in the correct id.
         return createNode(j["name"].get<std::string>());
     }
 
