@@ -116,7 +116,14 @@ namespace graphski
                 neighbors.erase(it, neighbors.end());
         }
 
-        m_freeNodeIds.push(nodeId); // add this id to the free list for reuse
+        if(nodeId == m_nodes.size() - 1) // if it's the last node, we can just pop it
+        {
+            m_nodes.pop_back();
+            m_adjList.pop_back();
+        }    
+        else
+            m_freeNodeIds.push(nodeId); // add this id to the free list for reuse
+            
         m_nodeCount--;
         return true;
     }
