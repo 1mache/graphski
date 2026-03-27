@@ -92,9 +92,10 @@ namespace graphski
         // creates and returns a new node given json representation of it, used in loadFromFile
         virtual std::unique_ptr<Node> deserializeNode(const nlohmann::json& j) const; 
 
+        AdjacencyList m_adjList;    
+    private:
         std::vector<std::unique_ptr<Node>> m_nodes;
         std::queue<NodeId> m_freeNodeIds;
-        AdjacencyList m_adjList;
 
     private: 
         static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();

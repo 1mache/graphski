@@ -78,7 +78,7 @@ namespace graphski
 	std::optional<NodeId> DrawableGraph::posInNode(sf::Vector2f position)
 	{
 		// checks if bounds contain position for every node in graph 
-		for (size_t i = 0; i < m_nodes.size(); ++i)
+		for (size_t i = 0; i < nodeCount(); ++i)
 		{
 			auto* drawableNode = getNode(static_cast<NodeId>(i));
 			if(drawableNode->getGlobalBounds().contains(position))

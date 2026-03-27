@@ -16,9 +16,9 @@ namespace graphski
         m_adjList.reserve(reserveCount);
     }
 
-    Graph::Graph(const Graph& other)
-        :m_nodes{},
-         m_adjList{other.m_adjList} // copy adj list.
+    Graph::Graph(const Graph& other):
+        m_adjList{other.m_adjList}, // copy adj list.
+        m_nodes{}
     {
         m_nodes.reserve(other.nodeCount());
 
