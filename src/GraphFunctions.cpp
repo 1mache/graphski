@@ -14,6 +14,8 @@ void swap(Graph &first, Graph &second) noexcept
     using std::swap;
     swap(first.m_nodes, second.m_nodes);
     swap(first.m_adjList, second.m_adjList);
+    swap(first.m_freeNodeIds, second.m_freeNodeIds);
+    swap(first.m_nodeCount, second.m_nodeCount);
 }
 
 void transposeGraph(Graph &graph) {

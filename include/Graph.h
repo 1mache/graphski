@@ -95,7 +95,8 @@ namespace graphski
         AdjacencyList m_adjList;    
     private:
         std::vector<std::unique_ptr<Node>> m_nodes;
-        std::queue<NodeId> m_freeNodeIds;
+        std::queue<NodeId>                 m_freeNodeIds;
+        size_t                             m_nodeCount;
 
     private: 
         static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();

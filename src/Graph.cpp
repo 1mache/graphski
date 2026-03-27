@@ -18,20 +18,25 @@ namespace graphski
 
     Graph::Graph(const Graph& other):
         m_adjList{other.m_adjList}, // copy adj list.
-        m_nodes{}
+        m_nodes(other.nodeCount(), nullptr), // reserve nodes vector with null pointers
+        m_freeNodeIds{other.m_freeNodeIds},
+        m_nodeCount{other.m_nodeCount}
     {
         m_nodes.reserve(other.nodeCount());
 
         for (const auto& pnode : other.m_nodes)
-            m_nodes.push_back(createNode(pnode.get()));
+        {
+            if(!pnode) m_nodes.push_back(nullptr); // keep null pointers for deleted nodes
+            else m_nodes.push_back(createNode(pnode.get()));
+        }
     }
 
     void Graph::makeEmpty()
     {
         m_nodes.clear();
         m_adjList.clear();
-        m_nodes.reserve(RESERVE_NODES);
-        m_adjList.reserve(RESERVE_NODES);    
+        m_freeNodeIds = std::queue<NodeId>(); // clear the free ids queue
+        m_nodeCount = 0;
     }
 
     OptionalNodeConstRef Graph::node(NodeId id) const
@@ -60,6 +65,7 @@ namespace graphski
 
         m_nodes.push_back(createNode(finalName)); // create the node and add it to the graph
         m_adjList.emplace_back(); // add an empty neighbors vector
+        m_nodeCount++;
         return id;
     }
 
@@ -103,7 +109,7 @@ namespace graphski
         }
 
         m_freeNodeIds.push(nodeId); // add this id to the free list for reuse
-
+        m_nodeCount--;
         return true;
     }
 
