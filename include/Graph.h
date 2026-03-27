@@ -37,7 +37,7 @@ namespace graphski
         // how many nodes are there
         size_t nodeCount() const override
         {
-            return m_nodes.size();
+            return m_nodeCount;
         }
         // how many edges are there
         size_t edgeCount() const override

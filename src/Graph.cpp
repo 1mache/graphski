@@ -18,7 +18,7 @@ namespace graphski
 
     Graph::Graph(const Graph& other):
         m_adjList{other.m_adjList}, // copy adj list.
-        m_nodes(other.m_nodes.size()), // reserve nodes vector with null pointers
+        m_nodes{}, // empty for now, will populate in the body
         m_freeNodeIds{other.m_freeNodeIds},
         m_nodeCount{other.m_nodeCount}
     {
