@@ -95,8 +95,8 @@ namespace graphski
 		DrawableNode* getNode(NodeId id) override
 		{
 			auto* node = Graph::getNode(id);
-			if(!node)
-				return nullptr;
+			if(!node) return nullptr;
+			
 			auto* res = dynamic_cast<DrawableNode*>(node);
 			if (!res) // should never happen
 				throw std::runtime_error("Node with id " + std::to_string(id) + " is not a DrawableNode.");
@@ -105,7 +105,10 @@ namespace graphski
 
 		const DrawableNode* getNode(NodeId id) const override
 		{
-			auto* res = dynamic_cast<const DrawableNode*>(Graph::getNode(id));
+			auto* node = Graph::getNode(id);
+			if(!node) return nullptr;
+
+			auto* res = dynamic_cast<const DrawableNode*>(node);
 			if (!res) // should never happen
 				throw std::runtime_error("Node with id " + std::to_string(id) + " is not a DrawableNode.");
 			return res;

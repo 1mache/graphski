@@ -20,6 +20,7 @@ namespace graphski
         std::swap(first.m_data, second.m_data); // swap the data vector as well
     }
 
+    // TODO: try to make these non friend.
     // transposes graph in place
     void transposeGraph(Graph& graph);
     

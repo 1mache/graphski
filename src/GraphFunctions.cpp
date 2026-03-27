@@ -29,10 +29,17 @@ void transposeGraph(Graph &graph) {
     for (size_t i = 0; i < graph.nodeCount(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
+        if(!graph.node(nodeId).has_value())
+            continue; // skip deleted nodes
+        
         const auto& neighbors = graph.m_adjList[nodeId];
 
         for (NodeId neighbor : neighbors)
+        {
+            if(!graph.node(neighbor).has_value())
+                continue; // skip deleted neighbors
             newAdjList[neighbor].push_back(nodeId);
+        }
     }
 
     std::for_each(nodes.begin(), nodes.end(), 
@@ -52,12 +59,16 @@ void saveToFile(const Graph &graph, std::string_view fileName)
     nlohmann::json j;
     // write the number of nodes
     j["nodeCount"] = graph.nodeCount();
+    // write size of m_nodes
+    j["nodeMaxId"] = graph.m_nodes.size();
     // initialize the array of neighbors in json 
     auto& nodesArr = j["nodes"] = nlohmann::json::array();
 
     for (size_t i = 0; i < graph.nodeCount(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
+        if(!graph.node(nodeId).has_value())
+            continue; // skip deleted nodes
         auto nodeJson = graph.serializeNode(nodeId);
 
         nodeJson["neighbors"] = graph.getNeighbors(nodeId); // add neighbors to the node json
@@ -90,18 +101,22 @@ void loadFromFile(Graph &graph, std::string_view fileName)
     }
 
     graph.makeEmpty(); // clear the graph before loading
-    graph.m_nodes.reserve(j["nodeCount"].get<NodeId>());
-    graph.m_adjList.resize(j["nodeCount"].get<NodeId>(), std::vector<NodeId>{});
+    graph.m_nodeCount = j["nodeCount"].get<NodeId>();
+    graph.m_nodes.resize(j["nodeMaxId"].get<NodeId>());
+    graph.m_adjList.resize(j["nodeMaxId"].get<NodeId>(), std::vector<NodeId>{});
 
     // create nodes
-    for (auto& node : j["nodes"])
-        graph.m_nodes.push_back(graph.deserializeNode(node));
+    for (auto& nodeJson : j["nodes"])
+    {
+        // add the node to the graph's nodes vector at the correct index (id)
+        graph.m_nodes[nodeJson["id"]] = graph.deserializeNode(nodeJson);
+    }
 
     // add edges
-    for (auto& node : j["nodes"])
+    for (auto& nodeJson : j["nodes"])
     {
-        NodeId id = node["id"];
-        for (NodeId neighbor : node["neighbors"])
+        NodeId id = nodeJson["id"];
+        for (NodeId neighbor : nodeJson["neighbors"])
             graph.m_adjList[id].push_back(neighbor);
     }
 }
