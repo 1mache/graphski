@@ -39,7 +39,7 @@ namespace graphski
         m_nodeCount = 0;
     }
 
-    OptionalNodeConstRef Graph::node(NodeId id) const
+    OptionalNodeConstRef Graph::getNodeInfo(NodeId id) const
     {
         auto* node = getNode(id);
         if (!node)
@@ -151,7 +151,7 @@ namespace graphski
         return false; // edge did not exist
     }
 
-    std::vector<NodeId> Graph::getNeighbors(NodeId id) const
+    std::vector<NodeId> Graph::getNeighborsOf(NodeId id) const
     {
         auto* node = getNode(id);
         if (!node)

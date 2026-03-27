@@ -46,7 +46,7 @@ namespace graphski
                 [](size_t sum, const auto& neighbors) { return sum + neighbors.size();});
         }
         // node const ref by id
-        OptionalNodeConstRef node(NodeId id) const override; 
+        OptionalNodeConstRef getNodeInfo(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
         virtual NodeId addNode(std::string_view name = "") override; 
         // creates an edge between to given nodes, gets them by ids
@@ -56,7 +56,7 @@ namespace graphski
 		// deletes an edge between two nodes, gets them by ids. returns true if successful
 		virtual bool deleteEdge(NodeId fromNodeId, NodeId toNodeId) override; 
         // gets an array of neighbor ids for the given node id
-        std::vector<NodeId> getNeighbors(NodeId id) const override; 
+        std::vector<NodeId> getNeighborsOf(NodeId id) const override; 
         // gets a copy of the adjacency list.
         AdjacencyList getAdjacencyList() const override
         {

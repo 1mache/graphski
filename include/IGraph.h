@@ -16,15 +16,15 @@ namespace graphski
 		virtual size_t nodeCount() const = 0;
 		virtual size_t edgeCount() const = 0;
 
-		virtual OptionalNodeConstRef node(NodeId id) const = 0;
+		virtual OptionalNodeConstRef getNodeInfo(NodeId id) const = 0;
 
 		virtual NodeId addNode(std::string_view name = "") = 0;
-		virtual void addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
+		virtual void   addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
 
 		virtual bool deleteNode(NodeId id) = 0;
 		virtual bool deleteEdge(NodeId fromNodeId, NodeId toNodeId) = 0;
 
-		virtual std::vector<NodeId> getNeighbors(NodeId id) const = 0;
-		virtual AdjacencyList getAdjacencyList() const = 0;
+		virtual std::vector<NodeId> getNeighborsOf(NodeId id) const = 0;
+		virtual AdjacencyList 		getAdjacencyList() const = 0;
 	};
 }

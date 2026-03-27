@@ -29,14 +29,14 @@ void transposeGraph(Graph &graph) {
     for (size_t i = 0; i < graph.m_nodes.size(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
-        if(!graph.node(nodeId).has_value())
+        if(!graph.getNodeInfo(nodeId).has_value())
             continue; // skip deleted nodes
         
         const auto& neighbors = graph.m_adjList[nodeId];
 
         for (NodeId neighbor : neighbors)
         {
-            if(!graph.node(neighbor).has_value())
+            if(!graph.getNodeInfo(neighbor).has_value())
                 continue; // skip deleted neighbors
             newAdjList[neighbor].push_back(nodeId);
         }
@@ -67,11 +67,11 @@ void saveToFile(const Graph &graph, std::string_view fileName)
     for (size_t i = 0; i < graph.m_nodes.size(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
-        if(!graph.node(nodeId).has_value())
+        if(!graph.getNodeInfo(nodeId).has_value())
             continue; // skip deleted nodes
         auto nodeJson = graph.serializeNode(nodeId);
 
-        nodeJson["neighbors"] = graph.getNeighbors(nodeId); // add neighbors to the node json
+        nodeJson["neighbors"] = graph.getNeighborsOf(nodeId); // add neighbors to the node json
         nodesArr.push_back(nodeJson);
     }
 

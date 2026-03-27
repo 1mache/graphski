@@ -52,8 +52,8 @@ TEST_CASE("DataGraph adds nodes and stores payload", "[DataGraph]")
     REQUIRE(id1 == 1);
     REQUIRE(graph.nodeCount() == 2);
 
-    auto node0 = graph.node(id0);
-    auto node1 = graph.node(id1);
+    auto node0 = graph.getNodeInfo(id0);
+    auto node1 = graph.getNodeInfo(id1);
     REQUIRE(node0.has_value());
     REQUIRE(node1.has_value());
     REQUIRE(node0.value().get().getName() == "A");
@@ -157,8 +157,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(copy.nodeCount() == source.nodeCount());
         REQUIRE(copy.edgeCount() == source.edgeCount());
-        auto nodeA = copy.node(a);
-        auto nodeB = copy.node(b);
+        auto nodeA = copy.getNodeInfo(a);
+        auto nodeB = copy.getNodeInfo(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");
@@ -184,8 +184,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(moved.nodeCount() == 2);
         REQUIRE(moved.edgeCount() == 1);
-        auto nodeA = moved.node(a);
-        auto nodeB = moved.node(b);
+        auto nodeA = moved.getNodeInfo(a);
+        auto nodeB = moved.getNodeInfo(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");
@@ -214,8 +214,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        auto nodeA = target.node(a);
-        auto nodeB = target.node(b);
+        auto nodeA = target.getNodeInfo(a);
+        auto nodeB = target.getNodeInfo(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");
@@ -242,8 +242,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        auto nodeA = target.node(a);
-        auto nodeB = target.node(b);
+        auto nodeA = target.getNodeInfo(a);
+        auto nodeB = target.getNodeInfo(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");

@@ -32,8 +32,8 @@ TEST_CASE("Add node and add edge", "[Graph]")
         graph.addEdge(node1, node2);
 
         REQUIRE(graph.edgeCount() == 1);
-        CHECK(graph.getNeighbors(node1) == std::vector<graphski::NodeId>{node2});
-        CHECK(graph.getNeighbors(node2).empty());
+        CHECK(graph.getNeighborsOf(node1) == std::vector<graphski::NodeId>{node2});
+        CHECK(graph.getNeighborsOf(node2).empty());
     }
 
     SECTION("Add edge 2")
@@ -47,9 +47,9 @@ TEST_CASE("Add node and add edge", "[Graph]")
         graph.addEdge(node2, node3);
 
         REQUIRE(graph.edgeCount() == 3);
-        CHECK(graph.getNeighbors(node1) == std::vector<graphski::NodeId>{node2, node3});
-        CHECK(graph.getNeighbors(node2) == std::vector<graphski::NodeId>{node3});
-        CHECK(graph.getNeighbors(node3).empty());
+        CHECK(graph.getNeighborsOf(node1) == std::vector<graphski::NodeId>{node2, node3});
+        CHECK(graph.getNeighborsOf(node2) == std::vector<graphski::NodeId>{node3});
+        CHECK(graph.getNeighborsOf(node3).empty());
     }
 }
 
@@ -113,9 +113,9 @@ TEST_CASE("Delete edge", "[Graph]")
 
     CHECK(graph.deleteEdge(node1, node2) == true);
     REQUIRE(graph.edgeCount() == 2);
-    CHECK(graph.getNeighbors(node1) == std::vector<graphski::NodeId>{node3});
-    CHECK(graph.getNeighbors(node2) == std::vector<graphski::NodeId>{node3});
-    CHECK(graph.getNeighbors(node3).empty());
+    CHECK(graph.getNeighborsOf(node1) == std::vector<graphski::NodeId>{node3});
+    CHECK(graph.getNeighborsOf(node2) == std::vector<graphski::NodeId>{node3});
+    CHECK(graph.getNeighborsOf(node3).empty());
 
     CHECK(graph.deleteEdge(node1, node2) == false); // edge already deleted
 }
