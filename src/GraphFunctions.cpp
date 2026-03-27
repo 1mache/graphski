@@ -26,7 +26,7 @@ void transposeGraph(Graph &graph) {
     AdjacencyList newAdjList{ graph.m_adjList.size(), std::vector<NodeId>() };
 
     // fill it with opposite edges
-    for (size_t i = 0; i < graph.nodeCount(); ++i)
+    for (size_t i = 0; i < graph.m_nodes.size(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
         if(!graph.node(nodeId).has_value())
@@ -64,7 +64,7 @@ void saveToFile(const Graph &graph, std::string_view fileName)
     // initialize the array of neighbors in json 
     auto& nodesArr = j["nodes"] = nlohmann::json::array();
 
-    for (size_t i = 0; i < graph.nodeCount(); ++i)
+    for (size_t i = 0; i < graph.m_nodes.size(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
         if(!graph.node(nodeId).has_value())

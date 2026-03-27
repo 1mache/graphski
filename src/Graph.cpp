@@ -22,7 +22,7 @@ namespace graphski
         m_freeNodeIds{other.m_freeNodeIds},
         m_nodeCount{other.m_nodeCount}
     {
-        m_nodes.reserve(other.nodeCount());
+        m_nodes.reserve(other.m_nodes.size());
 
         for (const auto& pnode : other.m_nodes)
         {
@@ -62,9 +62,17 @@ namespace graphski
 
         // default to id as name
         std::string finalName = name.empty() ? std::to_string(id) : std::string(name);
-
-        m_nodes.push_back(createNode(finalName)); // create the node and add it to the graph
-        m_adjList.emplace_back(); // add an empty neighbors vector
+        auto nodep = createNode(finalName);
+        if(m_nodes.size() <= id)
+        {
+            m_nodes.push_back(std::move(nodep)); // create the node and add it to the graph
+            m_adjList.emplace_back(); // add an empty neighbors vector
+        }
+        else
+        {
+            m_nodes[id] = std::move(nodep); // create the node and add it to the graph
+            m_adjList[id].clear(); // clear any existing neighbors (should be empty already)
+        }
         m_nodeCount++;
         return id;
     }
@@ -147,7 +155,7 @@ namespace graphski
 
     bool Graph::nodeIdInBounds(NodeId id) const
     {
-        if (id >= nodeCount())
+        if (id >= m_nodes.size())
         {
             std::cerr << "Node id out of bounds: " << (int)id << std::endl;
             return false;

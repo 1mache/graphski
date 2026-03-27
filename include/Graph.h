@@ -96,7 +96,7 @@ namespace graphski
     private:
         std::vector<std::unique_ptr<Node>> m_nodes;
         std::queue<NodeId>                 m_freeNodeIds;
-        size_t                             m_nodeCount;
+        size_t                             m_nodeCount{0};
 
     private: 
         static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();
