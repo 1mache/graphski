@@ -26,9 +26,9 @@ namespace graphski
 			drawNode(target, states, m_movedId);
 	}
 
-	void DrawableGraph::makeEmpty()
+	void DrawableGraph::clear()
 	{
-		Graph::makeEmpty();
+		Graph::clear();
 		m_updatedGraph = true;
 		m_interactionMode = InteractionMode::None;
 
@@ -64,7 +64,7 @@ namespace graphski
 
 	void DrawableGraph::toggleSelectNode(NodeId id)
 	{
-		auto* node = getNode(id);
+		auto* node = getNodeAs<DrawableNode>(id);
 		if(!node) return; // deleted or non existing node 
 		
 		node->toggleSelect();
@@ -81,7 +81,7 @@ namespace graphski
 		// checks if bounds contain position for every node in graph 
 		for (size_t i = 0; i < m_adjList.size(); ++i)
 		{
-			auto* drawableNode = getNode(static_cast<NodeId>(i));
+			auto* drawableNode = getNodeAs<DrawableNode>(static_cast<NodeId>(i));
 			if(drawableNode && drawableNode->getGlobalBounds().contains(position))
 				return static_cast<NodeId>(i);
 		}
@@ -197,15 +197,15 @@ namespace graphski
 
 	void DrawableGraph::drawNode(sf::RenderTarget& target, sf::RenderStates states, NodeId nodeId) const
 	{
-		const auto* drawableNode = getNode(nodeId);
+		const auto* drawableNode = getNodeAs<DrawableNode>(nodeId);
 		if(!drawableNode) return; // deleted or non existing node	
 		target.draw(*drawableNode, states);
 	}
 
 	void DrawableGraph::drawEdge(sf::RenderTarget& target, sf::RenderStates states, const EdgeLocator edgeId) const
 	{
-		const auto* from = getNode(edgeId.nodeId);
-		const auto* to = getNode(m_adjList[edgeId.nodeId][edgeId.neighborId]);
+		const auto* from = getNodeAs<DrawableNode>(edgeId.nodeId);
+		const auto* to = getNodeAs<DrawableNode>(m_adjList[edgeId.nodeId][edgeId.neighborId]);
 		// note: actually from should never be null because we delete out edges immediately
 		if(!from || !to) return; 
 
@@ -232,7 +232,7 @@ namespace graphski
 	{
 		// call base function which writes all the base data to the json
 		auto nodeJson = Graph::serializeNode(nodeId);
-		auto* node = getNode(nodeId);
+		auto* node = getNodeAs<DrawableNode>(nodeId);
 
 		// add position 
 		if(node)

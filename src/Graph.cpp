@@ -2,46 +2,29 @@
 
 namespace graphski
 {
-    Graph::Graph(size_t reserveCount)
-    {
-        if (reserveCount > MAX_NODES)
-        {
-            std::cout << "Too much nodes requested, max is " << MAX_NODES << '\n';
-            reserveCount = RESERVE_NODES;
-        }
-        else if (reserveCount == 0)
-            reserveCount = RESERVE_NODES;
-
-        m_nodes.reserve(reserveCount);
-        m_adjList.reserve(reserveCount);
-    }
-
-    Graph::Graph(const Graph& other):
-        m_adjList{other.m_adjList}, // copy adj list.
-        m_nodes{}, // empty for now, will populate in the body
-        m_freeNodeIds{other.m_freeNodeIds},
-        m_nodeCount{other.m_nodeCount}
+    Graph::Graph(const Graph &other):
+        m_adjList{other.m_adjList},
+        m_nodes{} 
     {
         m_nodes.reserve(other.m_nodes.size());
 
-        for (const auto& pnode : other.m_nodes)
+        for (const auto& node : other.m_nodes)
         {
-            if(!pnode) m_nodes.push_back(nullptr); // keep null pointers for deleted nodes
-            else m_nodes.push_back(createNode(pnode.get()));
-        }
+            if(!node) m_nodes.addNode(nullptr); // keep null pointers for deleted nodes
+            else 
+            {
+                auto* ptrToNode = dynamic_cast<Node*>(node.get());
+                assert(ptrToNode != nullptr && "non Node* found in other`s NodeStorage");
+                m_nodes.addNode(
+                    createNode(ptrToNode)
+                );
+            }
+        }   
     }
 
-    void Graph::makeEmpty()
+    OptionalNodeConstRef Graph::getNode(NodeId id) const
     {
-        m_nodes.clear();
-        m_adjList.clear();
-        m_freeNodeIds = std::queue<NodeId>(); // clear the free ids queue
-        m_nodeCount = 0;
-    }
-
-    OptionalNodeConstRef Graph::getNodeInfo(NodeId id) const
-    {
-        auto* node = getNode(id);
+        auto* node = m_nodes.getNode(id);
         if (!node)
             return {};
         return std::cref(static_cast<const INode&>(*node));
@@ -49,38 +32,18 @@ namespace graphski
 
     NodeId Graph::addNode(std::string_view name)
     {
-        if (nodeCount() >= MAX_NODES)
-            throw std::overflow_error("Maximum number of nodes exceeded");
-
-        NodeId id = static_cast<NodeId>(nodeCount()); // default to next id
-        // if there is a free id reuse it.
-        if (!m_freeNodeIds.empty())
-        {
-            id = m_freeNodeIds.front();
-            m_freeNodeIds.pop();
-        }
-
+        NodeId id = m_nodes.addNode(createNode(name));
         // default to id as name
         std::string finalName = name.empty() ? std::to_string(id) : std::string(name);
-        auto nodep = createNode(finalName);
-        if(m_nodes.size() <= id)
-        {
-            m_nodes.push_back(std::move(nodep)); // create the node and add it to the graph
-            m_adjList.emplace_back(); // add an empty neighbors vector
-        }
-        else
-        {
-            m_nodes[id] = std::move(nodep); // create the node and add it to the graph
-            m_adjList[id].clear(); // clear any existing neighbors (should be empty already)
-        }
-        m_nodeCount++;
+        if(m_nodes.size() <= id) // add an empty neighbors vector if id is not reused
+            m_adjList.emplace_back(); 
         return id;
     }
 
     void Graph::addEdge(NodeId fromNodeId, NodeId toNodeId)
     {
-        Node* fromPtr = getNode(fromNodeId),
-            * toPtr = getNode(toNodeId);
+        Node* fromPtr = getNodeAs<Node>(fromNodeId),
+            * toPtr = getNodeAs<Node>(toNodeId);
 
         if (!fromPtr || !toPtr)
         {
@@ -102,13 +65,15 @@ namespace graphski
 
     bool Graph::deleteNode(NodeId nodeId)
     {
-        if(!getNode(nodeId))
-            return false;
+        if(!m_nodes.deleteNode(nodeId))
+            return false; // try to delete from storage
 
-        m_adjList[nodeId].clear(); // clear outgoing edges
-        m_nodes[nodeId].reset(nullptr); // delete the node
+        // clear outgoing edges or pop depending on id
+        if(nodeId == m_adjList.size())
+            m_adjList.pop_back();
+        else m_adjList[nodeId].clear();
 
-        // TODO: could this be done lazily?
+        // TODO: do this lazily
         for (auto& neighbors : m_adjList) // clear incoming edges
         {
             auto it = std::remove(neighbors.begin(), neighbors.end(), nodeId);
@@ -116,22 +81,13 @@ namespace graphski
                 neighbors.erase(it, neighbors.end());
         }
 
-        if(nodeId == m_nodes.size() - 1) // if it's the last node, we can just pop it
-        {
-            m_nodes.pop_back();
-            m_adjList.pop_back();
-        }    
-        else
-            m_freeNodeIds.push(nodeId); // add this id to the free list for reuse
-            
-        m_nodeCount--;
         return true;
     }
 
     bool Graph::deleteEdge(NodeId fromNodeId, NodeId toNodeId)
     {
-        Node* fromPtr = getNode(fromNodeId),
-            * toPtr = getNode(toNodeId);
+        Node* fromPtr = getNodeAs<Node>(fromNodeId),
+            * toPtr = getNodeAs<Node>(toNodeId);
 
         if (!fromPtr || !toPtr)
         {
@@ -153,21 +109,11 @@ namespace graphski
 
     std::vector<NodeId> Graph::getNeighborsOf(NodeId id) const
     {
-        auto* node = getNode(id);
+        auto* node = getNodeAs<Node>(id);
         if (!node)
             throw std::invalid_argument("Node with given id does not exist.");
 
         return m_adjList[id]; // return a copy of the neighbors vector
-    }
-
-    bool Graph::nodeIdInBounds(NodeId id) const
-    {
-        if (id >= m_nodes.size())
-        {
-            std::cerr << "Node id out of bounds: " << (int)id << std::endl;
-            return false;
-        }
-        return true;
     }
 
     bool Graph::edgeExists(NodeId fromNodeId, NodeId toNodeId) const
@@ -185,23 +131,9 @@ namespace graphski
         return true;
     }
 
-    Node* Graph::getNode(NodeId id)
-    {
-        if (!nodeIdInBounds(id))
-            return nullptr;
-        return m_nodes[id].get();
-    }
-
-    const Node* Graph::getNode(NodeId id) const
-    {
-        if (!nodeIdInBounds(id))
-            return nullptr;
-        return m_nodes[id].get();
-    }
-
     nlohmann::json Graph::serializeNode(NodeId nodeId) const
     {
-        const Node* node = getNode(nodeId);
+        const Node* node = getNodeAs<Node>(nodeId);
         nlohmann::json j;
         if(node)
         {

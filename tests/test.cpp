@@ -91,7 +91,7 @@ TEST_CASE("Make empty", "[Graph]")
     REQUIRE(graph.nodeCount() == 2);
     REQUIRE(graph.edgeCount() == 1);
 
-    graph.makeEmpty();
+    graph.clear();
 
     REQUIRE(graph.nodeCount() == 0);
     REQUIRE(graph.edgeCount() == 0);

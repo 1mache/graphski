@@ -24,7 +24,7 @@ namespace graphski
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-		void makeEmpty() override;
+		void clear() override;
 
 		NodeId addNode(std::string_view name = "") override;
 		NodeId addNode(sf::Vector2f position, std::string_view name = "");
@@ -40,7 +40,7 @@ namespace graphski
 		
 		void markNode(NodeId id, bool val = true)
 		{
-			auto* node = getNode(id);
+			auto* node = getNodeAs<DrawableNode>(id);
 			if (node)
 				node->mark(val);
 			m_updatedGraph = true;
@@ -53,7 +53,7 @@ namespace graphski
 
 		void setNodePosition(NodeId nodeId, sf::Vector2f position)
 		{
-			auto* node = getNode(nodeId);
+			auto* node = getNodeAs<DrawableNode>(nodeId);
 			if (node)
 			{
 				node->setPosition(position);
@@ -90,29 +90,6 @@ namespace graphski
 		std::unique_ptr<Node> createNode(std::string_view name = "") const override;
 		
 		std::unique_ptr<Node> createNode(const Node* node) const override;
-
-		// node and edge getters overrides
-		DrawableNode* getNode(NodeId id) override
-		{
-			auto* node = Graph::getNode(id);
-			if(!node) return nullptr;
-			
-			auto* res = dynamic_cast<DrawableNode*>(node);
-			if (!res) // should never happen
-				throw std::runtime_error("Node with id " + std::to_string(id) + " is not a DrawableNode.");
-			return res;
-		}
-
-		const DrawableNode* getNode(NodeId id) const override
-		{
-			auto* node = Graph::getNode(id);
-			if(!node) return nullptr;
-
-			auto* res = dynamic_cast<const DrawableNode*>(node);
-			if (!res) // should never happen
-				throw std::runtime_error("Node with id " + std::to_string(id) + " is not a DrawableNode.");
-			return res;
-		}
 
 		// returns a color for a node (random or not depends on Config)
 		sf::Color getNodeColor() const;

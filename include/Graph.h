@@ -3,23 +3,30 @@
 #include <utility>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <algorithm>
 #include <memory>
-#include <queue>
+#include <concepts>
+#include <type_traits>
 
 #include "nlohmann/json.hpp"
 #include "IGraph.h"
 #include "Node.h"
+#include "NodeStorage.h"
 
 namespace graphski
 {
     class Graph : public IGraph
     {
     public:
-        explicit Graph(size_t reserveCount = 0);
-        
+        explicit Graph(size_t reserveCount = 0)
+        : m_nodes(reserveCount > NodeStorage::maxNodes() ? 
+                                    NodeStorage::maxNodes() : reserveCount)
+        {
+            m_adjList.reserve(reserveCount);
+        }
+
         Graph(const Graph& other);
+        
         Graph& operator=(const Graph& other)
         {
             Graph copy(other); // make a copy using the copy constructor
@@ -29,24 +36,24 @@ namespace graphski
 
         Graph(Graph&&) = default;        
         Graph& operator=(Graph&&) = default;
-
         virtual ~Graph() = default;
 
-        // clears the graph
-        virtual void makeEmpty() override;
-        // how many nodes are there
+        virtual void clear() override
+        {
+            m_nodes.clear();
+            m_adjList.clear();  
+        }
         size_t nodeCount() const override
         {
-            return m_nodeCount;
+            return m_nodes.nodeCount();
         }
-        // how many edges are there
         size_t edgeCount() const override
         {
             return std::accumulate(m_adjList.begin(), m_adjList.end(), 0u,
                 [](size_t sum, const auto& neighbors) { return sum + neighbors.size();});
         }
         // node const ref by id
-        OptionalNodeConstRef getNodeInfo(NodeId id) const override; 
+        OptionalNodeConstRef getNode(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
         virtual NodeId addNode(std::string_view name = "") override; 
         // creates an edge between to given nodes, gets them by ids
@@ -64,6 +71,19 @@ namespace graphski
         }
 
     protected:
+        template <typename NodeT>
+            requires std::derived_from<std::remove_cv_t<NodeT>, INode>
+        NodeT* getNodeAs(NodeId id)
+        {
+            return dynamic_cast<NodeT*>(m_nodes.getNode(id));
+        }
+        template <typename NodeT>
+            requires std::derived_from<std::remove_cv_t<NodeT>, INode>
+        const NodeT* getNodeAs(NodeId id) const
+        {
+            return dynamic_cast<const NodeT*>(m_nodes.getNode(id));
+        }
+        
 		// factory methods for creating nodes
         virtual std::unique_ptr<Node> createNode(std::string_view name = "") const
         {
@@ -76,15 +96,8 @@ namespace graphski
 				throw std::invalid_argument("Cannot create a node from a null pointer.");
             return std::make_unique<Node>(*node);
         }
-
-		// checks if node id is in bounds of the graphs
-        bool nodeIdInBounds(NodeId id) const;
 		// checks if edge exists between two nodes, returns true if it does
         bool edgeExists(NodeId fromNodeId, NodeId toNodeId) const;
-
-		// private getters for nodes for internal use, raw pointers are non owning.
-        virtual Node* getNode(NodeId id);
-        virtual const Node* getNode(NodeId id) const; // const version
 
         // TODO: move these somewhere else
         // returns the json representation of the node, used in saveToFile
@@ -94,14 +107,7 @@ namespace graphski
 
         AdjacencyList m_adjList;    
     private:
-        std::vector<std::unique_ptr<Node>> m_nodes;
-        std::queue<NodeId>                 m_freeNodeIds;
-        size_t                             m_nodeCount{0};
-
-    private: 
-        static constexpr size_t MAX_NODES     = std::numeric_limits<NodeId>::max();
-        static constexpr size_t RESERVE_NODES = 10;
-        
+        NodeStorage m_nodes;
     // Friends:
         friend void swap(Graph& first, Graph& second) noexcept; // for copy and swap idiom
 

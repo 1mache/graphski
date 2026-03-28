@@ -23,11 +23,11 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
         REQUIRE(id1 == 0);
         REQUIRE(id2 == 1);
 
-        auto node1 = g.getNodeInfo(id1);
+        auto node1 = g.getNode(id1);
         REQUIRE(node1.has_value());
         REQUIRE(node1.value().get().getName() == "A");
 
-        auto node2 = g.getNodeInfo(id2);
+        auto node2 = g.getNode(id2);
         REQUIRE(node2.has_value());
         REQUIRE(node2.value().get().getName() == "1");
     }
@@ -38,7 +38,7 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
         g.addNode();
         REQUIRE(g.nodeCount() == 2);
         
-        g.makeEmpty();
+        g.clear();
         REQUIRE(g.nodeCount() == 0);
         REQUIRE(g.edgeCount() == 0);
     }
@@ -57,9 +57,9 @@ TEST_CASE("Graph Operations", "[Graph]") {
         REQUIRE(g.edgeCount() == 2);
 
         // Check degrees via peekNode
-        auto node1 = g.getNodeInfo(id1);
-        auto node2 = g.getNodeInfo(id2);
-        auto node3 = g.getNodeInfo(id3);
+        auto node1 = g.getNode(id1);
+        auto node2 = g.getNode(id2);
+        auto node3 = g.getNode(id3);
         REQUIRE(node1.has_value());
         REQUIRE(node2.has_value());
         REQUIRE(node3.has_value());
@@ -94,7 +94,7 @@ TEST_CASE("Graph Operations", "[Graph]") {
         REQUIRE(result == true);
         REQUIRE(g.nodeCount() == 2);
         REQUIRE(g.edgeCount() == 0); // Edges involving deleted node should be removed
-        REQUIRE_FALSE(g.getNodeInfo(id2).has_value());
+        REQUIRE_FALSE(g.getNode(id2).has_value());
 
         // Any edge operation using a deleted node id should fail.
         REQUIRE_THROWS_AS(g.addEdge(id1, id2), std::invalid_argument);
@@ -104,7 +104,7 @@ TEST_CASE("Graph Operations", "[Graph]") {
         NodeId reusedId = g.addNode("D");
         REQUIRE(reusedId == id2);
         REQUIRE(g.nodeCount() == 3);
-        auto reusedNode = g.getNodeInfo(reusedId);
+        auto reusedNode = g.getNode(reusedId);
         REQUIRE(reusedNode.has_value());
         REQUIRE(reusedNode.value().get().getName() == "D");
         
@@ -150,9 +150,9 @@ TEST_CASE("Graph Operations", "[Graph]") {
         REQUIRE(n1.empty()); // Now id1 should have no outgoing edges
         
         // Check new degrees
-        auto node1 = g.getNodeInfo(id1);
-        auto node2 = g.getNodeInfo(id2);
-        auto node3 = g.getNodeInfo(id3);
+        auto node1 = g.getNode(id1);
+        auto node2 = g.getNode(id2);
+        auto node3 = g.getNode(id3);
         REQUIRE(node1.has_value());
         REQUIRE(node2.has_value());
         REQUIRE(node3.has_value());
@@ -191,9 +191,9 @@ TEST_CASE("Graph Serialization", "[Graph][JSON]") {
         REQUIRE(g2.edgeCount() == 2);
 
         // Verify nodes 
-        auto nodeA = g2.getNodeInfo(idA);
-        auto nodeB = g2.getNodeInfo(idB);
-        auto nodeC = g2.getNodeInfo(idC);
+        auto nodeA = g2.getNode(idA);
+        auto nodeB = g2.getNode(idB);
+        auto nodeC = g2.getNode(idC);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeC.has_value());
@@ -238,14 +238,14 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(copy.nodeCount() == source.nodeCount());
         REQUIRE(copy.edgeCount() == source.edgeCount());
-        auto copiedNodeA = copy.getNodeInfo(a);
+        auto copiedNodeA = copy.getNode(a);
         REQUIRE(copiedNodeA.has_value());
         REQUIRE(copiedNodeA.value().get().getName() == "A");
         REQUIRE(copy.getNeighborsOf(a).size() == 1);
         REQUIRE(copy.getNeighborsOf(a)[0] == b);
 
         // Mutate source to verify the copy is independent.
-        REQUIRE(source.getNodeInfo(a).has_value());
+        REQUIRE(source.getNode(a).has_value());
         source.addNode("C");
         source.deleteEdge(a, b);
 
@@ -265,14 +265,14 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(moved.nodeCount() == 2);
         REQUIRE(moved.edgeCount() == 1);
-        auto movedNodeA = moved.getNodeInfo(a);
+        auto movedNodeA = moved.getNode(a);
         REQUIRE(movedNodeA.has_value());
         REQUIRE(movedNodeA.value().get().getName() == "A");
         REQUIRE(moved.getNeighborsOf(a).size() == 1);
         REQUIRE(moved.getNeighborsOf(a)[0] == b);
 
         // Moved-from object must remain valid and usable.
-        source.makeEmpty();
+        source.clear();
         NodeId x = source.addNode("X");
         REQUIRE(x == 0);
         REQUIRE(source.nodeCount() == 1);
@@ -291,7 +291,7 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        auto targetNodeA = target.getNodeInfo(a);
+        auto targetNodeA = target.getNode(a);
         REQUIRE(targetNodeA.has_value());
         REQUIRE(targetNodeA.value().get().getName() == "A");
         REQUIRE(target.getNeighborsOf(a).size() == 1);
@@ -316,14 +316,14 @@ TEST_CASE("Graph Rule of Five", "[Graph][RuleOf5]") {
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        auto targetNodeA = target.getNodeInfo(a);
+        auto targetNodeA = target.getNode(a);
         REQUIRE(targetNodeA.has_value());
         REQUIRE(targetNodeA.value().get().getName() == "A");
         REQUIRE(target.getNeighborsOf(a).size() == 1);
         REQUIRE(target.getNeighborsOf(a)[0] == b);
 
         // Moved-from object must remain valid and usable.
-        source.makeEmpty();
+        source.clear();
         source.addNode("AfterMove");
         REQUIRE(source.nodeCount() == 1);
     }

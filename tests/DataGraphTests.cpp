@@ -52,8 +52,8 @@ TEST_CASE("DataGraph adds nodes and stores payload", "[DataGraph]")
     REQUIRE(id1 == 1);
     REQUIRE(graph.nodeCount() == 2);
 
-    auto node0 = graph.getNodeInfo(id0);
-    auto node1 = graph.getNodeInfo(id1);
+    auto node0 = graph.getNode(id0);
+    auto node1 = graph.getNode(id1);
     REQUIRE(node0.has_value());
     REQUIRE(node1.has_value());
     REQUIRE(node0.value().get().getName() == "A");
@@ -157,8 +157,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(copy.nodeCount() == source.nodeCount());
         REQUIRE(copy.edgeCount() == source.edgeCount());
-        auto nodeA = copy.getNodeInfo(a);
-        auto nodeB = copy.getNodeInfo(b);
+        auto nodeA = copy.getNode(a);
+        auto nodeB = copy.getNode(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");
@@ -184,8 +184,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(moved.nodeCount() == 2);
         REQUIRE(moved.edgeCount() == 1);
-        auto nodeA = moved.getNodeInfo(a);
-        auto nodeB = moved.getNodeInfo(b);
+        auto nodeA = moved.getNode(a);
+        auto nodeB = moved.getNode(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");
@@ -193,7 +193,7 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
         REQUIRE(moved.getNodeData(a) == "data-A");
         REQUIRE(moved.getNodeData(b) == "data-B");
 
-        source.makeEmpty();
+        source.clear();
         NodeId x = source.addNode("new-data", "X");
         REQUIRE(x == 0);
         REQUIRE(source.nodeCount() == 1);
@@ -214,8 +214,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        auto nodeA = target.getNodeInfo(a);
-        auto nodeB = target.getNodeInfo(b);
+        auto nodeA = target.getNode(a);
+        auto nodeB = target.getNode(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");
@@ -242,8 +242,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 
         REQUIRE(target.nodeCount() == 2);
         REQUIRE(target.edgeCount() == 1);
-        auto nodeA = target.getNodeInfo(a);
-        auto nodeB = target.getNodeInfo(b);
+        auto nodeA = target.getNode(a);
+        auto nodeB = target.getNode(b);
         REQUIRE(nodeA.has_value());
         REQUIRE(nodeB.has_value());
         REQUIRE(nodeA.value().get().getName() == "A");
@@ -251,7 +251,7 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
         REQUIRE(target.getNodeData(a) == "data-A");
         REQUIRE(target.getNodeData(b) == "data-B");
 
-        source.makeEmpty();
+        source.clear();
         NodeId x = source.addNode("after-move", "X");
         REQUIRE(x == 0);
         REQUIRE(source.nodeCount() == 1);

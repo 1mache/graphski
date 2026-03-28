@@ -106,7 +106,7 @@ namespace graphski
 			break;
 
         case CLEAR_GRAPH_KEY:
-            m_graph.makeEmpty();
+            m_graph.clear();
 			break;
 
         case TRANSPOSE_KEY:

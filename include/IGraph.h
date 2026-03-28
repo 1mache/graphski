@@ -11,12 +11,12 @@ namespace graphski
 	public:
 		virtual ~IGraph() = default;
 
-		virtual void makeEmpty() = 0;
+		virtual void clear() = 0;
 
 		virtual size_t nodeCount() const = 0;
 		virtual size_t edgeCount() const = 0;
 
-		virtual OptionalNodeConstRef getNodeInfo(NodeId id) const = 0;
+		virtual OptionalNodeConstRef getNode(NodeId id) const = 0;
 
 		virtual NodeId addNode(std::string_view name = "") = 0;
 		virtual void   addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;

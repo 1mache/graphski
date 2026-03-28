@@ -1,6 +1,7 @@
 set(TEST_MAIN "unit_tests")
 set(TEST_SOURCES 
     "NodeTests.cpp"
+    "NodeStorageTests.cpp"
     "GraphTests.cpp"
     "DataGraphTests.cpp"
 )

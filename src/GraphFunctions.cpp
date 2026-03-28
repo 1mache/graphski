@@ -14,8 +14,6 @@ void swap(Graph &first, Graph &second) noexcept
     using std::swap;
     swap(first.m_nodes, second.m_nodes);
     swap(first.m_adjList, second.m_adjList);
-    swap(first.m_freeNodeIds, second.m_freeNodeIds);
-    swap(first.m_nodeCount, second.m_nodeCount);
 }
 
 void transposeGraph(Graph &graph) {
@@ -29,14 +27,14 @@ void transposeGraph(Graph &graph) {
     for (size_t i = 0; i < graph.m_nodes.size(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
-        if(!graph.getNodeInfo(nodeId).has_value())
+        if(!graph.getNode(nodeId).has_value())
             continue; // skip deleted nodes
         
         const auto& neighbors = graph.m_adjList[nodeId];
 
         for (NodeId neighbor : neighbors)
         {
-            if(!graph.getNodeInfo(neighbor).has_value())
+            if(!graph.getNode(neighbor).has_value())
                 continue; // skip deleted neighbors
             newAdjList[neighbor].push_back(nodeId);
         }
@@ -67,7 +65,7 @@ void saveToFile(const Graph &graph, std::string_view fileName)
     for (size_t i = 0; i < graph.m_nodes.size(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
-        if(!graph.getNodeInfo(nodeId).has_value())
+        if(!graph.getNode(nodeId).has_value())
             continue; // skip deleted nodes
         auto nodeJson = graph.serializeNode(nodeId);
 
@@ -100,8 +98,7 @@ void loadFromFile(Graph &graph, std::string_view fileName)
         return;
     }
 
-    graph.makeEmpty(); // clear the graph before loading
-    graph.m_nodeCount = j["nodeCount"].get<NodeId>();
+    graph.clear(); // clear the graph before loading
     graph.m_nodes.resize(j["nodeMaxId"].get<NodeId>());
     graph.m_adjList.resize(j["nodeMaxId"].get<NodeId>(), std::vector<NodeId>{});
 
@@ -109,7 +106,10 @@ void loadFromFile(Graph &graph, std::string_view fileName)
     for (auto& nodeJson : j["nodes"])
     {
         // add the node to the graph's nodes vector at the correct index (id)
-        graph.m_nodes[nodeJson["id"]] = graph.deserializeNode(nodeJson);
+        graph.m_nodes.insertToEmptySlot(
+            nodeJson["id"], 
+            graph.deserializeNode(nodeJson)
+        );
     }
 
     // add edges
