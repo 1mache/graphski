@@ -5,10 +5,13 @@ namespace graphski
 {
 NodeId NodeStorage::addNode(std::unique_ptr<INode> node)
 {
-    if (nodeCount() >= maxNodes())
+    if (size() >= maxNodes())
         throw std::overflow_error("Maximum number of nodes exceeded");
+    
+    // node is allowed to be nullptr. we just wont count it in nodeCount then
+    bool isNull = !node.get();
 
-    NodeId id = static_cast<NodeId>(nodeCount()); // default to next id
+    NodeId id = getNextMaxId(); // default to next max id
     // if there is a free id reuse it.
     if (!m_freeNodeIds.empty())
     {
@@ -27,6 +30,7 @@ NodeId NodeStorage::addNode(std::unique_ptr<INode> node)
         m_storage.push_back(std::move(node));   
     }
 
+    if(!isNull) m_nodeCount++;
     return id;
 }
 
@@ -35,6 +39,7 @@ void NodeStorage::insertToEmptySlot(NodeId slotId, std::unique_ptr<INode> insert
     if(getNode(slotId))
         throw std::logic_error("Storage holds node at provided id. Cannot overwrite.");
 
+    m_nodeCount++;
     m_storage[slotId] = std::move(insertedNode);
 }
 
@@ -54,6 +59,7 @@ bool NodeStorage::deleteNode(NodeId nodeId)
         m_freeNodeIds.push(nodeId); // add this id to the free list for reuse
     }
 
+    m_nodeCount--;
     return false;
 }
 } // namespace graphski

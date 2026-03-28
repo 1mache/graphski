@@ -110,6 +110,12 @@ class NodeStorage
             swap(first.m_nodeCount, second.m_nodeCount);
         }
     private:
+        // get NOT reused id
+        NodeId getNextMaxId()
+        {
+            return static_cast<NodeId>(size());
+        }
+
         std::vector<std::unique_ptr<INode>> m_storage;
         std::queue<NodeId> m_freeNodeIds; // queue of free node ids for reuse
         size_t m_nodeCount{0};
