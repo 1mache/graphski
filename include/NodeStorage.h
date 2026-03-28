@@ -16,7 +16,7 @@ namespace graphski
 class NodeStorage
 {
     public:
-        NodeStorage(size_t reserveCount = 0)
+        explicit NodeStorage(size_t reserveCount = 0)
         {
             m_storage.reserve(reserveCount);
         }
@@ -57,9 +57,7 @@ class NodeStorage
 
         void clear()
         {   
-            m_storage.clear();
-            m_nodeCount = 0;        
-            m_freeNodeIds = std::queue<NodeId>();
+            *this = NodeStorage{};
         }
 
         bool nodeIdInBounds(NodeId id) const

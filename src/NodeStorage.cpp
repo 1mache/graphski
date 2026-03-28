@@ -60,6 +60,6 @@ bool NodeStorage::deleteNode(NodeId nodeId)
     }
 
     m_nodeCount--;
-    return false;
+    return true;
 }
 } // namespace graphski

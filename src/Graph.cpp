@@ -33,9 +33,10 @@ namespace graphski
     NodeId Graph::addNode(std::string_view name)
     {
         NodeId id = m_nodes.addNode(createNode(name));
-        // default to id as name
-        std::string finalName = name.empty() ? std::to_string(id) : std::string(name);
-        if(m_nodes.size() <= id) // add an empty neighbors vector if id is not reused
+        if(name.empty()) // set default name to id if not provided
+            m_nodes.getNode(id)->setName(std::to_string(id));
+
+        if(m_adjList.size() <= id) // add an empty neighbors vector if id is not reused
             m_adjList.emplace_back(); 
         return id;
     }
