@@ -40,6 +40,11 @@ class NodeStorage
             return m_nodeCount;
         }
 
+        NodeId maxNodeId() const
+        {
+            return static_cast<NodeId>(m_storage.size());
+        }
+
         void reserve(size_t newSize)
         {
             if (newSize > maxNodes())
@@ -115,7 +120,7 @@ class NodeStorage
         }
 
         std::vector<std::unique_ptr<INode>> m_storage;
-        std::queue<NodeId> m_freeNodeIds; // queue of free node ids for reuse
+        std::vector<NodeId> m_freeNodeIds; // queue of free node ids for reuse
         size_t m_nodeCount{0};
 };
     

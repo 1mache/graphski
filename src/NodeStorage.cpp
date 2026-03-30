@@ -16,7 +16,7 @@ NodeId NodeStorage::addNode(std::unique_ptr<INode> node)
     if (!m_freeNodeIds.empty())
     {
         id = m_freeNodeIds.front();
-        m_freeNodeIds.pop();
+        m_freeNodeIds.pop_back();
     }
 
     if(id < m_storage.size())
@@ -52,13 +52,19 @@ bool NodeStorage::deleteNode(NodeId nodeId)
     {
         // if it's the last node, we can just pop it
         m_storage.pop_back();
-        while(m_storage.back() == nullptr)
-            m_storage.pop_back(); // also pop nullptrs if any in the back
+        if(m_storage.back() == nullptr)
+        {
+            while(m_storage.back() == nullptr)
+                m_storage.pop_back(); // pop nullptrs if any in the back
+
+            // remove any freed ids that are out of bounds now
+            std::erase_if(m_freeNodeIds, [this](NodeId id){ return id >= size(); });
+        }
     }    
     else
     {
         m_storage[nodeId].reset(nullptr);
-        m_freeNodeIds.push(nodeId); // add this id to the free list for reuse
+        m_freeNodeIds.push_back(nodeId); // add this id to the free list for reuse
     }
 
     m_nodeCount--;

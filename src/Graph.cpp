@@ -76,18 +76,24 @@ namespace graphski
 
     bool Graph::deleteNode(NodeId nodeId)
     {
+        bool lastInStorage = (m_nodes.maxNodeId() == nodeId);
         if(!m_nodes.deleteNode(nodeId))
             return false; // try to delete from storage
 
         // clear outgoing edges or pop depending on id
-        if(nodeId == m_adjList.size()) // TODO: make a last id function and use it instead of size
+        if(lastInStorage)
             m_adjList.pop_back();
+        else m_adjList[nodeId].clear();
+       
+        // if last was popped there are possible trailing nulls. pop them
+        while(m_nodes.size() > m_adjList.size())
+            m_adjList.pop_back();
+    
         // incoming edges deletion is handled lazily:
         // 1. when asked for neighbors of node.
         // 2. when asked for adjacency list
         // 3. when asked for total amount of edges.
 
-        else m_adjList[nodeId].clear();
 
         return true;
     }

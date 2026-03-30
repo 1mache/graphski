@@ -127,6 +127,54 @@ TEST_CASE("Graph Operations", "[Graph]") {
         REQUIRE(resultFalse == false);
     }
 
+    SECTION("Adjacency list shrinks when last node is deleted") {
+        g.addEdge(id1, id2);
+        g.addEdge(id2, id3);
+
+        auto adjList = g.getAdjacencyList();
+        REQUIRE(adjList.size() == 3); // adjacency list has 3 entries initially
+
+        // Delete last node
+        REQUIRE(g.deleteNode(id3));
+        adjList = g.getAdjacencyList();
+        REQUIRE(adjList.size() == 2); // adjacency list shrinks
+
+        // Delete new last node
+        REQUIRE(g.deleteNode(id2));
+        adjList = g.getAdjacencyList();
+        REQUIRE(adjList.size() == 1); // shrinks again
+
+        // Delete final node
+        REQUIRE(g.deleteNode(id1));
+        adjList = g.getAdjacencyList();
+        REQUIRE(adjList.empty()); // now empty
+    }
+
+    SECTION("Adjacency list reuse pattern: delete middle, reuse slot") {
+        g.addEdge(id1, id2);
+        g.addEdge(id2, id3);
+
+        auto adjListBefore = g.getAdjacencyList();
+        REQUIRE(adjListBefore.size() == 3);
+
+        // Delete middle node
+        REQUIRE(g.deleteNode(id2));
+        auto adjListAfter = g.getAdjacencyList();
+        REQUIRE(adjListAfter.size() == 3); // size unchanged with middle deletion
+
+        // Reuse the freed slot
+        NodeId id4 = g.addNode("D");
+        REQUIRE(id4 == id2); // Should reuse the freed id
+
+        // Adjacency list should still be accessible at the reused position
+        REQUIRE(g.getNeighborsOf(id4).empty()); // New node has no neighbors initially
+        
+        // Add edge from new node
+        g.addEdge(id4, id3);
+        REQUIRE(g.edgeCount() == 1); // Only the new edge exists now
+        REQUIRE(g.getNeighborsOf(id4).size() == 1);
+    }
+
     SECTION("Graph Transposition") {
         Graph empty{};
         REQUIRE_NOTHROW(transposeGraph(empty));
