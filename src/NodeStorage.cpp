@@ -52,6 +52,8 @@ bool NodeStorage::deleteNode(NodeId nodeId)
     {
         // if it's the last node, we can just pop it
         m_storage.pop_back();
+        while(m_storage.back() == nullptr)
+            m_storage.pop_back(); // also pop nullptrs if any in the back
     }    
     else
     {
