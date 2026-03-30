@@ -3,7 +3,6 @@
 #include <utility>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
 #include <memory>
 #include <concepts>
 #include <type_traits>
@@ -47,11 +46,7 @@ namespace graphski
         {
             return m_nodes.nodeCount();
         }
-        size_t edgeCount() const override
-        {
-            return std::accumulate(m_adjList.begin(), m_adjList.end(), 0u,
-                [](size_t sum, const auto& neighbors) { return sum + neighbors.size();});
-        }
+        size_t edgeCount() const override;
         // node const ref by id
         OptionalNodeConstRef getNode(NodeId id) const override; 
         // creates a node with empty edges list, returns its unique id
@@ -65,10 +60,7 @@ namespace graphski
         // gets an array of neighbor ids for the given node id
         std::vector<NodeId> getNeighborsOf(NodeId id) const override; 
         // gets a copy of the adjacency list.
-        AdjacencyList getAdjacencyList() const override
-        {
-            return m_adjList; // return a copy and thats ok! 
-        }
+        AdjacencyList getAdjacencyList() const override;
 
     protected:
         template <typename NodeT>
@@ -104,6 +96,9 @@ namespace graphski
         virtual nlohmann::json serializeNode(NodeId nodeId) const;
         // creates and returns a new node given json representation of it, used in loadFromFile
         virtual std::unique_ptr<Node> deserializeNode(const nlohmann::json& j) const; 
+        
+        // TODO: find a place to call this function on m_adjList.
+        void cleanupDeletedDestEdges(AdjacencyList& adjList) const;
 
         AdjacencyList m_adjList;    
     private:

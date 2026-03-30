@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <ranges>
+
 #include "Graph.h"
 
 namespace graphski
@@ -20,6 +23,13 @@ namespace graphski
                 );
             }
         }   
+    }
+
+    size_t Graph::edgeCount() const
+    {
+        auto cleanedAdjList = getAdjacencyList();
+        return std::accumulate(cleanedAdjList.begin(), cleanedAdjList.end(), 0u,
+            [](size_t sum, const auto& neighbors) { return sum + neighbors.size();});
     }
 
     OptionalNodeConstRef Graph::getNode(NodeId id) const
@@ -70,17 +80,14 @@ namespace graphski
             return false; // try to delete from storage
 
         // clear outgoing edges or pop depending on id
-        if(nodeId == m_adjList.size())
+        if(nodeId == m_adjList.size()) // TODO: make a last id function and use it instead of size
             m_adjList.pop_back();
-        else m_adjList[nodeId].clear();
+        // incoming edges deletion is handled lazily:
+        // 1. when asked for neighbors of node.
+        // 2. when asked for adjacency list
+        // 3. when asked for total amount of edges.
 
-        // TODO: do this lazily
-        for (auto& neighbors : m_adjList) // clear incoming edges
-        {
-            auto it = std::remove(neighbors.begin(), neighbors.end(), nodeId);
-            if (it != neighbors.end())
-                neighbors.erase(it, neighbors.end());
-        }
+        else m_adjList[nodeId].clear();
 
         return true;
     }
@@ -110,11 +117,27 @@ namespace graphski
 
     std::vector<NodeId> Graph::getNeighborsOf(NodeId id) const
     {
+        using namespace std::ranges;
         auto* node = getNodeAs<Node>(id);
         if (!node)
             throw std::invalid_argument("Node with given id does not exist.");
 
-        return m_adjList[id]; // return a copy of the neighbors vector
+        auto neighborsCleaned = m_adjList[id]; 
+        // remove edges to deleted nodes
+        const auto [first, last] = remove_if(neighborsCleaned, 
+                    [this](NodeId id){return m_nodes.getNode(id) == nullptr;});
+        
+        neighborsCleaned.erase(first,last);
+            
+        return neighborsCleaned; // return a cleaned up copy of the neighbors vector
+    }
+
+    AdjacencyList Graph::getAdjacencyList() const
+    {
+        auto adjListCleaned = m_adjList;   
+        cleanupDeletedDestEdges(adjListCleaned);
+
+        return adjListCleaned;
     }
 
     bool Graph::edgeExists(NodeId fromNodeId, NodeId toNodeId) const
@@ -148,6 +171,19 @@ namespace graphski
     {
         // TODO: needs to be placed in the correct id.
         return createNode(j["name"].get<std::string>());
+    }
+
+    void Graph::cleanupDeletedDestEdges(AdjacencyList& adjList) const
+    {
+        using namespace std::ranges;
+        for (auto& neighbors : adjList)
+        {
+            // remove edges to deleted nodes
+            const auto [first, last] = remove_if(neighbors, 
+                        [this](NodeId id){return m_nodes.getNode(id) == nullptr;});
+            
+            neighbors.erase(first,last);
+        }
     }
 
 } // namespace graphski
