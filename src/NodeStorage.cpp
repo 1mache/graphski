@@ -8,8 +8,8 @@ NodeId NodeStorage::addNode(std::unique_ptr<INode>&& node)
     if (size() >= maxNodes())
         throw std::overflow_error("Maximum number of nodes exceeded");
     
-    // node is allowed to be nullptr. we just wont count it in nodeCount then
-    bool isNull = !node.get();
+    if(!node)
+        throw std::invalid_argument("Got addNode as an argument for addNode");
 
     NodeId id = getNextMaxId(); // default to next max id
     // if there is a free id reuse it.
@@ -26,18 +26,7 @@ NodeId NodeStorage::addNode(std::unique_ptr<INode>&& node)
         m_storage.push_back(std::move(node));   
     }
 
-    if(!isNull) m_nodeCount++;
     return id;
-}
-
-void NodeStorage::insertToEmptySlot(NodeId slotId, std::unique_ptr<INode>&& insertedNode)
-{
-    if(getNode(slotId))
-        throw std::logic_error("Storage holds node at provided id. Cannot overwrite.");
-
-    // TODO: this will invalidate slotId in freelist
-    m_nodeCount++;
-    m_storage[slotId] = std::move(insertedNode);
 }
 
 bool NodeStorage::deleteNode(NodeId nodeId)

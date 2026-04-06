@@ -72,21 +72,18 @@ class NodeStorage
 
         // add node to storage, returns access id
         NodeId addNode(std::unique_ptr<INode>&& node);
-        void insertToEmptySlot(NodeId slotId, std::unique_ptr<INode>&& insertedNode);
         // deletes a node by id, returns true if successful 
         bool deleteNode(NodeId nodeId);
 
         // getters for nodes, raw pointers are non owning.
         INode* getNode(NodeId id)
         {
-            if (!nodeIdInBounds(id))
-                return nullptr;
+            if (!nodeIdInBounds(id)) return nullptr;
             return m_storage[id].get();
         }
         const INode* getNode(NodeId id) const // const version
         {
-            if (!nodeIdInBounds(id))
-                return nullptr;
+            if (!nodeIdInBounds(id)) return nullptr;
             return m_storage[id].get();
         }
     
