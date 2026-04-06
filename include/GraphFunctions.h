@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include <functional>
 
 #include "Graph.h"
 #include "DataGraph.h"
@@ -24,7 +25,16 @@ namespace graphski
     // transposes graph in place
     void transposeGraph(Graph& graph);
     
-    // serialization and deserialization
-    void saveToFile(const Graph& graph, std::string_view fileName = Config::SERIALIZED_FILE_NAME);
+    // serialization and deserialization:
+
+    // returns the json representation of the INode generic node
+    nlohmann::json serializeINode(const INode& node, NodeId nodeId);
+    
+    // for graph-type specific node serialization.
+    using NodeSerializer = std::function<nlohmann::json(const INode& node, NodeId nodeId)>;
+
+    void saveToFile(const IGraph& graph,
+                    std::string_view fileName = Config::SERIALIZED_FILE_NAME,
+                    const NodeSerializer& nodeSerializer = serializeINode);
     void loadFromFile(Graph& graph, std::string_view fileName = Config::SERIALIZED_FILE_NAME);
 } // namespace graphski

@@ -40,6 +40,22 @@ namespace graphski
         return std::cref(static_cast<const INode&>(*node));
     }
 
+    std::vector<NodeId> Graph::getNodeIds() const
+    {
+        std::vector<NodeId> res;
+        res.reserve(m_nodes.size());
+
+        NodeId id = 0;
+        for (const auto& node : m_nodes)
+        {
+            if (node) res.push_back(id);
+
+            ++id;
+        }
+
+        return res;
+    }
+
     NodeId Graph::addNode(std::string_view name)
     {
         NodeId id = m_nodes.addNode(createNode(name));
@@ -159,24 +175,6 @@ namespace graphski
             return false;
 
         return true;
-    }
-
-    nlohmann::json Graph::serializeNode(NodeId nodeId) const
-    {
-        const Node* node = getNodeAs<Node>(nodeId);
-        nlohmann::json j;
-        if(node)
-        {
-            j["id"] = nodeId;
-            j["name"] = node->getName();
-        }
-        return j;
-    }
-
-    std::unique_ptr<Node> Graph::deserializeNode(const nlohmann::json& j) const
-    {
-        // TODO: needs to be placed in the correct id.
-        return createNode(j["name"].get<std::string>());
     }
 
     void Graph::cleanupDeletedDestEdges(AdjacencyList& adjList) const

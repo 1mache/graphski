@@ -49,6 +49,7 @@ namespace graphski
         size_t edgeCount() const override;
         // node const ref by id
         OptionalNodeConstRef getNode(NodeId id) const override; 
+        std::vector<NodeId> getNodeIds() const override;
         // creates a node with empty edges list, returns its unique id
         virtual NodeId addNode(std::string_view name = "") override; 
         // creates an edge between to given nodes, gets them by ids
@@ -90,12 +91,6 @@ namespace graphski
         }
 		// checks if edge exists between two nodes, returns true if it does
         bool edgeExists(NodeId fromNodeId, NodeId toNodeId) const;
-
-        // TODO: move these somewhere else
-        // returns the json representation of the node, used in saveToFile
-        virtual nlohmann::json serializeNode(NodeId nodeId) const;
-        // creates and returns a new node given json representation of it, used in loadFromFile
-        virtual std::unique_ptr<Node> deserializeNode(const nlohmann::json& j) const; 
         
         // TODO: find a place to call this function on m_adjList.
         void cleanupDeletedDestEdges(AdjacencyList& adjList) const;
@@ -103,11 +98,10 @@ namespace graphski
         AdjacencyList m_adjList;    
     private:
         NodeStorage m_nodes;
+        
     // Friends:
         friend void swap(Graph& first, Graph& second) noexcept; // for copy and swap idiom
 
         friend void transposeGraph(Graph& graph); 
-        friend void saveToFile(const Graph& graph, std::string_view fileName);
-        friend void loadFromFile(Graph& graph, std::string_view fileName);
     };
 }

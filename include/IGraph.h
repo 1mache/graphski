@@ -17,6 +17,7 @@ namespace graphski
 		virtual size_t edgeCount() const = 0;
 
 		virtual OptionalNodeConstRef getNode(NodeId id) const = 0;
+		virtual std::vector<NodeId>  getNodeIds() const = 0;
 
 		virtual NodeId addNode(std::string_view name = "") = 0;
 		virtual void   addEdge(NodeId fromNodeId, NodeId toNodeId) = 0;

@@ -1,5 +1,6 @@
 #include "GraphFunctions.h"
 
+#include <unordered_map>
 #include "nlohmann/json.hpp"
 
 namespace graphski
@@ -16,7 +17,8 @@ void swap(Graph &first, Graph &second) noexcept
     swap(first.m_adjList, second.m_adjList);
 }
 
-void transposeGraph(Graph &graph) {
+void transposeGraph(Graph &graph) 
+{
     std::cout << "I am transposing it" << std::endl;
     // we can reuse the same nodes vector
     auto& nodes = graph.m_nodes; 
@@ -51,23 +53,37 @@ void transposeGraph(Graph &graph) {
     graph.m_adjList = std::move(newAdjList);
 }
 
-void saveToFile(const Graph &graph, std::string_view fileName)
+nlohmann::json serializeINode(const INode &node, NodeId nodeId)
+{
+    nlohmann::json j;
+    j["id"] = nodeId;
+    j["name"] = node.getName();
+
+    return j;
+}
+
+void saveToFile(const IGraph& graph, std::string_view fileName, const NodeSerializer& nodeSerializer)
 {
     // initialize the file
     nlohmann::json j;
     // write the number of nodes
     j["nodeCount"] = graph.nodeCount();
-    // write size of m_nodes
-    j["nodeMaxId"] = graph.m_nodes.size();
     // initialize the array of neighbors in json 
     auto& nodesArr = j["nodes"] = nlohmann::json::array();
 
-    for (size_t i = 0; i < graph.m_nodes.size(); ++i)
+    auto nodeIds = graph.getNodeIds();
+    for (NodeId nodeId : nodeIds)
     {
-        NodeId nodeId = static_cast<NodeId>(i);
         if(!graph.getNode(nodeId).has_value())
             continue; // skip deleted nodes
-        auto nodeJson = graph.serializeNode(nodeId);
+
+        const INode& node = graph.getNode(nodeId).value().get();
+        nlohmann::json nodeJson; 
+
+        if (nodeSerializer)
+            nodeJson = nodeSerializer(node, nodeId);
+        else
+            nodeJson = serializeINode(node, nodeId);
 
         nodeJson["neighbors"] = graph.getNeighborsOf(nodeId); // add neighbors to the node json
         nodesArr.push_back(nodeJson);
@@ -83,6 +99,7 @@ void saveToFile(const Graph &graph, std::string_view fileName)
     file.close();
     std::cout << "Graph saved to " << fileName << std::endl;
 }
+
 void loadFromFile(Graph &graph, std::string_view fileName)
 {
     nlohmann::json j;
@@ -99,25 +116,26 @@ void loadFromFile(Graph &graph, std::string_view fileName)
     }
 
     graph.clear(); // clear the graph before loading
-    graph.m_nodes.resize(j["nodeMaxId"].get<NodeId>());
-    graph.m_adjList.resize(j["nodeMaxId"].get<NodeId>(), std::vector<NodeId>{});
 
+    // map of old ids to new ids
+    std::unordered_map<NodeId, NodeId> old2NewId{j["nodes"].size()};
     // create nodes
     for (auto& nodeJson : j["nodes"])
     {
-        // add the node to the graph's nodes vector at the correct index (id)
-        graph.m_nodes.insertToEmptySlot(
-            nodeJson["id"], 
-            graph.deserializeNode(nodeJson)
-        );
+        NodeId oldId = static_cast<NodeId>(nodeJson["id"]);
+        auto newId = graph.addNode(nodeJson["name"]);
+        old2NewId[oldId] = newId;
     }
 
     // add edges
     for (auto& nodeJson : j["nodes"])
     {
-        NodeId id = nodeJson["id"];
+        NodeId oldId = nodeJson["id"];
         for (NodeId neighbor : nodeJson["neighbors"])
-            graph.m_adjList[id].push_back(neighbor);
+        {
+            // add edges between nodes after translating their ids
+            graph.addEdge(old2NewId[oldId], old2NewId[neighbor]);
+        }
     }
 }
 } // namespace graphski

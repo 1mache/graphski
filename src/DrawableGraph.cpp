@@ -239,17 +239,4 @@ namespace graphski
 			nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
 		return nodeJson;
 	}
-
-	std::unique_ptr<Node> DrawableGraph::deserializeNode(const nlohmann::json& nodeJson) const
-	{
-		// call base function to get the node without position
-		auto nodep = Graph::deserializeNode(nodeJson);
-		auto* drawableNodePtr = dynamic_cast<DrawableNode*>(nodep.get());
-		if (!drawableNodePtr) throw std::runtime_error("Deserialized node is not a DrawableNode.");
-
-		// set the position
-		drawableNodePtr->setPosition({ nodeJson["position"][0], nodeJson["position"][1] });
-
-		return std::unique_ptr<Node>(drawableNodePtr);
-	}
 }
