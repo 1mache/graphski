@@ -34,7 +34,7 @@ namespace graphski
     using NodeSerializer = std::function<nlohmann::json(const INode& node, NodeId nodeId)>;
 
     void saveToFile(const IGraph& graph,
-                    std::string_view fileName = Config::SERIALIZED_FILE_NAME,
-                    const NodeSerializer& nodeSerializer = serializeINode);
+                    const NodeSerializer& nodeSerializer,
+                    std::string_view fileName = Config::SERIALIZED_FILE_NAME);
     void loadFromFile(Graph& graph, std::string_view fileName = Config::SERIALIZED_FILE_NAME);
 } // namespace graphski

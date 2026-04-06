@@ -97,11 +97,6 @@ namespace graphski
 		void drawNode(sf::RenderTarget& target, sf::RenderStates states, NodeId nodeId) const;
 		void drawEdge(sf::RenderTarget& target, sf::RenderStates states, EdgeLocator edgeId) const;
 
-		// override function to serialize a drawable node
-		nlohmann::json serializeNode(NodeId nodeId) const override;
-		// override function to deserialize a drawable node
-		std::unique_ptr<Node> deserializeNode(const nlohmann::json& nodeJson) const override;
-
 	private:
 		enum class InteractionMode
 		{

@@ -228,7 +228,7 @@ TEST_CASE("Graph Serialization", "[Graph][JSON]") {
     SECTION("Save and Load") {
         std::string_view filename = "serialized_test.json";
         // Save to json
-        saveToFile(g1, filename);
+        saveToFile(g1, serializeINode, filename);
 
         // Load into a new graph
         Graph g2;

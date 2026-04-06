@@ -62,7 +62,7 @@ nlohmann::json serializeINode(const INode &node, NodeId nodeId)
     return j;
 }
 
-void saveToFile(const IGraph& graph, std::string_view fileName, const NodeSerializer& nodeSerializer)
+void saveToFile(const IGraph& graph, const NodeSerializer& nodeSerializer, std::string_view fileName)
 {
     // initialize the file
     nlohmann::json j;
@@ -80,10 +80,7 @@ void saveToFile(const IGraph& graph, std::string_view fileName, const NodeSerial
         const INode& node = graph.getNode(nodeId).value().get();
         nlohmann::json nodeJson; 
 
-        if (nodeSerializer)
-            nodeJson = nodeSerializer(node, nodeId);
-        else
-            nodeJson = serializeINode(node, nodeId);
+        nodeJson = nodeSerializer(node, nodeId);
 
         nodeJson["neighbors"] = graph.getNeighborsOf(nodeId); // add neighbors to the node json
         nodesArr.push_back(nodeJson);

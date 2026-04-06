@@ -227,16 +227,4 @@ namespace graphski
 
 		edge.draw(target, states);
 	}
-
-	nlohmann::json DrawableGraph::serializeNode(NodeId nodeId) const
-	{
-		// call base function which writes all the base data to the json
-		auto nodeJson = Graph::serializeNode(nodeId);
-		auto* node = getNodeAs<DrawableNode>(nodeId);
-
-		// add position 
-		if(node)
-			nodeJson["position"] = { node->getPosition().x, node->getPosition().y };
-		return nodeJson;
-	}
 }

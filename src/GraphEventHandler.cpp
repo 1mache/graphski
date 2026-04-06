@@ -1,4 +1,5 @@
 #include "GraphEventHandler.h"
+#include "DrawableGraphFunctions.h"
 
 namespace graphski
 {
@@ -99,7 +100,7 @@ namespace graphski
         switch (event.code)
         {
         case WRITE_TO_FILE_KEY:
-            saveToFile(m_graph);
+            saveToFile(m_graph, serializeDrawableNode);
             break;
         case LOAD_FROM_FILE_KEY:
             loadFromFile(m_graph);
