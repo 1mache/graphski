@@ -3,7 +3,7 @@
 
 namespace graphski
 {
-NodeId NodeStorage::addNode(std::unique_ptr<INode> node)
+NodeId NodeStorage::addNode(std::unique_ptr<INode>&& node)
 {
     if (size() >= maxNodes())
         throw std::overflow_error("Maximum number of nodes exceeded");
@@ -15,12 +15,8 @@ NodeId NodeStorage::addNode(std::unique_ptr<INode> node)
     // if there is a free id reuse it.
     if (!m_freeNodeIds.empty())
     {
-        id = m_freeNodeIds.front();
+        id = m_freeNodeIds.back();
         m_freeNodeIds.pop_back();
-    }
-
-    if(id < m_storage.size())
-    {
         // reusing old slot
         m_storage[id] = std::move(node);
     }
@@ -34,11 +30,12 @@ NodeId NodeStorage::addNode(std::unique_ptr<INode> node)
     return id;
 }
 
-void NodeStorage::insertToEmptySlot(NodeId slotId, std::unique_ptr<INode> insertedNode)
+void NodeStorage::insertToEmptySlot(NodeId slotId, std::unique_ptr<INode>&& insertedNode)
 {
     if(getNode(slotId))
         throw std::logic_error("Storage holds node at provided id. Cannot overwrite.");
 
+    // TODO: this will invalidate slotId in freelist
     m_nodeCount++;
     m_storage[slotId] = std::move(insertedNode);
 }

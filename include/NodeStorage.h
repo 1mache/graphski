@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <memory>
-#include <queue>
 #include <utility>
 #include <limits>
 #include <iostream>
@@ -39,10 +38,11 @@ class NodeStorage
         {
             return m_nodeCount;
         }
-
+        // maxId of all ids in storage
         NodeId maxNodeId() const
         {
-            return static_cast<NodeId>(m_storage.size());
+            // the last element in storage is always present => his id is max
+            return static_cast<NodeId>(m_storage.size()-1);
         }
 
         void reserve(size_t newSize)
@@ -67,17 +67,12 @@ class NodeStorage
 
         bool nodeIdInBounds(NodeId id) const
         {
-            if (id >= m_storage.size())
-            {
-                std::cerr << "Node id out of bounds: " << (int)id << std::endl;
-                return false;
-            }
-            return true;
+            return (0 <= id && id < m_storage.size());
         }
 
         // add node to storage, returns access id
-        NodeId addNode(std::unique_ptr<INode> node);
-        void insertToEmptySlot(NodeId slotId, std::unique_ptr<INode> insertedNode);
+        NodeId addNode(std::unique_ptr<INode>&& node);
+        void insertToEmptySlot(NodeId slotId, std::unique_ptr<INode>&& insertedNode);
         // deletes a node by id, returns true if successful 
         bool deleteNode(NodeId nodeId);
 
