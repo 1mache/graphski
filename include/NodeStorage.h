@@ -52,13 +52,6 @@ class NodeStorage
 
             m_storage.reserve(newSize);
         }
-        void resize(size_t newSize)
-        {
-            if (newSize > maxNodes())
-                newSize = maxNodes();
-
-            m_storage.resize(newSize);
-        }
 
         void clear()
         {   

@@ -16,18 +16,18 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
 
     SECTION("Adding Nodes") {
         Graph g;
-        NodeId id1 = g.addNode("A");
-        NodeId id2 = g.addNode(); // default name should be id as string
+        NodeId id0 = g.addNode("A");
+        NodeId id1 = g.addNode(); // default name should be id as string
         
         REQUIRE(g.nodeCount() == 2);
-        REQUIRE(id1 == 0);
-        REQUIRE(id2 == 1);
+        REQUIRE(id0 == 0);
+        REQUIRE(id1 == 1);
 
-        auto node1 = g.getNode(id1);
+        auto node1 = g.getNode(id0);
         REQUIRE(node1.has_value());
         REQUIRE(node1.value().get().getName() == "A");
 
-        auto node2 = g.getNode(id2);
+        auto node2 = g.getNode(id1);
         REQUIRE(node2.has_value());
         REQUIRE(node2.value().get().getName() == "1");
     }
@@ -46,20 +46,20 @@ TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
 
 TEST_CASE("Graph Operations", "[Graph]") {
     Graph g;
-    NodeId id1 = g.addNode("A");
-    NodeId id2 = g.addNode("B");
-    NodeId id3 = g.addNode("C");
+    NodeId id0 = g.addNode("A");
+    NodeId id1 = g.addNode("B");
+    NodeId id2 = g.addNode("C");
 
     SECTION("Adding Edges") {
+        g.addEdge(id0, id1);
         g.addEdge(id1, id2);
-        g.addEdge(id2, id3);
 
         REQUIRE(g.edgeCount() == 2);
 
         // Check degrees via peekNode
-        auto node1 = g.getNode(id1);
-        auto node2 = g.getNode(id2);
-        auto node3 = g.getNode(id3);
+        auto node1 = g.getNode(id0);
+        auto node2 = g.getNode(id1);
+        auto node3 = g.getNode(id2);
         REQUIRE(node1.has_value());
         REQUIRE(node2.has_value());
         REQUIRE(node3.has_value());
@@ -74,35 +74,35 @@ TEST_CASE("Graph Operations", "[Graph]") {
         REQUIRE(node3.value().get().getDegIn() == 1);
         
         // Check Neighbors
-        auto neighbors1 = g.getNeighborsOf(id1);
+        auto neighbors1 = g.getNeighborsOf(id0);
         REQUIRE(neighbors1.size() == 1);
-        REQUIRE(neighbors1[0] == id2);
+        REQUIRE(neighbors1[0] == id1);
     }
 
     SECTION("Adding Duplicate Edge") {
-        g.addEdge(id1, id2);
-        g.addEdge(id1, id2); // Should be ignored or handle gracefully
+        g.addEdge(id0, id1);
+        g.addEdge(id0, id1); // Should be ignored or handle gracefully
         
         REQUIRE(g.edgeCount() == 1); // Typically handled by simple graph structures
     }
 
     SECTION("Deleting Nodes") {
+        g.addEdge(id0, id1);
         g.addEdge(id1, id2);
-        g.addEdge(id2, id3);
         
-        bool result = g.deleteNode(id2);
+        bool result = g.deleteNode(id1);
         REQUIRE(result == true);
         REQUIRE(g.nodeCount() == 2);
         REQUIRE(g.edgeCount() == 0); // Edges involving deleted node should be removed
-        REQUIRE_FALSE(g.getNode(id2).has_value());
+        REQUIRE_FALSE(g.getNode(id1).has_value());
 
         // Any edge operation using a deleted node id should fail.
-        REQUIRE_THROWS_AS(g.addEdge(id1, id2), std::invalid_argument);
-        REQUIRE_THROWS_AS(g.deleteEdge(id1, id2), std::invalid_argument);
+        REQUIRE_THROWS_AS(g.addEdge(id0, id1), std::invalid_argument);
+        REQUIRE_THROWS_AS(g.deleteEdge(id0, id1), std::invalid_argument);
 
         // Next insertion should reuse the freed node id.
         NodeId reusedId = g.addNode("D");
-        REQUIRE(reusedId == id2);
+        REQUIRE(reusedId == id1);
         REQUIRE(g.nodeCount() == 3);
         auto reusedNode = g.getNode(reusedId);
         REQUIRE(reusedNode.has_value());
@@ -114,63 +114,63 @@ TEST_CASE("Graph Operations", "[Graph]") {
     }
 
     SECTION("Deleting Edges") {
-        g.addEdge(id1, id2);
+        g.addEdge(id0, id1);
         REQUIRE(g.edgeCount() == 1);
         
-        bool result = g.deleteEdge(id1, id2);
+        bool result = g.deleteEdge(id0, id1);
         REQUIRE(result == true);
         REQUIRE(g.edgeCount() == 0);
-        REQUIRE(g.getNeighborsOf(id1).empty());
+        REQUIRE(g.getNeighborsOf(id0).empty());
         
         // Deleting non-existent edge
-        bool resultFalse = g.deleteEdge(id1, id3);
+        bool resultFalse = g.deleteEdge(id0, id2);
         REQUIRE(resultFalse == false);
     }
 
     SECTION("Adjacency list shrinks when last node is deleted") {
+        g.addEdge(id0, id1);
         g.addEdge(id1, id2);
-        g.addEdge(id2, id3);
 
         auto adjList = g.getAdjacencyList();
         REQUIRE(adjList.size() == 3); // adjacency list has 3 entries initially
 
         // Delete last node
-        REQUIRE(g.deleteNode(id3));
+        REQUIRE(g.deleteNode(id2));
         adjList = g.getAdjacencyList();
         REQUIRE(adjList.size() == 2); // adjacency list shrinks
 
         // Delete new last node
-        REQUIRE(g.deleteNode(id2));
+        REQUIRE(g.deleteNode(id1));
         adjList = g.getAdjacencyList();
         REQUIRE(adjList.size() == 1); // shrinks again
 
         // Delete final node
-        REQUIRE(g.deleteNode(id1));
+        REQUIRE(g.deleteNode(id0));
         adjList = g.getAdjacencyList();
         REQUIRE(adjList.empty()); // now empty
     }
 
     SECTION("Adjacency list reuse pattern: delete middle, reuse slot") {
+        g.addEdge(id0, id1);
         g.addEdge(id1, id2);
-        g.addEdge(id2, id3);
 
         auto adjListBefore = g.getAdjacencyList();
         REQUIRE(adjListBefore.size() == 3);
 
         // Delete middle node
-        REQUIRE(g.deleteNode(id2));
+        REQUIRE(g.deleteNode(id1));
         auto adjListAfter = g.getAdjacencyList();
         REQUIRE(adjListAfter.size() == 3); // size unchanged with middle deletion
 
         // Reuse the freed slot
         NodeId id4 = g.addNode("D");
-        REQUIRE(id4 == id2); // Should reuse the freed id
+        REQUIRE(id4 == id1); // Should reuse the freed id
 
         // Adjacency list should still be accessible at the reused position
         REQUIRE(g.getNeighborsOf(id4).empty()); // New node has no neighbors initially
         
         // Add edge from new node
-        g.addEdge(id4, id3);
+        g.addEdge(id4, id2);
         REQUIRE(g.edgeCount() == 1); // Only the new edge exists now
         REQUIRE(g.getNeighborsOf(id4).size() == 1);
     }
@@ -179,28 +179,28 @@ TEST_CASE("Graph Operations", "[Graph]") {
         Graph empty{};
         REQUIRE_NOTHROW(transposeGraph(empty));
 
+        g.addEdge(id0, id1);
         g.addEdge(id1, id2);
-        g.addEdge(id2, id3);
 
         transposeGraph(g);
 
         REQUIRE(g.edgeCount() == 2);
         
-        auto n3 = g.getNeighborsOf(id3);
+        auto n3 = g.getNeighborsOf(id2);
         REQUIRE(n3.size() == 1);
-        REQUIRE(n3[0] == id2); // Reversed direction
+        REQUIRE(n3[0] == id1); // Reversed direction
         
-        auto n2 = g.getNeighborsOf(id2);
+        auto n2 = g.getNeighborsOf(id1);
         REQUIRE(n2.size() == 1);
-        REQUIRE(n2[0] == id1); // Reversed direction
+        REQUIRE(n2[0] == id0); // Reversed direction
 
-        auto n1 = g.getNeighborsOf(id1);
+        auto n1 = g.getNeighborsOf(id0);
         REQUIRE(n1.empty()); // Now id1 should have no outgoing edges
         
         // Check new degrees
-        auto node1 = g.getNode(id1);
-        auto node2 = g.getNode(id2);
-        auto node3 = g.getNode(id3);
+        auto node1 = g.getNode(id0);
+        auto node2 = g.getNode(id1);
+        auto node3 = g.getNode(id2);
         REQUIRE(node1.has_value());
         REQUIRE(node2.has_value());
         REQUIRE(node3.has_value());

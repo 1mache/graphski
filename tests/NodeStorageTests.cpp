@@ -120,21 +120,16 @@ TEST_CASE("NodeStorage clear resets internal state and id allocation", "[NodeSto
     REQUIRE(storage.nodeCount() == 1);
 }
 
-TEST_CASE("NodeStorage accepts null node slots without counting them as active nodes", "[NodeStorage]")
+TEST_CASE("NodeStorage doesnt accept null nodes", "[NodeStorage]")
 {
     NodeStorage storage;
 
-    NodeId nullId = storage.addNode(nullptr);
-    REQUIRE(nullId == 0);
-    REQUIRE(storage.size() == 1);
-    REQUIRE(storage.nodeCount() == 0);
-    REQUIRE(storage.getNode(nullId) == nullptr);
+    REQUIRE_THROWS(storage.addNode(nullptr));
 
     NodeId id1 = storage.addNode(std::make_unique<Node>("Real"));
-    REQUIRE(id1 == 1);
-    REQUIRE(storage.size() == 2);
+    REQUIRE(id1 == 0);
+    REQUIRE(storage.size() == 1);
     REQUIRE(storage.nodeCount() == 1);
-    REQUIRE(storage.getNode(id1) != nullptr);
 }
 
 TEST_CASE("NodeStorage cleans up trailing nullptrs on last node deletion", "[NodeStorage]")
@@ -155,7 +150,8 @@ TEST_CASE("NodeStorage cleans up trailing nullptrs on last node deletion", "[Nod
 
     // Delete last node, which should pop and then clean trailing nullptrs if needed
     REQUIRE(storage.deleteNode(id2));
-    REQUIRE(storage.size() == 2); // shrinks to remove id2
+    // shrinks to remove id2, then shrinks to 1 because id1 deleted
+    REQUIRE(storage.size() == 1); 
     REQUIRE(storage.getNode(id2) == nullptr);
     REQUIRE(storage.nodeCount() == 1);
 

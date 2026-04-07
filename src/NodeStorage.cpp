@@ -26,6 +26,7 @@ NodeId NodeStorage::addNode(std::unique_ptr<INode>&& node)
         m_storage.push_back(std::move(node));   
     }
 
+    ++m_nodeCount;
     return id;
 }
 
@@ -38,7 +39,7 @@ bool NodeStorage::deleteNode(NodeId nodeId)
     {
         // if it's the last node, we can just pop it
         m_storage.pop_back();
-        if(m_storage.back() == nullptr)
+        if(!m_storage.empty() && m_storage.back() == nullptr)
         {
             while(m_storage.back() == nullptr)
                 m_storage.pop_back(); // pop nullptrs if any in the back
@@ -53,7 +54,7 @@ bool NodeStorage::deleteNode(NodeId nodeId)
         m_freeNodeIds.push_back(nodeId); // add this id to the free list for reuse
     }
 
-    m_nodeCount--;
+    --m_nodeCount;
     return true;
 }
 } // namespace graphski
