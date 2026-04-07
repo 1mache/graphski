@@ -11,7 +11,7 @@
 #include "core/GraphTypes.h"
 #include "core/Config.h"
 
-namespace graphski
+namespace graphski::core
 {    
     void swap(Graph& first, Graph& second) noexcept;
     template<typename T>
@@ -37,4 +37,4 @@ namespace graphski
                     const NodeSerializer& nodeSerializer,
                     std::string_view fileName = Config::SERIALIZED_FILE_NAME);
     void loadFromFile(Graph& graph, std::string_view fileName = Config::SERIALIZED_FILE_NAME);
-} // namespace graphski
+} // namespace graphski::core

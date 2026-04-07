@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-namespace graphski
+namespace graphski::graphics
 {
 	class Arrow : public sf::Drawable
 	{

@@ -4,7 +4,7 @@
 #include <cstdio> // for std::remove
 #include <stdexcept>
 
-using namespace graphski;
+using namespace graphski::core;
 
 TEST_CASE("Graph Creation and Basic Operations", "[Graph]") {
     SECTION("Empty Graph properties") {

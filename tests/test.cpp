@@ -1,9 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include "core/Graph.h"
 
+using namespace graphski::core;
+
 TEST_CASE("Add node and add edge", "[Graph]")
 {
-    graphski::Graph graph;
+    Graph graph;
     
     SECTION("Add node")
     {
@@ -32,7 +34,7 @@ TEST_CASE("Add node and add edge", "[Graph]")
         graph.addEdge(node1, node2);
 
         REQUIRE(graph.edgeCount() == 1);
-        CHECK(graph.getNeighborsOf(node1) == std::vector<graphski::NodeId>{node2});
+        CHECK(graph.getNeighborsOf(node1) == std::vector<NodeId>{node2});
         CHECK(graph.getNeighborsOf(node2).empty());
     }
 
@@ -47,15 +49,15 @@ TEST_CASE("Add node and add edge", "[Graph]")
         graph.addEdge(node2, node3);
 
         REQUIRE(graph.edgeCount() == 3);
-        CHECK(graph.getNeighborsOf(node1) == std::vector<graphski::NodeId>{node2, node3});
-        CHECK(graph.getNeighborsOf(node2) == std::vector<graphski::NodeId>{node3});
+        CHECK(graph.getNeighborsOf(node1) == std::vector<NodeId>{node2, node3});
+        CHECK(graph.getNeighborsOf(node2) == std::vector<NodeId>{node3});
         CHECK(graph.getNeighborsOf(node3).empty());
     }
 }
 
 TEST_CASE("Adjacency list", "[Graph]")
 {
-    graphski::Graph graph;
+    Graph graph;
 
     auto node1 = graph.addNode("Node1");
     auto node2 = graph.addNode("Node2");
@@ -70,11 +72,11 @@ TEST_CASE("Adjacency list", "[Graph]")
     REQUIRE(adjList.size() == 3);
     CHECK(adjList[node1].first.id == node1);
     CHECK(adjList[node1].second.size() == 2); // 2 neighbors
-    CHECK(adjList[node1].second == std::vector<graphski::NodeId>{node2, node3});
+    CHECK(adjList[node1].second == std::vector<NodeId>{node2, node3});
 
     CHECK(adjList[node2].first.id == node2);
     CHECK(adjList[node2].second.size() == 1);
-    CHECK(adjList[node2].second == std::vector<graphski::NodeId>{node3});
+    CHECK(adjList[node2].second == std::vector<NodeId>{node3});
 
     CHECK(adjList[node3].first.id == node3);
     CHECK(adjList[node3].second.empty());
@@ -82,7 +84,7 @@ TEST_CASE("Adjacency list", "[Graph]")
 
 TEST_CASE("Make empty", "[Graph]")
 {
-    graphski::Graph graph;
+    Graph graph;
 
     auto node1 = graph.addNode("Node1");
     auto node2 = graph.addNode("Node2");
@@ -99,7 +101,7 @@ TEST_CASE("Make empty", "[Graph]")
 
 TEST_CASE("Delete edge", "[Graph]")
 {
-    graphski::Graph graph;
+    Graph graph;
 
     auto node1 = graph.addNode("Node1");
     auto node2 = graph.addNode("Node2");
@@ -113,8 +115,8 @@ TEST_CASE("Delete edge", "[Graph]")
 
     CHECK(graph.deleteEdge(node1, node2) == true);
     REQUIRE(graph.edgeCount() == 2);
-    CHECK(graph.getNeighborsOf(node1) == std::vector<graphski::NodeId>{node3});
-    CHECK(graph.getNeighborsOf(node2) == std::vector<graphski::NodeId>{node3});
+    CHECK(graph.getNeighborsOf(node1) == std::vector<NodeId>{node3});
+    CHECK(graph.getNeighborsOf(node2) == std::vector<NodeId>{node3});
     CHECK(graph.getNeighborsOf(node3).empty());
 
     CHECK(graph.deleteEdge(node1, node2) == false); // edge already deleted

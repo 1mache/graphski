@@ -3,7 +3,7 @@
 #include "core/GraphTypes.h"
 #include "core/INode.h"
 
-namespace graphski 
+namespace graphski::core
 {
 
 	/* Base class with no data for testing, visualization and

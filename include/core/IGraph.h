@@ -2,7 +2,7 @@
 #include <vector>
 #include "core/GraphTypes.h"
 
-namespace graphski
+namespace graphski::core
 {
 	class INode;
 	// General base class for graph traversal

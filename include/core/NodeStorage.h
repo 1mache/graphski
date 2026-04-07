@@ -9,7 +9,7 @@
 #include "core/INode.h"
 #include "core/GraphTypes.h"
 
-namespace graphski
+namespace graphski::core
 {
 // Sparse storage for nodes.
 class NodeStorage

@@ -6,7 +6,7 @@
 
 #include "core/DataGraph.h"
 
-using namespace graphski;
+using namespace graphski::core;
 
 namespace
 {

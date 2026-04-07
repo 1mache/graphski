@@ -7,7 +7,7 @@
 #include <functional>
 #include <optional>
 
-namespace graphski
+namespace graphski::core
 {
 	class INode;
 

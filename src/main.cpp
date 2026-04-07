@@ -12,8 +12,10 @@
 
 int main()
 {
-    using NodeId = graphski::NodeId;
-    using namespace graphski;
+    using namespace graphski::core;
+    using namespace graphski::graphics;
+
+    using NodeId = graphski::core::NodeId;
 
     srand((unsigned int)time(nullptr)); // seed the random number generator
 
@@ -23,11 +25,11 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     DrawableGraph graph;
-	GraphEventHandler graphEvents(graph);
+    GraphEventHandler graphEvents(graph);
 
 	NodeId nodeCount = 16; // number of nodes in the graph
-	RandomGraphGenerator generator(graph, nodeCount);
-	generator.setProbabilities(RandomGraphGenerator::Distributions::IndexDependent);
+    RandomGraphGenerator generator(graph, nodeCount);
+    generator.setProbabilities(RandomGraphGenerator::Distributions::IndexDependent);
     generator.generate();
     graph.arrangeNodesEvenly();
 

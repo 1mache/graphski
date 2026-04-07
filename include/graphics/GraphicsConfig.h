@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace graphski::graphics
+{
 class GraphicsConfig
 {
 public:
@@ -39,3 +41,4 @@ public:
 	static constexpr sf::Color SELECTED_COLOR{ 0x1656D9FF };
 	static constexpr sf::Color TEXT_COLOR{ sf::Color::White };
 };
+}

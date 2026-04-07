@@ -12,7 +12,7 @@
 #include "core/Node.h"
 #include "core/NodeStorage.h"
 
-namespace graphski
+namespace graphski::core
 {
     class Graph : public IGraph
     {

@@ -1,7 +1,7 @@
 #pragma once
 #include "core/Graph.h"
 
-namespace graphski
+namespace graphski::core
 {
 	class GraphAlgorithms
 	{

@@ -4,8 +4,11 @@
 #include "core/Node.h"
 #include "graphics/GraphicsConfig.h"
 
-namespace graphski
+namespace graphski::graphics
 {
+	using ::graphski::core::Node;
+	using ::graphski::core::NodeId;
+
 	class DrawableNode : public Node, public sf::Drawable, public sf::Transformable
 	{
 	public:

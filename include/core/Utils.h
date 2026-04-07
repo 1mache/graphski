@@ -1,10 +1,13 @@
 #pragma once
-class Utils
+namespace graphski::core
 {
-public:
-	template <typename T>
-	static constexpr T absDiff(T a, T b) {
-		return (a > b) ? (a - b) : (b - a);
-	}
-};
+    class Utils
+    {
+    public:
+	    template <typename T>
+	    static constexpr T absDiff(T a, T b) {
+		    return (a > b) ? (a - b) : (b - a);
+	    }
+    };
+}
 

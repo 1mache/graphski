@@ -2,12 +2,14 @@
 #include "graphics/DrawableGraph.h"
 #include "graphics/GraphicsConfig.h"
 
-namespace graphski 
+namespace graphski::graphics
 {
+    using ::graphski::core::NodeId;
+
     class GraphEventHandler
     {
     public:
-        GraphEventHandler(graphski::DrawableGraph& graph)
+        GraphEventHandler(DrawableGraph& graph)
             : m_graph(graph)
         {
             m_clickClock.start();

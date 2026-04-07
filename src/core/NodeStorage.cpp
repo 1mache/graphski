@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include "core/NodeStorage.h"
 
-namespace graphski
+namespace graphski::core
 {
 NodeId NodeStorage::addNode(std::unique_ptr<INode>&& node)
 {
@@ -57,4 +57,4 @@ bool NodeStorage::deleteNode(NodeId nodeId)
     --m_nodeCount;
     return true;
 }
-} // namespace graphski
+} // namespace graphski::core

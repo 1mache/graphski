@@ -8,7 +8,7 @@
 #include "core/GraphTypes.h"
 #include "core/IGraph.h"
 
-namespace graphski
+namespace graphski::core
 {
 	class RandomGraphGenerator
 	{

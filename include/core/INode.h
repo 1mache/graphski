@@ -2,7 +2,7 @@
 
 #include "core/GraphTypes.h"
 
-namespace graphski
+namespace graphski::core
 {
 class INode
 {

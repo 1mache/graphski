@@ -1,6 +1,8 @@
 #include "graphics/Arrow.h"
 
-void graphski::Arrow::draw(sf::RenderTarget& target, sf::RenderStates states) const
+namespace graphski::graphics
+{
+void Arrow::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	if(m_from == m_to)
 	{
@@ -50,7 +52,7 @@ void graphski::Arrow::draw(sf::RenderTarget& target, sf::RenderStates states) co
 	target.draw(hair2, states);
 }
 
-void graphski::Arrow::drawSelfArrow(sf::RenderTarget& target, sf::RenderStates states) const
+void Arrow::drawSelfArrow(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::CircleShape selfArrow(m_selfArrowRadius, CIRCLE_RES);
 
@@ -65,4 +67,5 @@ void graphski::Arrow::drawSelfArrow(sf::RenderTarget& target, sf::RenderStates s
 	selfArrow.setPosition(m_from + m_selfArrowOffset);
 
 	target.draw(selfArrow, states);
+}
 }

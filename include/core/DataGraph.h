@@ -7,7 +7,7 @@
 
 #include "core/Graph.h"
 
-namespace graphski
+namespace graphski::core
 {
 template<typename T>
 class DataGraph : public Graph
@@ -82,4 +82,4 @@ T& DataGraph<T>::getNodeData(NodeId id)
     return m_data[id];
 }
 
-} // namespace graphski
+} // namespace graphski::core

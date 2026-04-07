@@ -1,6 +1,6 @@
 #include "core/GraphAlgorithms.h"
 
-namespace graphski
+namespace graphski::core
 {
 
 }

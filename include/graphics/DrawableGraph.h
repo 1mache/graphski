@@ -9,8 +9,14 @@
 #include "graphics/DrawableNode.h"
 #include "graphics/Arrow.h"
 
-namespace graphski
+namespace graphski::graphics
 {
+	using ::graphski::core::EdgeLocator;
+	using ::graphski::core::Graph;
+	using ::graphski::core::Node;
+	using ::graphski::core::NodeId;
+	using ::graphski::core::Utils;
+
 	class DrawableGraph : public Graph, public sf::Drawable
 	{
 	public:

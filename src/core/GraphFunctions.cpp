@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include "nlohmann/json.hpp"
 
-namespace graphski
+namespace graphski::core
 {
 std::unique_ptr<Node> createNode(std::string_view name)
 {
@@ -135,4 +135,4 @@ void loadFromFile(Graph &graph, std::string_view fileName)
         }
     }
 }
-} // namespace graphski
+} // namespace graphski::core

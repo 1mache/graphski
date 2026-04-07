@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include "core/Node.h"
 
-using namespace graphski;
+using namespace graphski::core;
 
 TEST_CASE("Node Initialization and Basic Properties", "[Node]") {
     SECTION("Default constructor logic") {

@@ -5,7 +5,7 @@
 #include "core/Node.h"
 #include "core/NodeStorage.h"
 
-using namespace graphski;
+using namespace graphski::core;
 
 TEST_CASE("NodeStorage starts empty", "[NodeStorage]")
 {
