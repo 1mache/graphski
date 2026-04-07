@@ -1,5 +1,5 @@
-#include "DrawableGraph.h"
-#include "DrawableNode.h"
+#include "graphics/DrawableGraph.h"
+#include "graphics/DrawableNode.h"
 
 namespace graphski
 {

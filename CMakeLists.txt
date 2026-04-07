@@ -48,6 +48,8 @@ endif()
 
 set(APP_ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
+set(PROJECT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
 set(PROJECT_CORE_SOURCES
     src/core/Graph.cpp
     src/core/GraphAlgorithms.cpp
@@ -80,10 +82,10 @@ set(PROJECT_GRAPHICS_SOURCES
 )
 
 set(PROJECT_GRAPHICS_HEADERS
-    include/graphics/Arrow.h
     include/graphics/DrawableGraph.h
     include/graphics/DrawableGraphFunctions.h
     include/graphics/DrawableNode.h
+    include/graphics/Arrow.h
     include/graphics/GraphEventHandler.h
     include/graphics/GraphicsConfig.h
 )
@@ -116,10 +118,10 @@ target_sources(${PROJECT_LIBRARY_TARGET}
     PRIVATE
         ${PROJECT_CORE_SOURCES}
     PUBLIC
-        FILE_SET myHeaders
+        FILE_SET coreHeaders
         TYPE HEADERS
         BASE_DIRS
-            include
+            ${PROJECT_INCLUDE_DIR}
         FILES
             ${PROJECT_CORE_HEADERS}
 )
@@ -129,10 +131,10 @@ target_sources(${PROJECT_GRAPHICS_TARGET}
     PRIVATE
         ${PROJECT_GRAPHICS_SOURCES}
     PUBLIC
-        FILE_SET myHeaders
+        FILE_SET graphicsHeaders
         TYPE HEADERS
         BASE_DIRS
-            include
+            ${PROJECT_INCLUDE_DIR}
         FILES
             ${PROJECT_GRAPHICS_HEADERS}
 )
@@ -161,13 +163,13 @@ target_compile_options(${PROJECT_GRAPHICS_TARGET} PRIVATE
 )
 
 # 4. Include and Link Directories
-# Using CMAKE_CURRENT_SOURCE_DIR is safer if this ever becomes a subproject
+# Public include paths stay rooted at include/ so callers must use core/... and graphics/...
 target_include_directories(${PROJECT_LIBRARY_TARGET} PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${PROJECT_INCLUDE_DIR}"
 )
 
 target_include_directories(${PROJECT_GRAPHICS_TARGET} PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${PROJECT_INCLUDE_DIR}"
 )
 
 # 5. Link SFML libraries

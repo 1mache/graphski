@@ -5,8 +5,8 @@
 #include <limits>
 #include <iostream>
 
-#include "GraphTypes.h"
-#include "IGraph.h"
+#include "core/GraphTypes.h"
+#include "core/IGraph.h"
 
 namespace graphski
 {

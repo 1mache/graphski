@@ -6,8 +6,8 @@
 #include <limits>
 #include <iostream>
 
-#include "INode.h"
-#include "GraphTypes.h"
+#include "core/INode.h"
+#include "core/GraphTypes.h"
 
 namespace graphski
 {

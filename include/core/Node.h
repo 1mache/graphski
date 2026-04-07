@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "GraphTypes.h"
-#include "INode.h"
+#include "core/GraphTypes.h"
+#include "core/INode.h"
 
 namespace graphski 
 {

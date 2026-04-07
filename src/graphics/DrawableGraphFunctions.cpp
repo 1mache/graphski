@@ -1,6 +1,6 @@
-#include "DrawableGraphFunctions.h"
+#include "graphics/DrawableGraphFunctions.h"
 
-#include "DrawableNode.h"
+#include "graphics/DrawableNode.h"
 
 namespace graphski
 {

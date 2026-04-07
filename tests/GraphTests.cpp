@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
-#include "Graph.h"
-#include "GraphFunctions.h"
+#include "core/Graph.h"
+#include "core/GraphFunctions.h"
 #include <cstdio> // for std::remove
 #include <stdexcept>
 

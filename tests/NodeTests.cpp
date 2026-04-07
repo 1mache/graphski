@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "Node.h"
+#include "core/Node.h"
 
 using namespace graphski;
 

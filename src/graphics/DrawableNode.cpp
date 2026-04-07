@@ -1,4 +1,4 @@
-#include "DrawableNode.h"
+#include "graphics/DrawableNode.h"
 
 namespace graphski
 {

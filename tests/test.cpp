@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "Graph.h"
+#include "core/Graph.h"
 
 TEST_CASE("Add node and add edge", "[Graph]")
 {

@@ -4,7 +4,7 @@
 #include <string>
 #include <utility>
 
-#include "DataGraph.h"
+#include "core/DataGraph.h"
 
 using namespace graphski;
 

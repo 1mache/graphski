@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <ranges>
 
-#include "Graph.h"
+#include "core/Graph.h"
 
 namespace graphski
 {

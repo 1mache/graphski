@@ -3,16 +3,17 @@
 #include <vector>
 #include <cmath>
 
-#include "DrawableGraph.h"
-#include "DrawableNode.h"
-#include "GraphEventHandler.h"
-#include "GraphicsConfig.h"
-#include "RandomGraphGenerator.h"
+#include "graphics/DrawableGraph.h"
+#include "graphics/DrawableNode.h"
+#include "graphics/GraphEventHandler.h"
+#include "graphics/GraphicsConfig.h"
+#include "core/RandomGraphGenerator.h"
 
 
 int main()
 {
     using NodeId = graphski::NodeId;
+    using namespace graphski;
 
     srand((unsigned int)time(nullptr)); // seed the random number generator
 
@@ -21,12 +22,12 @@ int main()
 
     window.setVerticalSyncEnabled(true);
 
-    graphski::DrawableGraph graph;
-	graphski::GraphEventHandler graphEvents(graph);
+    DrawableGraph graph;
+	GraphEventHandler graphEvents(graph);
 
 	NodeId nodeCount = 16; // number of nodes in the graph
-	graphski::RandomGraphGenerator generator(graph, nodeCount);
-	generator.setProbabilities(graphski::RandomGraphGenerator::Distributions::IndexDependent);
+	RandomGraphGenerator generator(graph, nodeCount);
+	generator.setProbabilities(RandomGraphGenerator::Distributions::IndexDependent);
     generator.generate();
     graph.arrangeNodesEvenly();
 

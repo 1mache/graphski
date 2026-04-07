@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "Node.h"
-#include "NodeStorage.h"
+#include "core/Node.h"
+#include "core/NodeStorage.h"
 
 using namespace graphski;
 

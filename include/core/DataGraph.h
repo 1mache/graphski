@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include "Graph.h"
+#include "core/Graph.h"
 
 namespace graphski
 {

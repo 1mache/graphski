@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphFunctions.h"
+#include "core/GraphFunctions.h"
 
 namespace graphski
 {

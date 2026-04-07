@@ -1,5 +1,5 @@
-#include "GraphEventHandler.h"
-#include "DrawableGraphFunctions.h"
+#include "graphics/GraphEventHandler.h"
+#include "graphics/DrawableGraphFunctions.h"
 
 namespace graphski
 {

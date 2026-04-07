@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "GraphTypes.h"
+#include "core/GraphTypes.h"
 
 namespace graphski
 {

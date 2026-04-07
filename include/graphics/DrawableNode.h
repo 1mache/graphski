@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include "SFML/Graphics.hpp"
-#include "Node.h"
-#include "GraphicsConfig.h"
+#include "core/Node.h"
+#include "graphics/GraphicsConfig.h"
 
 namespace graphski
 {

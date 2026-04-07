@@ -1,6 +1,6 @@
 #pragma once
-#include "DrawableGraph.h"
-#include "GraphicsConfig.h"
+#include "graphics/DrawableGraph.h"
+#include "graphics/GraphicsConfig.h"
 
 namespace graphski 
 {

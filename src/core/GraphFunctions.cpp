@@ -1,4 +1,4 @@
-#include "GraphFunctions.h"
+#include "core/GraphFunctions.h"
 
 #include <unordered_map>
 #include "nlohmann/json.hpp"

@@ -3,11 +3,11 @@
 
 #include "SFML/Graphics.hpp"
 
-#include "Graph.h"
-#include "GraphicsConfig.h"
-#include "Utils.h"
-#include "DrawableNode.h"
-#include "Arrow.h"
+#include "core/Graph.h"
+#include "graphics/GraphicsConfig.h"
+#include "core/Utils.h"
+#include "graphics/DrawableNode.h"
+#include "graphics/Arrow.h"
 
 namespace graphski
 {

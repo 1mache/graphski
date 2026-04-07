@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include "NodeStorage.h"
+#include "core/NodeStorage.h"
 
 namespace graphski
 {

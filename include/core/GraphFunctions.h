@@ -5,11 +5,11 @@
 #include <memory>
 #include <functional>
 
-#include "Graph.h"
-#include "DataGraph.h"
-#include "Node.h"
-#include "GraphTypes.h"
-#include "Config.h"
+#include "core/Graph.h"
+#include "core/DataGraph.h"
+#include "core/Node.h"
+#include "core/GraphTypes.h"
+#include "core/Config.h"
 
 namespace graphski
 {    

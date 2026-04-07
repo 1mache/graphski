@@ -8,9 +8,9 @@
 #include <type_traits>
 
 #include "nlohmann/json.hpp"
-#include "IGraph.h"
-#include "Node.h"
-#include "NodeStorage.h"
+#include "core/IGraph.h"
+#include "core/Node.h"
+#include "core/NodeStorage.h"
 
 namespace graphski
 {

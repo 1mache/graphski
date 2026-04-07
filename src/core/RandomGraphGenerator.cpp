@@ -1,4 +1,4 @@
-#include "RandomGraphGenerator.h"
+#include "core/RandomGraphGenerator.h"
 
 namespace graphski
 {
