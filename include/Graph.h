@@ -92,12 +92,14 @@ namespace graphski
 		// checks if edge exists between two nodes, returns true if it does
         bool edgeExists(NodeId fromNodeId, NodeId toNodeId) const;
         
-        // TODO: find a place to call this function on m_adjList.
-        void cleanupDeletedDestEdges(AdjacencyList& adjList) const;
+        void cleanupIncomingEdgesInList(AdjacencyList& adjList) const;
+        void ensureCleanAdjList();
 
         AdjacencyList m_adjList;    
     private:
         NodeStorage m_nodes;
+        // used to save unneeded calls to cleanupDeletedDestEdges see impl.
+        bool m_adjListNeedsCleanup{false};
         
     // Friends:
         friend void swap(Graph& first, Graph& second) noexcept; // for copy and swap idiom

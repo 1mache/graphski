@@ -58,6 +58,11 @@ namespace graphski
 
     NodeId Graph::addNode(std::string_view name)
     {
+        // if we reuse same id that was deleted and it had
+        // in edges that we didnt delete the behavior is unexpected
+        // need to clean up
+        ensureCleanAdjList();
+
         NodeId id = m_nodes.addNode(createNode(name));
         if(name.empty()) // set default name to id if not provided
             m_nodes.getNode(id)->setName(std::to_string(id));
@@ -99,7 +104,11 @@ namespace graphski
         // clear outgoing edges or pop depending on id
         if(lastInStorage)
             m_adjList.pop_back();
-        else m_adjList[nodeId].clear();
+        else
+        {
+            m_adjList[nodeId].clear();
+            m_adjListNeedsCleanup = true; // lazy cleanup for in edges flag
+        } 
        
         // if last was popped there are possible trailing nulls. pop them
         while(m_nodes.size() > m_adjList.size())
@@ -156,8 +165,9 @@ namespace graphski
 
     AdjacencyList Graph::getAdjacencyList() const
     {
-        auto adjListCleaned = m_adjList;   
-        cleanupDeletedDestEdges(adjListCleaned);
+        auto adjListCleaned = m_adjList;
+        if(m_adjListNeedsCleanup)
+            cleanupIncomingEdgesInList(adjListCleaned);
 
         return adjListCleaned;
     }
@@ -177,7 +187,7 @@ namespace graphski
         return true;
     }
 
-    void Graph::cleanupDeletedDestEdges(AdjacencyList& adjList) const
+    void Graph::cleanupIncomingEdgesInList(AdjacencyList& adjList) const
     {
         using namespace std::ranges;
         for (auto& neighbors : adjList)
@@ -187,6 +197,15 @@ namespace graphski
                         [this](NodeId id){return m_nodes.getNode(id) == nullptr;});
             
             neighbors.erase(first,last);
+        }
+    }
+
+    void Graph::ensureCleanAdjList()
+    {
+        if(m_adjListNeedsCleanup)
+        {
+            cleanupIncomingEdgesInList(m_adjList);
+            m_adjListNeedsCleanup = false;
         }
     }
 
