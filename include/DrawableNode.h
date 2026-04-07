@@ -2,16 +2,16 @@
 #include <iostream>
 #include "SFML/Graphics.hpp"
 #include "Node.h"
-#include "Config.h"
+#include "GraphicsConfig.h"
 
 namespace graphski
 {
 	class DrawableNode : public Node, public sf::Drawable, public sf::Transformable
 	{
 	public:
-		DrawableNode(std::string_view name = "", sf::Color nodeColor = Config::DEFAULT_NODE_COLOR) :
+		DrawableNode(std::string_view name = "", sf::Color nodeColor = GraphicsConfig::DEFAULT_NODE_COLOR) :
 			Node(name),
-			m_nameTxt(Config::getFont()), m_nodeColor(nodeColor)
+			m_nameTxt(GraphicsConfig::getFont()), m_nodeColor(nodeColor)
 		{		
 			// TODO: this should be set by screen size	
 			setScale({0.8f, 0.8f}); // lower the scale a little, this should be defined by screenSize later
@@ -74,10 +74,10 @@ namespace graphski
 		// Note: this assumes theres only one graph
 		// can be changed to be set by specific graph pointer
 		// mark and selection colors are the same across all nodes
-		inline static sf::Color s_markedColor  =  Config::MARKED_COLOR;
-		inline static sf::Color s_selectColor  =  Config::SELECTED_COLOR;
-		inline static sf::Color s_textColor    = Config::TEXT_COLOR; // color when not selected or marked
-		inline static sf::Color s_outlineColor = Config::IDLE_OUTLINE_COLOR; // color when not selected or marked
+		inline static sf::Color s_markedColor  =  GraphicsConfig::MARKED_COLOR;
+		inline static sf::Color s_selectColor  =  GraphicsConfig::SELECTED_COLOR;
+		inline static sf::Color s_textColor    = GraphicsConfig::TEXT_COLOR; // color when not selected or marked
+		inline static sf::Color s_outlineColor = GraphicsConfig::IDLE_OUTLINE_COLOR; // color when not selected or marked
 
 	public: // constants
 		static constexpr float        NODE_RADIUS = 30.f;

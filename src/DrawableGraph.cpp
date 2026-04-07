@@ -129,8 +129,8 @@ namespace graphski
 		if(nodeNum == 0) return;
 		
 		const float fnodeNum = static_cast<float>(nodeNum);
-		const float w = static_cast<float>(Config::WINDOW_WIDTH);
-		const float h = static_cast<float>(Config::WINDOW_HEIGHT);
+		const float w = static_cast<float>(GraphicsConfig::WINDOW_WIDTH);
+		const float h = static_cast<float>(GraphicsConfig::WINDOW_HEIGHT);
 		// Calculate grid size (columns and rows)
 
 		float fcols = std::ceil(std::sqrt(fnodeNum * w / h));
@@ -181,7 +181,7 @@ namespace graphski
 	sf::Color DrawableGraph::getNodeColor() const
 	{
 		sf::Color nodeColor = m_nodeColor; // default color
-		if (Config::crazyColors)
+		if (GraphicsConfig::crazyColors)
 		{
 			do
 			{
@@ -189,7 +189,7 @@ namespace graphski
 									  static_cast<uint8_t>(rand() % 256), 
 									  static_cast<uint8_t>(rand() % 256));
 				nodeColor += sf::Color(0xFF050505); // add some white to the color for pastel effect
-			} while (colorDifference(nodeColor, Config::TEXT_COLOR) < MIN_COLOR_DIFFERENCE);
+			} while (colorDifference(nodeColor, GraphicsConfig::TEXT_COLOR) < MIN_COLOR_DIFFERENCE);
 		}
 
 		return nodeColor;
@@ -210,7 +210,7 @@ namespace graphski
 		if(!from || !to) return; 
 
 		// TODO: is there a way to cache it? 
-		Arrow edge{from->getPosition(), to->getPosition(), EDGE_THICKNESS, Config::IDLE_OUTLINE_COLOR};
+		Arrow edge{from->getPosition(), to->getPosition(), EDGE_THICKNESS, GraphicsConfig::IDLE_OUTLINE_COLOR};
 
 		// self edge case
 		if (from == to)

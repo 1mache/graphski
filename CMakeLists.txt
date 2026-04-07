@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.15...3.28)
 project(graphski LANGUAGES CXX)
 
 set(PROJECT_LIBRARY_TARGET "${PROJECT_NAME}_core")
+set(PROJECT_GRAPHICS_TARGET "${PROJECT_NAME}_graphics")
 set(PROJECT_APP_TARGET "${PROJECT_NAME}_app")
 set(PROJECT_APP_OUTPUT_NAME "${PROJECT_NAME}")
 
@@ -45,20 +46,47 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# 2. Add source files
-# Note: While explicit listing is safest, GLOB with CONFIGURE_DEPENDS is fine for this setup
 set(APP_ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
-file(GLOB_RECURSE PROJECT_CPP_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+set(PROJECT_CORE_SOURCES
+    src/core/Graph.cpp
+    src/core/GraphAlgorithms.cpp
+    src/core/GraphFunctions.cpp
+    src/core/NodeStorage.cpp
+    src/core/RandomGraphGenerator.cpp
 )
 
-file(GLOB_RECURSE PROJECT_HEADERS CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
+set(PROJECT_CORE_HEADERS
+    include/core/Graph.h
+    include/core/GraphAlgorithms.h
+    include/core/GraphFunctions.h
+    include/core/DataGraph.h
+    include/core/GraphTypes.h
+    include/core/IGraph.h
+    include/core/INode.h
+    include/core/Node.h
+    include/core/NodeStorage.h
+    include/core/RandomGraphGenerator.h
+    include/core/Utils.h
+    include/core/Config.h
 )
 
-set(PROJECT_LIBRARY_SOURCES ${PROJECT_CPP_SOURCES})
-list(REMOVE_ITEM PROJECT_LIBRARY_SOURCES "${APP_ENTRYPOINT}")
+set(PROJECT_GRAPHICS_SOURCES
+    src/graphics/Arrow.cpp
+    src/graphics/DrawableGraph.cpp
+    src/graphics/DrawableGraphFunctions.cpp
+    src/graphics/DrawableNode.cpp
+    src/graphics/GraphEventHandler.cpp
+)
+
+set(PROJECT_GRAPHICS_HEADERS
+    include/graphics/Arrow.h
+    include/graphics/DrawableGraph.h
+    include/graphics/DrawableGraphFunctions.h
+    include/graphics/DrawableNode.h
+    include/graphics/GraphEventHandler.h
+    include/graphics/GraphicsConfig.h
+)
 
 option(STATIC_ANALYSIS "Enable static analysis tools (clang-tidy, cppcheck)" OFF)
 
@@ -83,11 +111,37 @@ if(STATIC_ANALYSIS)
     endif()
 endif()
 
-add_library(${PROJECT_LIBRARY_TARGET} ${PROJECT_LIBRARY_SOURCES} ${PROJECT_HEADERS})
+add_library(${PROJECT_LIBRARY_TARGET})
+target_sources(${PROJECT_LIBRARY_TARGET}
+    PRIVATE
+        ${PROJECT_CORE_SOURCES}
+    PUBLIC
+        FILE_SET myHeaders
+        TYPE HEADERS
+        BASE_DIRS
+            include
+        FILES
+            ${PROJECT_CORE_HEADERS}
+)
+
+add_library(${PROJECT_GRAPHICS_TARGET})
+target_sources(${PROJECT_GRAPHICS_TARGET}
+    PRIVATE
+        ${PROJECT_GRAPHICS_SOURCES}
+    PUBLIC
+        FILE_SET myHeaders
+        TYPE HEADERS
+        BASE_DIRS
+            include
+        FILES
+            ${PROJECT_GRAPHICS_HEADERS}
+)
+
 add_executable(${PROJECT_APP_TARGET} ${APP_ENTRYPOINT})
 
 # 3. Modern C++ Standard definition (Target-centric)
 target_compile_features(${PROJECT_LIBRARY_TARGET} PUBLIC cxx_std_20)
+target_compile_features(${PROJECT_GRAPHICS_TARGET} PUBLIC cxx_std_20)
 
 # Set compiler warnings (pedantic/permissive- intentionally omitted)
 target_compile_options(${PROJECT_LIBRARY_TARGET} PRIVATE
@@ -98,11 +152,21 @@ target_compile_options(${PROJECT_LIBRARY_TARGET} PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic -Werror>
 )
 
+target_compile_options(${PROJECT_GRAPHICS_TARGET} PRIVATE
+    # If using MSVC compiler:
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /permissive /WX->
+
+    # If using GCC or Clang :
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic -Werror>
+)
+
 # 4. Include and Link Directories
 # Using CMAKE_CURRENT_SOURCE_DIR is safer if this ever becomes a subproject
-target_link_libraries(${PROJECT_APP_TARGET} PRIVATE ${PROJECT_LIBRARY_TARGET})
-
 target_include_directories(${PROJECT_LIBRARY_TARGET} PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+target_include_directories(${PROJECT_GRAPHICS_TARGET} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
@@ -119,11 +183,17 @@ find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 # 5.4. Link using modern namespaces!
 # This automatically handles includes, library order, transitive dependencies (opengl32, etc.), and sets -DSFML_STATIC!
 target_link_libraries(${PROJECT_LIBRARY_TARGET} PUBLIC
+    nlohmann_json::nlohmann_json
+)
+
+target_link_libraries(${PROJECT_GRAPHICS_TARGET} PUBLIC
+    ${PROJECT_LIBRARY_TARGET}
     SFML::Graphics
     SFML::Window
     SFML::System
-    nlohmann_json::nlohmann_json
 ) 
+
+target_link_libraries(${PROJECT_APP_TARGET} PRIVATE ${PROJECT_GRAPHICS_TARGET})
 
 # Suppress the missing PDB warnings from third-party static libraries
 target_link_options(${PROJECT_APP_TARGET} PRIVATE 

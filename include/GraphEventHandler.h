@@ -1,6 +1,6 @@
 #pragma once
 #include "DrawableGraph.h"
-#include "Config.h"
+#include "GraphicsConfig.h"
 
 namespace graphski 
 {
@@ -28,8 +28,8 @@ namespace graphski
 
         bool posInBounds(sf::Vector2f position)
         {
-            return (0 <= position.x && position.x <= Config::WINDOW_WIDTH) &&
-                (0 <= position.y && position.y <= Config::WINDOW_HEIGHT);
+            return (0 <= position.x && position.x <= GraphicsConfig::WINDOW_WIDTH) &&
+                (0 <= position.y && position.y <= GraphicsConfig::WINDOW_HEIGHT);
         }
 
     private:

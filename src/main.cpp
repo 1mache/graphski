@@ -6,6 +6,7 @@
 #include "DrawableGraph.h"
 #include "DrawableNode.h"
 #include "GraphEventHandler.h"
+#include "GraphicsConfig.h"
 #include "RandomGraphGenerator.h"
 
 
@@ -15,7 +16,7 @@ int main()
 
     srand((unsigned int)time(nullptr)); // seed the random number generator
 
-    sf::RenderWindow window (sf::VideoMode({ Config::WINDOW_WIDTH , Config::WINDOW_HEIGHT }),
+    sf::RenderWindow window (sf::VideoMode({ GraphicsConfig::WINDOW_WIDTH , GraphicsConfig::WINDOW_HEIGHT }),
                              "Graphski");
 
     window.setVerticalSyncEnabled(true);

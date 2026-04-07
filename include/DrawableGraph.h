@@ -4,6 +4,7 @@
 #include "SFML/Graphics.hpp"
 
 #include "Graph.h"
+#include "GraphicsConfig.h"
 #include "Utils.h"
 #include "DrawableNode.h"
 #include "Arrow.h"
@@ -105,7 +106,7 @@ namespace graphski
 			Edge // creating an edge
 		};
 
-		sf::Color m_nodeColor{ Config::DEFAULT_NODE_COLOR };
+		sf::Color m_nodeColor{ GraphicsConfig::DEFAULT_NODE_COLOR };
 
 		static constexpr float EDGE_THICKNESS = 5.f;
 
@@ -127,8 +128,8 @@ namespace graphski
 		}
 
 		// min color difference (for random color selection)
-		static constexpr uint32_t MIN_COLOR_DIFFERENCE = Utils::absDiff(Config::DEFAULT_NODE_COLOR.toInteger(),
-																		Config::TEXT_COLOR.toInteger());
+		static constexpr uint32_t MIN_COLOR_DIFFERENCE = Utils::absDiff(GraphicsConfig::DEFAULT_NODE_COLOR.toInteger(),
+															GraphicsConfig::TEXT_COLOR.toInteger());
 
 	};
 }
