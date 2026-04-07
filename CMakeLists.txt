@@ -37,7 +37,6 @@ if(BUILD_TESTING)
 
     list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
     include(Catch)
-    add_subdirectory(tests)
 endif()
 
 # 1. Handle Build Types for VS Code (Single-Config Generators)
@@ -49,46 +48,6 @@ endif()
 set(APP_ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
 set(PROJECT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-
-set(PROJECT_CORE_SOURCES
-    src/core/Graph.cpp
-    src/core/GraphAlgorithms.cpp
-    src/core/GraphFunctions.cpp
-    src/core/NodeStorage.cpp
-    src/core/RandomGraphGenerator.cpp
-)
-
-set(PROJECT_CORE_HEADERS
-    include/core/Graph.h
-    include/core/GraphAlgorithms.h
-    include/core/GraphFunctions.h
-    include/core/DataGraph.h
-    include/core/GraphTypes.h
-    include/core/IGraph.h
-    include/core/INode.h
-    include/core/Node.h
-    include/core/NodeStorage.h
-    include/core/RandomGraphGenerator.h
-    include/core/Utils.h
-    include/core/Config.h
-)
-
-set(PROJECT_GRAPHICS_SOURCES
-    src/graphics/Arrow.cpp
-    src/graphics/DrawableGraph.cpp
-    src/graphics/DrawableGraphFunctions.cpp
-    src/graphics/DrawableNode.cpp
-    src/graphics/GraphEventHandler.cpp
-)
-
-set(PROJECT_GRAPHICS_HEADERS
-    include/graphics/DrawableGraph.h
-    include/graphics/DrawableGraphFunctions.h
-    include/graphics/DrawableNode.h
-    include/graphics/Arrow.h
-    include/graphics/GraphEventHandler.h
-    include/graphics/GraphicsConfig.h
-)
 
 option(STATIC_ANALYSIS "Enable static analysis tools (clang-tidy, cppcheck)" OFF)
 
@@ -113,88 +72,15 @@ if(STATIC_ANALYSIS)
     endif()
 endif()
 
-add_library(${PROJECT_LIBRARY_TARGET})
-target_sources(${PROJECT_LIBRARY_TARGET}
-    PRIVATE
-        ${PROJECT_CORE_SOURCES}
-    PUBLIC
-        FILE_SET coreHeaders
-        TYPE HEADERS
-        BASE_DIRS
-            ${PROJECT_INCLUDE_DIR}
-        FILES
-            ${PROJECT_CORE_HEADERS}
-)
+add_subdirectory(src/core)
 
-add_library(${PROJECT_GRAPHICS_TARGET})
-target_sources(${PROJECT_GRAPHICS_TARGET}
-    PRIVATE
-        ${PROJECT_GRAPHICS_SOURCES}
-    PUBLIC
-        FILE_SET graphicsHeaders
-        TYPE HEADERS
-        BASE_DIRS
-            ${PROJECT_INCLUDE_DIR}
-        FILES
-            ${PROJECT_GRAPHICS_HEADERS}
-)
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
+
+add_subdirectory(src/graphics)
 
 add_executable(${PROJECT_APP_TARGET} ${APP_ENTRYPOINT})
-
-# 3. Modern C++ Standard definition (Target-centric)
-target_compile_features(${PROJECT_LIBRARY_TARGET} PUBLIC cxx_std_20)
-target_compile_features(${PROJECT_GRAPHICS_TARGET} PUBLIC cxx_std_20)
-
-# Set compiler warnings (pedantic/permissive- intentionally omitted)
-target_compile_options(${PROJECT_LIBRARY_TARGET} PRIVATE
-    # If using MSVC compiler:
-    $<$<CXX_COMPILER_ID:MSVC>:/W4 /permissive /WX->
-    
-    # If using GCC or Clang :
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic -Werror>
-)
-
-target_compile_options(${PROJECT_GRAPHICS_TARGET} PRIVATE
-    # If using MSVC compiler:
-    $<$<CXX_COMPILER_ID:MSVC>:/W4 /permissive /WX->
-
-    # If using GCC or Clang :
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wconversion -Wsign-conversion -Wpedantic -Werror>
-)
-
-# 4. Include and Link Directories
-# Public include paths stay rooted at include/ so callers must use core/... and graphics/...
-target_include_directories(${PROJECT_LIBRARY_TARGET} PUBLIC
-    "${PROJECT_INCLUDE_DIR}"
-)
-
-target_include_directories(${PROJECT_GRAPHICS_TARGET} PUBLIC
-    "${PROJECT_INCLUDE_DIR}"
-)
-
-# 5. Link SFML libraries
-# 5.1. Tell CMake we want static libraries
-set(SFML_STATIC_LIBRARIES ON)
-
-# 5.2. Point CMake to the folder containing SFMLConfig.cmake
-set(SFML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/SFML-3.0.0/lib/cmake/SFML")
-
-# 5.3. Find SFML 3 (Note: SFML 3 requires capitalized component names)
-find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
-
-# 5.4. Link using modern namespaces!
-# This automatically handles includes, library order, transitive dependencies (opengl32, etc.), and sets -DSFML_STATIC!
-target_link_libraries(${PROJECT_LIBRARY_TARGET} PUBLIC
-    nlohmann_json::nlohmann_json
-)
-
-target_link_libraries(${PROJECT_GRAPHICS_TARGET} PUBLIC
-    ${PROJECT_LIBRARY_TARGET}
-    SFML::Graphics
-    SFML::Window
-    SFML::System
-) 
-
 target_link_libraries(${PROJECT_APP_TARGET} PRIVATE ${PROJECT_GRAPHICS_TARGET})
 
 # Suppress the missing PDB warnings from third-party static libraries
