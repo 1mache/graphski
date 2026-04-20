@@ -92,6 +92,7 @@ namespace graphski::core
 		// checks if edge exists between two nodes, returns true if it does
         bool edgeExists(NodeId fromNodeId, NodeId toNodeId) const;
         
+        // cleans up the adjacency list from edges that point to deleted nodes
         void cleanupIncomingEdgesInList(AdjacencyList& adjList) const;
         void ensureCleanAdjList();
 
