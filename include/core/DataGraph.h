@@ -9,14 +9,18 @@
 
 namespace graphski::core
 {
-template<typename T>
+template <typename T>
 class DataGraph : public Graph
 {
-public:
-    explicit DataGraph(size_t reserveCount = 0) : Graph(reserveCount) {}
+  public:
+    explicit DataGraph(size_t reserveCount = 0) : Graph(reserveCount)
+    {
+    }
     virtual ~DataGraph() = default;
 
-    DataGraph(const DataGraph& other) : Graph(other), m_data(other.m_data) {}
+    DataGraph(const DataGraph& other) : Graph(other), m_data(other.m_data)
+    {
+    }
     DataGraph& operator=(const DataGraph& other);
     DataGraph(DataGraph&&) = default;
     DataGraph& operator=(DataGraph&&) = default;
@@ -26,16 +30,18 @@ public:
     NodeId addNode(const T& data, std::string_view name = "");
     NodeId addNode(T&& data, std::string_view name = "");
 
+    void addToDataStorage(NodeId id, T data);
+
     const T& getNodeData(NodeId id) const;
-    T& getNodeData(NodeId id);
-    
-private:
+    T&       getNodeData(NodeId id);
+
+  private:
     std::vector<T> m_data;
+    int            m_dataSize{0};
 };
 
-
 template <typename T>
-DataGraph<T>& DataGraph<T>::operator=(const DataGraph<T> &other)
+DataGraph<T>& DataGraph<T>::operator=(const DataGraph<T>& other)
 {
     DataGraph<T> copy(other); // make a copy using the copy constructor
     swap(*this, copy);
@@ -45,25 +51,37 @@ DataGraph<T>& DataGraph<T>::operator=(const DataGraph<T> &other)
 template <typename T>
 NodeId DataGraph<T>::addNode(std::string_view name)
 {
-    NodeId id = Graph::addNode(name);        
-    m_data.push_back(T{}); // default construct data for this node
+    NodeId id = Graph::addNode(name);
+    addToDataStorage(id, T{}); // add default-constructed data for the new node
     return id;
 }
 
 template <typename T>
-NodeId DataGraph<T>::addNode(const T &data, std::string_view name)
-{  
-    NodeId id = Graph::addNode(name);        
-    m_data.push_back(data); 
+NodeId DataGraph<T>::addNode(const T& data, std::string_view name)
+{
+    NodeId id = Graph::addNode(name);
+    addToDataStorage(id, data);
     return id;
 }
 
 template <typename T>
-NodeId DataGraph<T>::addNode(T &&data, std::string_view name)
-{  
-    NodeId id = Graph::addNode(name);        
-    m_data.push_back(std::move(data)); 
+NodeId DataGraph<T>::addNode(T&& data, std::string_view name)
+{
+    NodeId id = Graph::addNode(name);
+    addToDataStorage(id, std::move(data));
     return id;
+}
+
+template <typename T>
+void DataGraph<T>::addToDataStorage(NodeId id, T data)
+{
+    assert(id <= m_data.size() && "DataGraph: node id > data vector size");
+
+    if (id == m_data.size())
+        m_data.push_back(std::move(data));
+    else
+        // in case of id reuse after deletion, move assign to existing slot
+        m_data[id] = std::move(data);
 }
 
 template <typename T>

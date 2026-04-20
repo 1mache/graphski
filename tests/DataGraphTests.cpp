@@ -24,7 +24,9 @@ struct TrackingPayload
     std::string value;
 
     TrackingPayload() = default;
-    explicit TrackingPayload(std::string v) : value(std::move(v)) {}
+    explicit TrackingPayload(std::string v) : value(std::move(v))
+    {
+    }
 
     TrackingPayload(const TrackingPayload& other) : value(other.value)
     {
@@ -77,7 +79,7 @@ TEST_CASE("DataGraph base-signature addNode keeps data vector aligned", "[DataGr
 TEST_CASE("DataGraph retrieveNodeData returns data without moving from storage", "[DataGraph]")
 {
     DataGraph<std::string> graph;
-    NodeId id = graph.addNode(std::string("keep-me"), "N");
+    NodeId                 id = graph.addNode(std::string("keep-me"), "N");
 
     std::string& retrieved = graph.getNodeData(id);
 
@@ -95,7 +97,7 @@ TEST_CASE("DataGraph throws on out-of-range id", "[DataGraph]")
 TEST_CASE("DataGraph through Graph reference still keeps data in sync", "[DataGraph][Polymorphism]")
 {
     DataGraph<int> graph;
-    Graph& baseRef = graph;
+    Graph&         baseRef = graph;
 
     NodeId id = baseRef.addNode("FromBaseRef");
 
@@ -112,7 +114,7 @@ TEST_CASE("DataGraph addNode chooses copy for lvalue and move for rvalue", "[Dat
         DataGraph<TrackingPayload> graph;
 
         TrackingPayload payload{"lvalue-data"};
-        NodeId id = graph.addNode(payload, "L");
+        NodeId          id = graph.addNode(payload, "L");
 
         REQUIRE(id == 0);
         REQUIRE(graph.getNodeData(id).value == "lvalue-data");
@@ -133,6 +135,68 @@ TEST_CASE("DataGraph addNode chooses copy for lvalue and move for rvalue", "[Dat
     }
 }
 
+TEST_CASE("DataGraph deletion and id reuse keep payload aligned", "[DataGraph][Deletion]")
+{
+    DataGraph<std::string> graph;
+
+    NodeId a = graph.addNode("data-A", "A");
+    NodeId b = graph.addNode("data-B", "B");
+    NodeId c = graph.addNode("data-C", "C");
+
+    REQUIRE(graph.nodeCount() == 3);
+    REQUIRE(graph.getNodeData(a) == "data-A");
+    REQUIRE(graph.getNodeData(b) == "data-B");
+    REQUIRE(graph.getNodeData(c) == "data-C");
+
+    REQUIRE(graph.deleteNode(b));
+    REQUIRE(graph.nodeCount() == 2);
+    REQUIRE_THROWS_AS(graph.getNodeData(b), std::out_of_range);
+
+    NodeId reused = graph.addNode("data-B2", "B2");
+    REQUIRE(reused == b);
+    REQUIRE(graph.nodeCount() == 3);
+
+    REQUIRE(graph.getNodeData(a) == "data-A");
+    REQUIRE(graph.getNodeData(reused) == "data-B2");
+    REQUIRE(graph.getNodeData(c) == "data-C");
+}
+
+TEST_CASE("DataGraph deletion of last node then re-add keeps payload aligned", "[DataGraph][Deletion]")
+{
+    DataGraph<std::string> graph;
+
+    NodeId a = graph.addNode("data-A", "A");
+    NodeId b = graph.addNode("data-B", "B");
+
+    REQUIRE(graph.deleteNode(b));
+    REQUIRE(graph.nodeCount() == 1);
+    REQUIRE_THROWS_AS(graph.getNodeData(b), std::out_of_range);
+
+    NodeId b2 = graph.addNode("data-B2", "B2");
+    REQUIRE(b2 == b);
+
+    REQUIRE(graph.getNodeData(a) == "data-A");
+    REQUIRE(graph.getNodeData(b2) == "data-B2");
+}
+
+TEST_CASE("DataGraph id reuse through Graph reference keeps data sync", "[DataGraph][Deletion][Polymorphism]")
+{
+    DataGraph<int> graph;
+    Graph&         baseRef = graph;
+
+    NodeId a = graph.addNode(10, "A");
+    NodeId b = graph.addNode(20, "B");
+
+    REQUIRE(graph.deleteNode(a));
+    REQUIRE_THROWS_AS(graph.getNodeData(a), std::out_of_range);
+
+    NodeId reused = baseRef.addNode("A2");
+    REQUIRE(reused == a);
+
+    REQUIRE(graph.getNodeData(reused) == 0);
+    REQUIRE(graph.getNodeData(b) == 20);
+}
+
 TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
 {
     SECTION("Constructors create valid DataGraph")
@@ -149,8 +213,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
     SECTION("Copy constructor copies graph topology and payload")
     {
         DataGraph<std::string> source;
-        NodeId a = source.addNode("data-A", "A");
-        NodeId b = source.addNode("data-B", "B");
+        NodeId                 a = source.addNode("data-A", "A");
+        NodeId                 b = source.addNode("data-B", "B");
         source.addEdge(a, b);
 
         DataGraph<std::string> copy(source);
@@ -176,8 +240,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
     SECTION("Move constructor transfers graph topology and payload")
     {
         DataGraph<std::string> source;
-        NodeId a = source.addNode("data-A", "A");
-        NodeId b = source.addNode("data-B", "B");
+        NodeId                 a = source.addNode("data-A", "A");
+        NodeId                 b = source.addNode("data-B", "B");
         source.addEdge(a, b);
 
         DataGraph<std::string> moved(std::move(source));
@@ -203,8 +267,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
     SECTION("Copy assignment copies graph topology and payload")
     {
         DataGraph<std::string> source;
-        NodeId a = source.addNode("data-A", "A");
-        NodeId b = source.addNode("data-B", "B");
+        NodeId                 a = source.addNode("data-A", "A");
+        NodeId                 b = source.addNode("data-B", "B");
         source.addEdge(a, b);
 
         DataGraph<std::string> target;
@@ -230,8 +294,8 @@ TEST_CASE("DataGraph Rule of Five", "[DataGraph][RuleOf5]")
     SECTION("Move assignment transfers graph topology and payload")
     {
         DataGraph<std::string> source;
-        NodeId a = source.addNode("data-A", "A");
-        NodeId b = source.addNode("data-B", "B");
+        NodeId                 a = source.addNode("data-A", "A");
+        NodeId                 b = source.addNode("data-B", "B");
         source.addEdge(a, b);
 
         DataGraph<std::string> target;
