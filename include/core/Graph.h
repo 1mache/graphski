@@ -18,7 +18,7 @@ namespace graphski::core
     {
     public:
         explicit Graph(size_t reserveCount = 0)
-        : m_nodes(reserveCount > NodeStorage::maxNodes() ? 
+        : m_nodeStorage(reserveCount > NodeStorage::maxNodes() ? 
                                     NodeStorage::maxNodes() : reserveCount)
         {
             m_adjList.reserve(reserveCount);
@@ -39,12 +39,12 @@ namespace graphski::core
 
         virtual void clear() override
         {
-            m_nodes.clear();
+            m_nodeStorage.clear();
             m_adjList.clear();  
         }
         size_t nodeCount() const override
         {
-            return m_nodes.nodeCount();
+            return m_nodeStorage.nodeCount();
         }
         size_t edgeCount() const override;
         // node const ref by id
@@ -68,13 +68,13 @@ namespace graphski::core
             requires std::derived_from<std::remove_cv_t<NodeT>, INode>
         NodeT* getNodeAs(NodeId id)
         {
-            return dynamic_cast<NodeT*>(m_nodes.getNode(id));
+            return dynamic_cast<NodeT*>(m_nodeStorage.getNode(id));
         }
         template <typename NodeT>
             requires std::derived_from<std::remove_cv_t<NodeT>, INode>
         const NodeT* getNodeAs(NodeId id) const
         {
-            return dynamic_cast<const NodeT*>(m_nodes.getNode(id));
+            return dynamic_cast<const NodeT*>(m_nodeStorage.getNode(id));
         }
         
 		// factory methods for creating nodes
@@ -98,7 +98,7 @@ namespace graphski::core
 
         AdjacencyList m_adjList;    
     private:
-        NodeStorage m_nodes;
+        NodeStorage m_nodeStorage;
         // used to save unneeded calls to cleanupDeletedDestEdges see impl.
         bool m_adjListNeedsCleanup{false};
         

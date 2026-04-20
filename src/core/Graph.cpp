@@ -7,18 +7,18 @@ namespace graphski::core
 {
 Graph::Graph(const Graph &other):
     m_adjList{other.m_adjList},
-    m_nodes{} 
+    m_nodeStorage{} 
 {
-    m_nodes.reserve(other.m_nodes.size());
+    m_nodeStorage.reserve(other.m_nodeStorage.size());
 
-    for (const auto& node : other.m_nodes)
+    for (const auto& node : other.m_nodeStorage)
     {
-        if(!node) m_nodes.addNode(nullptr); // keep null pointers for deleted nodes
+        if(!node) m_nodeStorage.addNode(nullptr); // keep null pointers for deleted nodes
         else 
         {
             auto* ptrToNode = dynamic_cast<Node*>(node.get());
             assert(ptrToNode != nullptr && "non Node* found in other`s NodeStorage");
-            m_nodes.addNode(
+            m_nodeStorage.addNode(
                 createNode(ptrToNode)
             );
         }
@@ -34,7 +34,7 @@ size_t Graph::edgeCount() const
 
 OptionalNodeConstRef Graph::getNode(NodeId id) const
 {
-    auto* node = m_nodes.getNode(id);
+    auto* node = m_nodeStorage.getNode(id);
     if (!node)
         return {};
     return std::cref(static_cast<const INode&>(*node));
@@ -43,10 +43,10 @@ OptionalNodeConstRef Graph::getNode(NodeId id) const
 std::vector<NodeId> Graph::getNodeIds() const
 {
     std::vector<NodeId> res;
-    res.reserve(m_nodes.size());
+    res.reserve(m_nodeStorage.size());
 
     NodeId id = 0;
-    for (const auto& node : m_nodes)
+    for (const auto& node : m_nodeStorage)
     {
         if (node) res.push_back(id);
 
@@ -63,9 +63,9 @@ NodeId Graph::addNode(std::string_view name)
     // need to clean up
     ensureCleanAdjList();
 
-    NodeId id = m_nodes.addNode(createNode(name));
+    NodeId id = m_nodeStorage.addNode(createNode(name));
     if(name.empty()) // set default name to id if not provided
-        m_nodes.getNode(id)->setName(std::to_string(id));
+        m_nodeStorage.getNode(id)->setName(std::to_string(id));
 
     if(m_adjList.size() <= id) // add an empty neighbors vector if id is not reused
         m_adjList.emplace_back(); 
@@ -97,8 +97,8 @@ void Graph::addEdge(NodeId fromNodeId, NodeId toNodeId)
 
 bool Graph::deleteNode(NodeId nodeId)
 {
-    bool lastInStorage = (m_nodes.maxNodeId() == nodeId);
-    if(!m_nodes.deleteNode(nodeId))
+    bool lastInStorage = (m_nodeStorage.maxNodeId() == nodeId);
+    if(!m_nodeStorage.deleteNode(nodeId))
         return false; // try to delete from storage
 
     // clear outgoing edges or pop depending on id
@@ -111,7 +111,7 @@ bool Graph::deleteNode(NodeId nodeId)
     } 
     
     // if last was popped there are possible trailing nulls. pop them
-    while(m_nodes.size() > m_adjList.size())
+    while(m_nodeStorage.size() > m_adjList.size())
         m_adjList.pop_back();
 
     // incoming edges deletion is handled lazily:
@@ -156,7 +156,7 @@ std::vector<NodeId> Graph::getNeighborsOf(NodeId id) const
     auto neighborsCleaned = m_adjList[id]; 
     // remove edges to deleted nodes
     const auto [first, last] = remove_if(neighborsCleaned, 
-                [this](NodeId id){return m_nodes.getNode(id) == nullptr;});
+                [this](NodeId id){return m_nodeStorage.getNode(id) == nullptr;});
     
     neighborsCleaned.erase(first,last);
         
@@ -194,7 +194,7 @@ void Graph::cleanupIncomingEdgesInList(AdjacencyList& adjList) const
     {
         // remove edges to deleted nodes
         const auto [first, last] = remove_if(neighbors, 
-                    [this](NodeId id){return m_nodes.getNode(id) == nullptr;});
+                    [this](NodeId id){return m_nodeStorage.getNode(id) == nullptr;});
         
         neighbors.erase(first,last);
     }

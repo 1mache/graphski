@@ -13,7 +13,7 @@ std::unique_ptr<Node> createNode(std::string_view name)
 void swap(Graph &first, Graph &second) noexcept
 {
     using std::swap;
-    swap(first.m_nodes, second.m_nodes);
+    swap(first.m_nodeStorage, second.m_nodeStorage);
     swap(first.m_adjList, second.m_adjList);
 }
 
@@ -21,12 +21,12 @@ void transposeGraph(Graph &graph)
 {
     std::cout << "I am transposing it" << std::endl;
     // we can reuse the same nodes vector
-    auto& nodes = graph.m_nodes; 
+    auto& nodes = graph.m_nodeStorage; 
     // new Adjacency list sized like the original and filled with empty vectors
     AdjacencyList newAdjList{ graph.m_adjList.size(), std::vector<NodeId>() };
 
     // fill it with opposite edges
-    for (size_t i = 0; i < graph.m_nodes.size(); ++i)
+    for (size_t i = 0; i < graph.m_nodeStorage.size(); ++i)
     {
         NodeId nodeId = static_cast<NodeId>(i);
         if(!graph.getNode(nodeId).has_value())
